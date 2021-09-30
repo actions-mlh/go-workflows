@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
-	"gopkg.in/yaml.v3"
+	
+	"yaml-parser/lint"
 )
 
 func main() {
@@ -19,26 +19,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	obj := make(map[interface{}]interface{})
-	errorMsg := yaml.Unmarshal(data, obj)
-	if errorMsg == nil {
-		fmt.Println("yaml parse ok! object:\n")
-		fmt.Println(obj)
-	} else {
-		// split yaml file into lines
-		lines := strings.Split(string(data), "\n")
+	err = lint.Lint(data)
 
-		// get line number of error
-		lineNoString := strings.Fields(errorMsg.Error())[2]
-		lineNoString = lineNoString[:len(lineNoString)-1]
-		var lineNo int
-		_, err := fmt.Sscan(lineNoString, &lineNo)
-		if err != nil {
-			panic("line no. not parsed correctly")
-		}
-		
-		fmt.Println(errorMsg)
-		fmt.Println(lines[lineNo])
-		os.Exit(1)
+	if err == nil {
+		fmt.Println("lint passed!")
+	} else {
+		fmt.Println("lint failed :(")
+		fmt.Println(err.Error())
 	}
 }
