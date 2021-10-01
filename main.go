@@ -1,31 +1,45 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"log"
 	"os"
+	"io"
 	
 	"gh-actions-checker/parser"
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("Please provide a filename.")
-		os.Exit(1)
-	}
-	
-	data, err := os.ReadFile(os.Args[1])
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	flag.Parse()
+	args := flag.Args()
+
+	if len(args) == 0 {
+		data, err := io.ReadAll(os.Stdin)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		_, err = parser.Parse(data)
+		if err != nil {
+			log.Fatalf("error parsing stdin:\n    %v", err)
+		}
+
+		fmt.Println("passed!")
 	}
 
-	out, err := parser.Parse(data)
+	for _, arg := range args {
+		data, err := os.ReadFile(arg)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	if err == nil {
-		fmt.Println("lint passed!")
-		fmt.Println(out)
-	} else {
-		fmt.Println("lint failed :(")
-		fmt.Println(err.Error())
+		_, err = parser.Parse(data)
+		if err != nil {
+			log.Fatalf("error parsing %v:\n    %v", arg, err)
+		}
+
+		// success case?
+		fmt.Println("passed!")
 	}
 }
