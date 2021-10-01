@@ -19,4 +19,4 @@ jobs:
         stale-pr-message: 'This pull request has become stale and will be closed automatically within a period of time. Sorry about that.'
         stale-issue-label: 'no-issue-activity'
         stale-pr-label: 'no-pr-activity'
-         days-before-stale: 90 
+        days-before-stale: 90 
