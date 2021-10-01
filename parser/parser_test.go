@@ -11,6 +11,10 @@ func TestParse(t *testing.T) {
 	root := "./yaml/"
 	
 	filepath.Walk(root, func (path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		
 		if info.IsDir() {
 			return nil
 		}
