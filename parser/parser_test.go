@@ -1,4 +1,4 @@
-package lint
+package parser
 
 import (
 	"os"
@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestLint(t *testing.T) {
+func TestParse(t *testing.T) {
 	dir, err := os.Open("./yaml/")
 	if err != nil {
 		panic("error reading dir yaml")
@@ -38,7 +38,7 @@ func TestLint(t *testing.T) {
 		}
 		passedExpected := lineNoExpected == -1
 		
-		passedActual, lineNoActual, err := Lint(data)
+		passedActual, lineNoActual, err := Parse(data)
 
 		if (passedExpected != passedActual) {
 			t.Errorf(

@@ -1,4 +1,4 @@
-package lint
+package parser
 
 import (
 	"strings"
@@ -8,7 +8,7 @@ import (
 
 // Lint returns true, -1, nil if the lint passes.
 // If not, it returns false, lineNo, error.
-func Lint(data []byte) (bool, int, error) {
+func Parse(data []byte) (bool, int, error) {
 	obj := make(map[interface{}]interface{})
 	err := yaml.Unmarshal(data, obj)
 	

@@ -1,4 +1,4 @@
-module yaml-parser
+module gh-actions-checker
 
 go 1.17
 

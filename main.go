@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	
-	"yaml-parser/lint"
+	"gh-actions-checker/parser"
 )
 
 func main() {
@@ -19,7 +19,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = lint.Lint(data)
+	err = parser.Parse(data)
 
 	if err == nil {
 		fmt.Println("lint passed!")
