@@ -26,7 +26,7 @@ func TestParse(t *testing.T) {
 		
 		_, err = Parse(data)
 		if err != nil {
-			t.Fatalf("error reading test file %v:\n%v", path, err)
+			t.Errorf("error reading test file %v:\n%v", path, err)
 		}
 		return nil
 	})
