@@ -1,30 +1,29 @@
 package parser
 
 import (
+	"io/fs"
+	"path/filepath"
 	"os"
 	"testing"
 )
 
 func TestParse(t *testing.T) {
-	dir, err := os.Open("./yaml/")
-	if err != nil {
-		t.Fatal("error reading dir yaml")
-	}
-	defer dir.Close()
-
-	files, err := dir.Readdirnames(0)
-	if err != nil {
-		t.Fatal("error reading files from yaml")
-	}
-
-	for _, file := range files {
-		data, err := os.ReadFile("./yaml/" + file)
-		if err != nil {
-			t.Fatalf("error reading test file %v",file)
+	root := "./yaml/"
+	
+	filepath.Walk(root, func (path string, info fs.FileInfo, err error) error {
+		if info.IsDir() {
+			return nil
 		}
+
+		data, err := os.ReadFile(path)
+		if err != nil {
+			t.Errorf("failed to read file %v", path)
+		}
+		
 		_, err = Parse(data)
 		if err != nil {
-			t.Errorf("failed to read file %v", file)
+			t.Fatalf("error reading test file %v:\n%v", path, err)
 		}
-	}
+		return nil
+	})
 }
