@@ -19,10 +19,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = parser.Parse(data)
+	out, err := parser.Parse(data)
 
 	if err == nil {
 		fmt.Println("lint passed!")
+		fmt.Println(out)
 	} else {
 		fmt.Println("lint failed :(")
 		fmt.Println(err.Error())
