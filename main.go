@@ -2,11 +2,10 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"io"
 	"log"
 	"os"
-	"io"
-	
+
 	"gh-actions-checker/parser"
 )
 
@@ -15,24 +14,24 @@ func main() {
 	args := flag.Args()
 
 	if len(args) == 0 {
-		process(io.ReadAll(os.Stdin))
+		data, err := io.ReadAll(os.Stdin)
+		process("stdin", data, err)
 	}
 
 	for _, arg := range args {
-		process(os.ReadFile(arg))
+		data, err := os.ReadFile(arg)
+		process(arg, data, err)
 	}
 }
 
-func process(data []byte, err error) error {
+func process(name string, data []byte, err error) {
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return
 	}
 
 	_, err = parser.Parse(data)
 	if err != nil {
-		log.Fatalf("error parsing stdin:\n    %v", err)
+		log.Printf("error parsing %v:\n    %v", name, err)
 	}
-
-	fmt.Println("passed!")
-	return nil
 }
