@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         go: [ '1.17.1', '1.16', '1.15', '1.14', '1.13' ]
-    name: Go ${{ matrix.go }} parser test on all go versions
+    name: Go ${{ matrix.go }} version test
     steps:
       - uses: actions/checkout@v2
       - name: Setup go
