@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         go: [ '1.17.1', '1.16', '1.15', '1.14', '1.13' ]
