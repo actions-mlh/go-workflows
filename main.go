@@ -31,6 +31,7 @@ func main() {
 
 func process(name string, data []byte, err error) bool {
 	error := false
+	// file/stdin
 	if err != nil {
 		fmt.Println(err)
 		error = true
