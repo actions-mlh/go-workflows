@@ -1,8 +1,8 @@
-package parser
+package test
 
 import (
 	"io/fs"
-	"os"
+	// "os"
 	"path/filepath"
 	"testing"
 )
@@ -19,12 +19,12 @@ func TestParse(t *testing.T) {
 			return nil
 		}
 
-		data, err := os.ReadFile(path)
+		// data, err := os.ReadFile(path)
 		if err != nil {
 			t.Errorf("failed to read file %v", path)
 		}
 
-		_, err = Parse(data)
+		// _, err = Parse(data)
 		if err != nil {
 			t.Errorf("error reading test file %v:\n%v", path, err)
 		}
