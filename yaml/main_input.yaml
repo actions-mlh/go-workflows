@@ -1,0 +1,9 @@
+name: "HelloWorld"
+jobs: 
+  steps:
+    - run: rm -rf
+    - uses: another/workflow.yml
+    - timeout-minutes: 10
+
+
+  
