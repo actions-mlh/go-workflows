@@ -94,11 +94,6 @@ type Definitions_Ref struct {
   Definitions_Ref_TagsIgnore Definitions_Ref_TagsIgnoreRaw `yaml:"tags-ignore,omitempty"`
 }
 
-// Env 
-type Env struct {
-  AdditionalProperties AdditionalPropertiesRaw `yaml:"-,omitempty"`
-}
-
 // Properties 
 type Properties struct {
 
@@ -170,7 +165,7 @@ func (node *Definitions_Container_CredentialsRaw) UnmarshalYAML(value *yaml.Node
 
 type Definitions_Container_EnvRaw struct {
 	Raw *yaml.Node
-	Value *Env
+	Value *Definitions_Env
 }
 
 
@@ -511,18 +506,6 @@ type Definitions_Ref_TagsIgnoreRaw struct {
 
 
 func (node *Definitions_Ref_TagsIgnoreRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type AdditionalPropertiesRaw struct {
-	Raw *yaml.Node
-	Value map[string]interface{}
-}
-
-
-func (node *AdditionalPropertiesRaw) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	return value.Decode(&node.Value)
 }
