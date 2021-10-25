@@ -1,0 +1,61 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$comment": "https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions",
+    "definitions": {
+        "defaults": {
+            "type": "object",
+            "properties": {
+                "run": {
+                    "type": "object",
+                    "properties": {
+                        "shell": {
+                            "$ref": "#/definitions/shell"
+                        },
+                        "working-directory": {
+                            "$ref": "#/definitions/working-directory"
+                        }
+                    },
+                    "minProperties": 1,
+                    "additionalProperties": false
+                }
+            },
+            "minProperties": 1,
+            "additionalProperties": false
+        },
+        "shell": {
+            "$comment": "https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#using-a-specific-shell",
+            "description": "You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.",
+            "type": "string",
+            "anyOf": [
+                {
+                    "$comment": "https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#custom-shell"
+                },
+                {
+                    "enum": [
+                        "bash",
+                        "pwsh",
+                        "python",
+                        "sh",
+                        "cmd",
+                        "powershell"
+                    ]
+                }
+            ]
+        },
+        "working-directory": {
+            "$comment": "https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstepsrun",
+            "description": "Using the working-directory keyword, you can specify the working directory of where to run the command.",
+            "type": "string"
+        }
+    },
+    "properties": {
+        "defaults": {
+            "$comment": "https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#defaults",
+            "$ref": "#/definitions/defaults",
+            "description": "A map of default settings that will apply to all jobs in the workflow."
+        }
+    },
+    "required": [
+    ],
+    "additionalProperties": false
+}

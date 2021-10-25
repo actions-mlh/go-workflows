@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"os"
 
-	"gh-actions-checker/parser"
+	"c2c-actions-mlh-workflow-parser/parse"
 )
+
+//go:generate go run ./schema/main.go
 
 func main() {
 	flag.Parse()

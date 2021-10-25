@@ -1,0 +1,230 @@
+OneOf Mock Schema Generated Documetation
+
+line 16: package mock_gen_schema 
+solutions:
+    1) Write it out since we are using one directory
+    2) Read -i (input path) from user, (package %s, input path)
+
+line 18 - 21: imports
+solutions:
+    1) Manually write it out
+    2) Create a buffer and slice, as we are reading the json Schema
+    we can scan the imports necessary and append to slice
+
+line 23 - 25: Root of Schema (General Node)
+solutions: 
+    1) Raw *yaml.Node, is used for getting values such as line, column and kind 
+    2) Value allows us to traverse the yaml tree that we built
+    3) If there are no keys named:
+        items, enums, oneOf, allOf
+        the general output would be:
+example:
+    type Parent + Child + Node struct {
+        Raw   *yaml.Node
+        Value Parent + Child + Value
+    }
+
+line 28 - 36: Root of Schema UnmarshalYAML (General UnmarshalYAML)
+solutions:
+    1) node.Raw = value, saves the node.Raw to the yaml.Node that we created.
+    This enables us to reference the yaml.Node in our linter 
+    2) return value.Decode(&node.Value)
+        a) this is a recursive step, that will return an error
+        b) Decode calls the UnmarshalYaml interface method on the value or Node.Raw, which
+        follows the unmarhal functions in our go struct Schema
+        c) at each recursive step it sets Node.Value to the value of the current yaml line
+        so we can call Node.Value later at the linter
+
+line 33 - 36: Root of Properties (General Properties)
+solutions:
+    1) Name WorkflowNameNode `yaml:"name"`
+        a) Child Parent + Child + Node `yaml:"child.fieldName"`
+
+
+line 38 - 41: First Recursive Return (1 recursive step)
+    1) WorkflowNameNode, (%s%s + Node, Parent , Child)
+    2) Raw *yaml.Node, add yaml node to access col and line of name and its value
+    3) Value string
+        a) if a key: value pair does not have a $ref, we set the Value to its "type"
+
+example:
+"name": {
+    "$comment": "https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#name",
+    "description": "The name of your workflow. GitHub displays the names of your workflows on your repository's actions page. If you omit this field, GitHub sets the name to the workflow's filename.",
+    "type": "string"
+}
+
+line 43 - 46:
+    1) value.Decode(&node.Value)
+        a) we still have to decode the node for the WorkflowName, 
+        as we need to attach the name's value to node.Value, so we can access it in the linter
+
+line 48-51: OneOf Value
+example:
+type WorkflowValue struct {
+	Name WorkflowNameNode `yaml:"name"`
+	On WorkflowOnNode `yaml:"on"`
+}
+
+type WorkflowOnNode struct {
+	Raw  *yaml.Node
+	OneOf WorkflowOnOneOf
+}
+
+solution:
+    1) Our first oneOf example is in the `On` property.
+    2) instead of having our general struct that contains Value Parent + Child + Value
+    We do:
+        OneOf Parent + Child + OneOf
+
+"on": {
+"$comment": "https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#on",
+"description": "The name of the GitHub event that triggers the workflow. You can provide a single event string, array of events, array of event types, or an event configuration map that schedules a workflow or restricts the execution of a workflow to specific files, tags, or branch changes. For a list of available events, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/events-that-trigger-workflows.",
+"oneOf": [
+        {
+            "$ref": "#/definitions/event"
+        },
+        {
+            "type": "array",
+            "items": {
+            "$ref": "#/definitions/event"
+        },
+            "minItems": 1
+        },
+        {
+            "type": "object",
+            "properties": {
+
+
+line 54 - 57: OneOf struct
+example:
+
+type WorkflowOnOneOf struct {
+	scalarNode *OnEventConstants
+	sequenceNode *[]OnEventConstants
+	mappingNode *[]WorkFlowOnValue
+}
+
+solution:
+    1) OneOf struct will consist of the different types:
+        (Scalar, Sequence, Map)
+
+    "oneOf": [
+        {
+            "$ref": "#/definitions/event"
+        },
+    2) list lowercased(type name) *Child (parent) + Child's Child (child) + $ref
+        in $ref (child), we look to see if there is keyword names:
+            items, enums, properties
+    "oneOf": [
+    {
+        "type": "array",
+        "items": {
+            "$ref": "#/definitions/event"
+        },
+        "minItems": 1
+    },
+    3) If its contains no $ref, and we get the keywords first, we just name it
+        Parent + Child + Keyword
+    
+    sequenceNode *[]OnEventConstants -> since our keyword is `items`,
+    items is an array -> []Parent + Child + $ref (enum)
+    $ref -> event: 
+    "event": {
+        "$comment": "https://help.github.com/en/github/automating-your-workflow-with-github-actions/events-that-trigger-workflows",
+        "type": "string",
+        "enum": [
+    
+    Keywords: 
+        enum = Constants
+        oneOf = OneOf
+        Properties = Value ( we can rename this to Properties, idk which is better)
+        items = [], add ( [] ) in front of named variable
+
+ORDER SOLUTION FOR ONEOF:
+    1) Check if keywords exist, if not
+    2) Look for $ref, to find keywords or type
+    3) if $ref doesnt exist, we assume there is a type string, which is the generic 
+    Value Parent + Child + Value output 
+
+line 60 - 92:
+solution:
+    1) WorkflowOnYAMLAssertType, consists of 
+        Parent + Child + YAMLAssertType
+        We pass node.Raw as the argument
+        
+    2) WorkflowOnYAMLAssertType func, return an error
+        a) kinds, stores an array of the kinds of nodes we have from our oneOf
+        type WorkflowOnOneOf struct {
+            scalarNode *OnEventConstants
+            sequenceNode *[]OnEventConstants
+            mappingNode *[]WorkFlowOnValue
+
+        b) we loop through them, if kind does not exist, we return an error which recursive back to the top
+
+example:
+
+	switch node.Raw.Kind {
+		case yaml.ScalarNode:
+			return value.Decode(&node.OneOf.scalarNode)
+		case yaml.SequenceNode:
+			return value.Decode(&node.OneOf.sequenceNode)
+		case yaml.MappingNode:
+			return value.Decode(&node.OneOf.mappingNode)
+		default:
+			return fmt.Errorf("%d:%d	error	Expected one of: string, array, map type", node.Raw.Line, node.Raw.Column)
+	}
+    1) we then use a switch case to recurse deeper into our yaml file, to decode it by the type
+
+
+line 94 - 102: Constants = enum
+example:
+
+"event": {
+    "$comment": "https://help.github.com/en/github/automating-your-workflow-with-github-actions/events-that-trigger-workflows",
+    "type": "string",
+    "enum": [
+        "check_run",
+        "check_suite",
+        "create",
+        "delete",
+        "deployment",
+    1) it refers to our event definition
+
+solution:
+    1) we create a type consists of 
+    type OnEventConstants string = type Parent + Child + Enum (Constants) "type"
+
+    2) Our consts will be
+        Enum[0] Parent + Child + Constants = "enum[0] ... enum[-1]"
+
+
+line 104- 108: oneOf -> null 
+"properties": {
+    "check_run": {
+        "$comment": "https://help.github.com/en/github/automating-your-workflow-with-github-actions/events-that-trigger-workflows#check-run-event-check_run",
+        "$ref": "#/definitions/eventObject",
+        "description": "Runs your workflow anytime the check_run event occurs. More than one activity type triggers this event. For information about the REST API, see https://developer.github.com/v3/checks/runs.",
+        "properties": {}
+    },
+
+"eventObject": {
+    "oneOf": [
+        {
+            "type": "object"
+        },
+        {
+            "type": "null"
+        }
+    ],
+
+solution: 
+    1) We look at $ref of check run: where we have oneOf
+    2) we follow the creation of oneOf, however now we have a "type" : "null"
+        a) "null" is the same as, check_run: null or check_run:
+    3) to satisfy that type, we add an ,omitempty"
+    to our Value on creation shown below
+
+type WorkFlowOnValue struct {
+	CheckRun OnCheckRunNode `yaml:"check_run,omitempty"`
+}

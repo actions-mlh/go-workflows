@@ -1,4 +1,4 @@
-module gh-actions-checker
+module c2c-actions-mlh-workflow-parser
 
 go 1.17
 
