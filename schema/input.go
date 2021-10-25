@@ -50,7 +50,6 @@ func ReadInputFiles(inputFiles []string, schemaKeyRequired bool) ([]*Schema, err
 			return nil, fmt.Errorf("failed to parse the input JSON schema file %s with error %v", file, err)
 		}
 	}
-
 	return schemas, nil
 }
 

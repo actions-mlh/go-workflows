@@ -37,12 +37,10 @@ func (g *Generator) CreateTypes() (err error) {
 	}
 
 	fmt.Println("---------------------CreateTypes")
-	// fmt.Printf("%#v\n", *&g.schemas[0].Definitions["shell"].AnyOf[1].Enum[0])
 	// extract the types
 	for _, schema := range g.schemas {
 		name := g.getSchemaName("", schema)
 		rootType, err := g.processSchema(name, schema)
-		// fmt.Printf("%#v\n", schema)
 		if err != nil {
 			return err
 		}
@@ -64,7 +62,7 @@ func (g *Generator) CreateTypes() (err error) {
 // process a block of definitions
 func (g *Generator) processDefinitions(schema *Schema) error {
 	for key, subSchema := range schema.Definitions {
-		if _, err := g.processSchema(getGolangName(key), subSchema); err != nil {
+		if _, err := g.processSchema("Definitions_" + getGolangName(key), subSchema); err != nil {
 			return err
 		}
 	}
@@ -96,7 +94,10 @@ func (g *Generator) processReference(schema *Schema) (string, error) {
 // returns the type refered to by schema after resolving all dependencies
 func (g *Generator) processSchema(schemaName string, schema *Schema) (typ string, err error) {
 	if len(schema.Definitions) > 0 {
-		g.processDefinitions(schema)
+		err := g.processDefinitions(schema)
+		if (err != nil) {
+			return "", err
+		}
 	}
 	schema.FixMissingTypeValue()
 	// if we have multiple schema types, the golang type will be interface{}
@@ -187,7 +188,7 @@ func (g *Generator) processObject(name string, schema *Schema) (typ string, err 
 	schema.GeneratedType = "*" + name
 	// regular properties
 	for propKey, prop := range schema.Properties {
-		fieldName := getGolangName(propKey)
+		fieldName := name + "_" + getGolangName(propKey)
 		// calculate sub-schema name here, may not actually be used depending on type of schema!
 		subSchemaName := g.getSchemaName(fieldName, prop)
 		fieldType, err := g.processSchema(subSchemaName, prop)
@@ -207,6 +208,7 @@ func (g *Generator) processObject(name string, schema *Schema) (typ string, err 
 		// fmt.Printf("%#v\n", prop)
 		strct.Fields[f.Name] = f
 	}
+
 	// additionalProperties with typed sub-schema
 	if schema.AdditionalProperties != nil && schema.AdditionalProperties.AdditionalPropertiesBool == nil {
 		ap := (*Schema)(schema.AdditionalProperties)
@@ -316,16 +318,16 @@ func (g *Generator) getSchemaName(keyName string, schema *Schema) string {
 		return getGolangName(keyName)
 	}
 	if schema.Parent == nil {
-		return "WorkflowRoot"
+		return "Properties"
 	}
 	if schema.JSONKey != "" {
 		return getGolangName(schema.JSONKey)
 	}
 	if schema.Parent != nil && schema.Parent.JSONKey != "" {
-		return getGolangName(schema.Parent.JSONKey + "Item")
+		return getGolangName(schema.Parent.JSONKey + "_" + "Item")
 	}
 	g.anonCount++
-	return fmt.Sprintf("Anonymous%d", g.anonCount)
+	return fmt.Sprintf("Anonymous_%d", g.anonCount)
 }
 
 // getGolangName strips invalid characters out of golang struct or field names.
@@ -359,7 +361,7 @@ func splitOnAll(s string, shouldSplit func(r rune) bool) []string {
 }
 
 func isNotAGoNameCharacter(r rune) bool {
-	if unicode.IsLetter(r) || unicode.IsDigit(r) {
+	if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' {
 		return false
 	}
 	return true
