@@ -9,7 +9,9 @@ import (
 	"c2c-actions-mlh-workflow-parser/parse"
 )
 
-//go:generate go run ./schema/main.go
+//go:generate make -C schema/
+//go:generate schema/schema-generate -i ./schema/json/github-workflow.json -o ./gen/gen_schema.go
+//go:generate rm schema/schema-generate
 
 func main() {
 	flag.Parse()
