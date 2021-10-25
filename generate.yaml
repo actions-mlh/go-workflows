@@ -1,0 +1,39 @@
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+concurrency:
+  group: generate-jldec-uk
+  cancel-in-progress: true
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    env:
+      DOMAIN: jldec.uk
+
+    steps:
+    - name: checkout source repo
+      uses: actions/checkout@v2
+
+    - name: checkout destination repo under ./out
+      uses: actions/checkout@v2
+      with:
+        repository: jldec/jldec.uk
+        token: ${{ secrets.GH_TOKEN }}
+        path: out
+
+    - name: generate output
+      run: |
+        npm ci
+        npm run generate
+        # npm run preview &
+        # curl -LO https://github.com/jldec/deno-hello/releases/download/v1.0.2/scan-linux-x86 && chmod +x scan-linux-x86
+        # ./scan-linux-x86 http://localhost:3001/
+        cd out
+        # force commits to validate concurrency restriction
+        # echo ${{ github.sha }} >sha.txt
+        git config user.email "jldec@ciaosoft.com"
+        git config user.name "cloudflare-pages-test generate action"
+        git add -A
+        if ! git diff-index --quiet HEAD ; then git commit -m 'https://github.com/jldec/cloudflare-pages-test/actions/runs/${{ github.run_id }}' && git push ; fi
+        echo done
