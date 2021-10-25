@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 	"gopkg.in/yaml.v3"
-	"github.com/hankc97/fixtures/mock_gen_schema"
-	"github.com/hankc97/parse/lint"
+	"c2c-actions-mlh-workflow-parser/gen_mock"
+	"c2c-actions-mlh-workflow-parser/parse/lint"
 )
 
 func main() {
@@ -29,7 +29,7 @@ func realMain(inputFilename string) error {
 	defer input.Close()
 
 	sink := &lint.ProblemSink{Filename: inputFilename, Output: os.Stdout}
-	node := new(mock_gen_schema.WorkflowNode)
+	node := new(gen_mock.WorkflowNode)
 	
 	if err := yaml.NewDecoder(input).Decode(&node); err != nil {
 		return err

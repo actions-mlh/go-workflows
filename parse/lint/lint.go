@@ -2,7 +2,7 @@ package lint
 
 import (
 	// "strings"
-	"github.com/hankc97/fixtures/mock_gen_schema"
+	"c2c-actions-mlh-workflow-parser/gen_mock"
 	"fmt"
 )
 
@@ -12,7 +12,7 @@ import (
 // 		fmt.Println(s.Index(i))
 // }
 
-func LintWorkflow(sink *ProblemSink, target *mock_gen_schema.WorkflowNode) error {
+func LintWorkflow(sink *ProblemSink, target *gen_mock.WorkflowNode) error {
 	workflow := target
 	fmt.Println(*workflow.Value.On.OneOf.ScalarNode)
 

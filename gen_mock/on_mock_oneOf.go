@@ -13,11 +13,12 @@
 // 4) type %s struct, parent + child + Value struct
 // 4a) Child.fieldName Parent + Child + Node `yaml:"lowercased(Child.fieldname)"`
 
-package mock_gen_schema
+package gen_mock
 
 import (
-	"gopkg.in/yaml.v3"
 	"fmt"
+
+	"gopkg.in/yaml.v3"
 )
 
 type WorkflowNode struct {
@@ -25,14 +26,30 @@ type WorkflowNode struct {
 	Value WorkflowValue
 }
 
+
+// when creating unmarshalYaml function, we check if required exists
 func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	return value.Decode(&node.Value)
+	// required := []string{"on"}
+
+
+	// only do this if required exists
+	if err := value.Decode(&node.Value); err != nil {
+		return err
+	}
+
+	
+	// fmt.Printf("%+v\n", *&node.Value)	
+
+	return nil
+	
 }
 
 type WorkflowValue struct {
-	Name WorkflowNameNode `yaml:"name"`
-	On WorkflowOnNode `yaml:"on"`
+	Name *WorkflowNameNode `yaml:"name"`
+	On   *WorkflowOnNode   `yaml:"on"`
+	// Env  WorkflowEnvNode  `yaml:"env"`
+	Defaults *WorkflowDefaultsNode `yaml:"defaults"`
 }
 
 type WorkflowNameNode struct {
@@ -46,106 +63,68 @@ func (node *WorkflowNameNode) UnmarshalYAML(value *yaml.Node) error {
 }
 
 type WorkflowOnNode struct {
-	Raw  *yaml.Node
+	Raw   *yaml.Node
 	OneOf WorkflowOnOneOf
 }
 
-// compare ref if visited dont create append, just reuse name 
+// compare ref if visited dont create append, just reuse name
 type WorkflowOnOneOf struct {
-	scalarNode *OnEventConstants
-	sequenceNode *[]OnEventConstants
-	mappingNode *[]WorkFlowOnValue
+	ScalarNode   *OnEventConstants
+	SequenceNode *[]OnEventConstants
+	MappingNode  *WorkFlowOnValue
 }
 
 func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
-	if err := WorkflowOnYAMLAssertType(node.Raw); err != nil {
-		return err
-	}
-
 	switch node.Raw.Kind {
-		case yaml.ScalarNode:
-			return value.Decode(&node.OneOf.scalarNode)
-		case yaml.SequenceNode:
-			return value.Decode(&node.OneOf.sequenceNode)
-		case yaml.MappingNode:
-			return value.Decode(&node.OneOf.mappingNode)
-		default:
-			return fmt.Errorf("%d:%d	error	Expected one of: string, array, map type", node.Raw.Line, node.Raw.Column)
+	case yaml.ScalarNode:
+		return value.Decode(&node.OneOf.ScalarNode)
+	case yaml.SequenceNode:
+		return value.Decode(&node.OneOf.SequenceNode)
+	case yaml.MappingNode:
+		return value.Decode(&node.OneOf.MappingNode)
+	default:
+		return fmt.Errorf("%d:%d	error	Expected one of: string, array, map type", node.Raw.Line, node.Raw.Column)
 	}
 }
 
-func WorkflowOnYAMLAssertType(rawNode *yaml.Node) error {
-	kinds := []yaml.Kind{yaml.ScalarNode, yaml.SequenceNode, yaml.MappingNode}
-	containsFlag := false
-	for _, kind := range kinds {
-		if rawNode.Kind == kind {
-			containsFlag = true
-		}
-	}
-	if !containsFlag {
-		return fmt.Errorf("%d:%d	error	Expected one of: string, array, map type", rawNode.Line, rawNode.Column)
-	}
-
-	return nil
-}
-
-type OnEventConstants string 
+type OnEventConstants string
 
 const (
-	CheckRun OnEventConstants = "check_run"
+	CheckRun   OnEventConstants = "check_run"
 	CheckSuite OnEventConstants = "check_suite"
-	Create OnEventConstants = "create"
-	Delete OnEventConstants = "delete"
+	Create     OnEventConstants = "create"
+	Delete     OnEventConstants = "delete"
 	Deployment OnEventConstants = "deployment"
 )
 
 type WorkFlowOnValue struct {
-	CheckRun OnCheckRunNode `yaml:"check_run,omitempty"`
-	// CheckSuite OnCheckSuiteNode `yaml:"check_suite"` -> same as Checkrun
-	Create OnCreateNode `yaml:"create,omitempty"`
+	CheckRun   *OnCheckRunNode   `yaml:"check_run,omitempty"`
+	CheckSuite *OnCheckSuiteNode `yaml:"check_suite"`
+	Create     *OnCreateNode     `yaml:"create,omitempty"`
 	// Delete OnDeleteNode `yaml:"delete"` -> same as Create
 }
 
 type OnCheckRunNode struct {
-	Raw *yaml.Node
-	OneOf OnCheckRunOneOf 
+	Raw   *yaml.Node
+	OneOf OnCheckRunOneOf
 }
 
 type OnCheckRunOneOf struct {
-	// scalarNode *CheckEventObjectNull --> omitempty gives output: Checkrun: 
-	mappingNode *[]OnCheckRunValue
+	// scalarNode *CheckEventObjectNull --> omitempty gives output: Checkrun:
+	MappingNode *OnCheckRunValue
 }
 
 func (node *OnCheckRunNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
-	if err := OnCheckRunYAMLAssertType(node.Raw); err != nil {
-		return err
-	}
-
 	switch node.Raw.Kind {
-		case yaml.MappingNode:
-			return value.Decode(&node.OneOf.mappingNode)
-		default:
-			return fmt.Errorf("%d:%d	error	Expected one of: string, array, map type", node.Raw.Line, node.Raw.Column)
+	case yaml.MappingNode:
+		return value.Decode(&node.OneOf.MappingNode)
+	default:
+		return fmt.Errorf("%d:%d	error	Expected one of: string, array, map type", node.Raw.Line, node.Raw.Column)
 	}
-}
-
-func OnCheckRunYAMLAssertType(rawNode *yaml.Node) error {
-	kinds := []yaml.Kind{yaml.MappingNode}
-	containsFlag := false
-	for _, kind := range kinds {
-		if rawNode.Kind == kind {
-			containsFlag = true
-		}
-	}
-	if !containsFlag {
-		return fmt.Errorf("%d:%d	error	Expected one of: string, array, map type", rawNode.Line, rawNode.Column)
-	}
-
-	return nil
 }
 
 type OnCheckRunValue struct {
@@ -153,66 +132,140 @@ type OnCheckRunValue struct {
 }
 
 type CheckRunTypesNode struct {
-	Raw *yaml.Node
+	Raw   *yaml.Node
 	Value *[]CheckRunTypesConstants
+}
+
+func (node *CheckRunTypesNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
 }
 
 type CheckRunTypesConstants string
 
 const (
-	Created CheckRunTypesConstants = "create"
-	Rerequested CheckRunTypesConstants = "rerequested"
-	Completed CheckRunTypesConstants = "completed"
-	RerequestedAction CheckRunTypesConstants = "rerequested_action"
+	CheckRunTypes_Created           CheckRunTypesConstants = "create"
+	CheckRunTypes_Rerequested       CheckRunTypesConstants = "rerequested"
+	CheckRunTypes_Completed         CheckRunTypesConstants = "completed"
+	CheckRunTypes_RerequestedAction CheckRunTypesConstants = "rerequested_action"
+)
+
+type OnCheckSuiteNode struct {
+	Raw   *yaml.Node
+	OneOf OnCheckSuiteOneOf
+}
+
+type OnCheckSuiteOneOf struct {
+	MappingNode *OnCheckSuiteValue
+}
+
+type OnCheckSuiteValue struct {
+	Types CheckSuiteTypesNode `yaml:"types"`
+}
+
+func (node *OnCheckSuiteNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+
+	switch node.Raw.Kind {
+	case yaml.MappingNode:
+		return value.Decode(&node.OneOf.MappingNode)
+	default:
+		return fmt.Errorf("%d:%d	error	Expected one of: string, array, map type", node.Raw.Line, node.Raw.Column)
+	}
+}
+
+type CheckSuiteTypesNode struct {
+	Raw   *yaml.Node
+	Value *[]CheckSuiteTypesConstants
+}
+
+func (node *CheckSuiteTypesNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type CheckSuiteTypesConstants string
+
+const (
+	CheckSuiteTypes_Completed   CheckSuiteTypesConstants = "completed"
+	CheckSuiteTypes_Requested   CheckSuiteTypesConstants = "requested"
+	CheckSuiteTypes_Rerequested CheckSuiteTypesConstants = "rerequested"
 )
 
 type OnCreateNode struct {
-	Raw *yaml.Node
-	Value CreateEventObjectOneOf 
+	Raw   *yaml.Node
+	Value *CreateEventObjectOneOf
 }
 
 type CreateEventObjectOneOf struct {
-	mappingNode *[]CreateEventObjectValue //if properties or items key do not exist within Create parent field remove this?
+	MappingNode *CreateEventObjectValue //if properties or items key do not exist within Create parent field remove this?
 }
 
 type CreateEventObjectValue struct {
-
 }
 
+type WorkflowDefaultsNode struct {
+	Raw   *yaml.Node
+	Value *WorkflowDefaultsValue
+}
 
+func (node *WorkflowDefaultsNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
 
+type WorkflowDefaultsValue struct {
+	Run DefaultsRunNode `yaml:"run"`
+}
 
+type DefaultsRunNode struct {
+	Raw   *yaml.Node
+	Value DefaultsRunValue
+}
 
+func (node *DefaultsRunNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
 
+type DefaultsRunValue struct {
+	Shell            RunShellNode            `yaml:"shell"`
+	WorkingDirectory RunWorkingDirectoryNode `yaml:"working_directory"`
+}
 
+type RunShellNode struct {
+	Raw   *yaml.Node
+	Value RunShellAnyOfConstants
+}
 
+func (node *RunShellNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
 
+	switch node.Raw.Kind {
+	case yaml.ScalarNode:
+		return value.Decode(&node.Value)
+	default:
+		return fmt.Errorf("%d:%d	error	Expected one of: string type", node.Raw.Line, node.Raw.Column)
+	}
+}
 
+type RunShellAnyOfConstants string
 
+const (
+	RunShell_Bash       RunShellAnyOfConstants = "bash"
+	RunShell_Pwsh       RunShellAnyOfConstants = "pwsh"
+	RunShell_Python     RunShellAnyOfConstants = "python"
+	RunShell_Sh         RunShellAnyOfConstants = "sh"
+	RunShell_Cmd        RunShellAnyOfConstants = "cmd"
+	RunShell_Powershell RunShellAnyOfConstants = "powershell"
+)
 
+type RunWorkingDirectoryNode struct {
+	Raw *yaml.Node
+	Value string
+}
 
-// type WorkflowOnOneOf struct {
-// 	WorkflowOnString *WorkflowOnStringNode 
-// 	WorkflowOnArray *[]WorkflowOnArrayNode   
-// }
-
-// type WorkflowOnStringNode struct {
-// 	Raw *yaml.Node
-// 	Value string
-// }
-
-// func (node *WorkflowOnStringNode) UnmarshalYAML(value *yaml.Node) error {
-// 	node.Raw = value
-// 	return value.Decode(&node.Value)
-// }
-
-// type WorkflowOnArrayNode struct {
-// 	Raw *yaml.Node
-// 	Value string
-// }
-
-// func (node *WorkflowOnArrayNode) UnmarshalYAML(value *yaml.Node) error {
-// 	node.Raw = value
-// 	return value.Decode(&node.Value)
-// }
-
+func (node *RunWorkingDirectoryNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
