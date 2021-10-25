@@ -14,7 +14,7 @@ import (
 
 func LintWorkflow(sink *ProblemSink, target *gen_mock.WorkflowNode) error {
 	workflow := target
-	fmt.Println(*workflow.Value.On.OneOf.ScalarNode)
+	fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode)
 
 
 

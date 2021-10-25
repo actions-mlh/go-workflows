@@ -17,29 +17,33 @@ package gen_mock
 
 import (
 	"fmt"
-
 	"gopkg.in/yaml.v3"
 )
 
 type WorkflowNode struct {
 	Raw   *yaml.Node
-	Value WorkflowValue
+	Value *WorkflowValue
 }
-
 
 // when creating unmarshalYaml function, we check if required exists
 func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	// required := []string{"on"}
-
 
 	// only do this if required exists
 	if err := value.Decode(&node.Value); err != nil {
 		return err
 	}
 
+	err := func(value WorkflowValue) error {
+		if value.On == nil {
+			return fmt.Errorf("%d:%d	error	Required keys: \"on\" \"jobs\"", node.Raw.Line, node.Raw.Column)
+		}
+		return nil
+	}(*node.Value)
 	
-	// fmt.Printf("%+v\n", *&node.Value)	
+	if err != nil {
+		return err
+	}
 
 	return nil
 	
@@ -77,8 +81,13 @@ type WorkflowOnOneOf struct {
 func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
+	scalarNodeTypes := []string{"string", "number", "boolean"}
+
 	switch node.Raw.Kind {
 	case yaml.ScalarNode:
+		for _, type := range scalscalarNodeTypes {
+			
+		}
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.SequenceNode:
 		return value.Decode(&node.OneOf.SequenceNode)
@@ -103,7 +112,6 @@ type WorkFlowOnValue struct {
 	CheckRun   *OnCheckRunNode   `yaml:"check_run,omitempty"`
 	CheckSuite *OnCheckSuiteNode `yaml:"check_suite"`
 	Create     *OnCreateNode     `yaml:"create,omitempty"`
-	// Delete OnDeleteNode `yaml:"delete"` -> same as Create
 }
 
 type OnCheckRunNode struct {

@@ -1,14 +1,9 @@
-name: "Hank"
-
+name: Hank
 
 on: 
-  checkrun
-
-on:
-  checkrun:
-    type: [com, rereq]
-
-
+  check_run:
+    types: [rerequested, completed]
+  
 
 
 
