@@ -5,15 +5,19 @@ A Go command line tool for linting and validating GitHub Actions.
 ## Usage
 
 Clone this repository and run
+
 ``
 go generate
 ``
+
 to create a Go type file in `gen/`.  Uses `schema/json/github-workflow.json` by default (obtained from [here](https://json.schemastore.org/github-workflow.json)); edit the `//go:generate` directive in `main.go` to use a different file.
 
 When the types are generated,
+
 ``
 go run . yourfilehere.yaml
 ``
+
 will invoke `main.go` and attempt to lint your YAML workflow.  The actual logic for linting lives in `parse/`.  If any problems are detected, they will be emitted to stdout; if not, then the output will be empty.
 
 (note for maintainers: change above to `cmd/` if we make that change.)
