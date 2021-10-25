@@ -28,7 +28,6 @@ func ReadInputFiles(inputFiles []string, schemaKeyRequired bool) ([]*Schema, err
 			Scheme: "file",
 			Path:   abPath,
 		}
-		fmt.Println("---------------------ParseWithSchemaKeyRequired")
 		schemas[i], err = ParseWithSchemaKeyRequired(string(b), &fileURI, schemaKeyRequired)
 		if err != nil {
 			if jsonError, ok := err.(*json.SyntaxError); ok {

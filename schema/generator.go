@@ -35,8 +35,6 @@ func (g *Generator) CreateTypes() (err error) {
 	if err := g.resolver.Init(); err != nil {
 		return err
 	}
-
-	fmt.Println("---------------------CreateTypes")
 	// extract the types
 	for _, schema := range g.schemas {
 		name := g.getSchemaName("", schema)
@@ -141,7 +139,7 @@ func (g *Generator) processSchema(schemaName string, schema *Schema) (typ string
 			return g.processReference(schema)
 		}
 	}
-	return // return interface{}
+	return
 }
 
 // name: name of this array, usually the js key
@@ -205,7 +203,6 @@ func (g *Generator) processObject(name string, schema *Schema) (typ string, err 
 		if f.Required {
 			strct.GenerateCode = true
 		}
-		// fmt.Printf("%#v\n", prop)
 		strct.Fields[f.Name] = f
 	}
 
