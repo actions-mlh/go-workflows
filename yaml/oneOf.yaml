@@ -2,9 +2,17 @@ name: Hank
 
 on: 
   check_run:
-    types: [rerequested, completed]
-  
 
+  check_suite:
+  # check_run:
+  #   types: [rerequested, completed]
 
+defaults:
+  run: 
+    shell: bash
+    working-directory: scripts
 
+concurrency: 
+  cancel-in-progress: true
+  group: staging_environment
 
