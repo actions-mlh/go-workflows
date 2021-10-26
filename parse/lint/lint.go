@@ -14,9 +14,12 @@ import (
 
 func LintWorkflow(sink *ProblemSink, target *gen_mock.WorkflowNode) error {
 	workflow := target
+	// fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode)
+	// fmt.Printf("%+v\n", *&workflow.Value.Defaults.Value.Run.Value.WorkingDirectory.Value)
+	// fmt.Printf("%+v\n", *&workflow.Value.Concurrency.OneOf.MappingNode.CancelInProgress.Value)
+
 	fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode)
-
-
+	fmt.Println()
 
 
 
