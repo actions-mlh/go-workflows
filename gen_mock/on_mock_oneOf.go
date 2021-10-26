@@ -130,7 +130,7 @@ type OnCheckRunOneOf struct {
 
 func (node *OnCheckRunNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-
+	fmt.Println("checked_run")
 	switch node.Raw.Kind {
 	case yaml.MappingNode:
 		return value.Decode(&node.OneOf.MappingNode)
