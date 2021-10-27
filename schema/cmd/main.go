@@ -8,7 +8,6 @@ import (
 	"io"
 	"os"
 	// "github.com/davecgh/go-spew/spew"
-	"sort"
 
 	"c2c-actions-mlh-workflow-parser/schema"
 )
@@ -46,15 +45,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	keys := make([]string, 0, len(schemas[0].Properties))
-	for k := range schemas[0].Properties {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-	fmt.Println(keys)
-
-	fmt.Printf("%+v\n", schemas[0].Definitions["globs"].Items)
-	
 	g := generate.New(schemas...)
 
 	err = g.CreateTypes()

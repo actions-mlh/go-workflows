@@ -60,7 +60,6 @@ func (g *Generator) CreateTypes() (err error) {
 // process a block of definitions
 func (g *Generator) processDefinitions(schema *Schema) error {
 	for key, subSchema := range schema.Definitions {
-		fmt.Println(key)
 		if _, err := g.processSchema("Definitions_" + getGolangName(key), subSchema); err != nil {
 			return err
 		}
