@@ -60,6 +60,7 @@ func (g *Generator) CreateTypes() (err error) {
 // process a block of definitions
 func (g *Generator) processDefinitions(schema *Schema) error {
 	for key, subSchema := range schema.Definitions {
+		fmt.Println(key)
 		if _, err := g.processSchema("Definitions_" + getGolangName(key), subSchema); err != nil {
 			return err
 		}
@@ -147,8 +148,8 @@ func (g *Generator) processSchema(schemaName string, schema *Schema) (typ string
 func (g *Generator) processArray(name string, schema *Schema) (typeStr string, err error) {
 	if schema.Items != nil {
 		// subType: fallback name in case this array contains inline object without a title
-		subName := g.getSchemaName(name, schema.Items)
-		subTyp, err := g.processSchema(subName, schema.Items)
+		subName := g.getSchemaName(name, (*Schema)(schema.Items))
+		subTyp, err := g.processSchema(subName, (*Schema)(schema.Items))
 		if err != nil {
 			return "", err
 		}

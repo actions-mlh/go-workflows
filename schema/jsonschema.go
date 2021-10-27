@@ -8,6 +8,7 @@ import (
 
 // AdditionalProperties handles additional properties present in the JSON schema.
 type AdditionalProperties Schema
+type Items Schema
 
 // Schema represents JSON schema.
 type Schema struct {
@@ -37,6 +38,8 @@ type Schema struct {
 	Properties map[string]*Schema
 	Required   []string
 
+	PatternProperties map[string]*Schema
+
 	// "additionalProperties": {...}
 	AdditionalProperties *AdditionalProperties
 
@@ -61,7 +64,8 @@ type Schema struct {
 
 	// Items represents the types that are permitted in the array.
 	// http://json-schema.org/draft-07/json-schema-validation.html#rfc.section.6.4
-	Items *Schema
+	Items *Items
+	ItemsArray []*Schema
 
 	// NameCount is the number of times the instance name was encountered across the schema.
 	NameCount int `json:"-" `
@@ -83,7 +87,7 @@ type Schema struct {
 func (ap *AdditionalProperties) UnmarshalJSON(data []byte) error {
 	var b bool
 	if err := json.Unmarshal(data, &b); err == nil {
-		*ap = (AdditionalProperties)(Schema{AdditionalPropertiesBool: &b})
+		*ap = AdditionalProperties(Schema{AdditionalPropertiesBool: &b})
 		return nil
 	}
 
@@ -107,6 +111,21 @@ func (ap *AdditionalProperties) UnmarshalJSON(data []byte) error {
 	err := json.Unmarshal(data, &s)
 	if err == nil {
 		*ap = AdditionalProperties(s)
+	}
+	return err
+}
+
+func (items *Items) UnmarshalJSON(data []byte) error {
+	var arr []*Schema
+	if err := json.Unmarshal(data, &arr); err == nil {
+		*items = (Items)(Schema{ItemsArray: arr})
+		return nil
+	}
+
+	s := Schema{}
+	err := json.Unmarshal(data, &s)
+	if err == nil {
+		*items = Items(s)
 	}
 	return err
 }
@@ -244,7 +263,7 @@ func (schema *Schema) updatePathElements() {
 
 	if schema.Items != nil {
 		schema.Items.PathElement = "items"
-		schema.Items.updatePathElements()
+		(*Schema)(schema.Items).updatePathElements()
 	}
 }
 
@@ -266,7 +285,7 @@ func (schema *Schema) updateParentLinks() {
 	}
 	if schema.Items != nil {
 		schema.Items.Parent = schema
-		schema.Items.updateParentLinks()
+		// schema.Items.updateParentLinks()
 	}
 }
 
@@ -292,11 +311,11 @@ func (schema *Schema) ensureSchemaKeyword() error {
 			return err
 		}
 	}
-	if schema.Items != nil {
-		if err := check("items", schema.Items); err != nil {
-			return err
-		}
-	}
+	// if schema.Items != nil {
+	// 	if err := check("items", schema.Items); err != nil {
+	// 		return err
+	// 	}
+	// }
 	return nil
 }
 
