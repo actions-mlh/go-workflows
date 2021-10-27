@@ -47,6 +47,7 @@ func main() {
 
 	g := generate.New(schemas...)
 
+	// spew.Dump(g)
 	err = g.CreateTypes()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Failure generating structs: ", err)

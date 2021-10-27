@@ -90,16 +90,22 @@ func (g *Generator) processReference(schema *Schema) (string, error) {
 }
 
 // returns the type refered to by schema after resolving all dependencies
-func (g *Generator) processSchema(schemaName string, schema *Schema) (typ string, err error) {
+func (g *Generator) processSchema(schemaName string, schema *Schema) (string, error) {
 	if len(schema.Definitions) > 0 {
 		err := g.processDefinitions(schema)
 		if (err != nil) {
 			return "", err
 		}
 	}
+	strct := Struct{
+		ID:          schema.ID(),
+		Name:        schemaName,
+		Description: schema.Description,
+		Fields:      make(map[string]Field, len(schema.Properties)),
+	}
+	g.Structs[schemaName] = strct
 	schema.FixMissingTypeValue()
 	// if we have multiple schema types, the golang type will be interface{}
-	typ = "interface{}"
 	types, isMultiType := schema.MultiType()
 	if len(types) > 0 {
 		for _, schemaType := range types {
@@ -139,7 +145,7 @@ func (g *Generator) processSchema(schemaName string, schema *Schema) (typ string
 			return g.processReference(schema)
 		}
 	}
-	return
+	return "interface{}", nil
 }
 
 // name: name of this array, usually the js key
@@ -315,7 +321,7 @@ func (g *Generator) getSchemaName(keyName string, schema *Schema) string {
 		return getGolangName(keyName)
 	}
 	if schema.Parent == nil {
-		return "Properties"
+		return "Root"
 	}
 	if schema.JSONKey != "" {
 		return getGolangName(schema.JSONKey)

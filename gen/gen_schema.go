@@ -4,6 +4,34 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// Branch When using the push and pull_request events, you can configure a workflow to run on specific branches or tags. If you only define only tags or only branches, the workflow won't run for events affecting the undefined Git ref.
+// The branches, branches-ignore, tags, and tags-ignore keywords accept glob patterns that use the * and ** wildcard characters to match more than one branch or tag name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
+// The patterns defined in branches and tags are evaluated against the Git ref's name. For example, defining the pattern mona/octocat in branches will match the refs/heads/mona/octocat Git ref. The pattern releases/** will match the refs/heads/releases/10 Git ref.
+// You can use two types of filters to prevent a workflow from running on pushes and pull requests to tags and branches:
+// - branches or branches-ignore - You cannot use both the branches and branches-ignore filters for the same event in a workflow. Use the branches filter when you need to filter branches for positive matches and exclude branches. Use the branches-ignore filter when you only need to exclude branch names.
+// - tags or tags-ignore - You cannot use both the tags and tags-ignore filters for the same event in a workflow. Use the tags filter when you need to filter tags for positive matches and exclude tags. Use the tags-ignore filter when you only need to exclude tag names.
+// You can exclude tags and branches using the ! character. The order that you define patterns matters.
+// - A matching negative pattern (prefixed with !) after a positive match will exclude the Git ref.
+// - A matching positive pattern after a negative match will include the Git ref again.
+type Branch struct {
+}
+
+// Definitions_Architecture 
+type Definitions_Architecture struct {
+}
+
+// Definitions_Branch When using the push and pull_request events, you can configure a workflow to run on specific branches or tags. If you only define only tags or only branches, the workflow won't run for events affecting the undefined Git ref.
+// The branches, branches-ignore, tags, and tags-ignore keywords accept glob patterns that use the * and ** wildcard characters to match more than one branch or tag name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
+// The patterns defined in branches and tags are evaluated against the Git ref's name. For example, defining the pattern mona/octocat in branches will match the refs/heads/mona/octocat Git ref. The pattern releases/** will match the refs/heads/releases/10 Git ref.
+// You can use two types of filters to prevent a workflow from running on pushes and pull requests to tags and branches:
+// - branches or branches-ignore - You cannot use both the branches and branches-ignore filters for the same event in a workflow. Use the branches filter when you need to filter branches for positive matches and exclude branches. Use the branches-ignore filter when you only need to exclude branch names.
+// - tags or tags-ignore - You cannot use both the tags and tags-ignore filters for the same event in a workflow. Use the tags filter when you need to filter tags for positive matches and exclude tags. Use the tags-ignore filter when you only need to exclude tag names.
+// You can exclude tags and branches using the ! character. The order that you define patterns matters.
+// - A matching negative pattern (prefixed with !) after a positive match will exclude the Git ref.
+// - A matching positive pattern after a negative match will include the Git ref again.
+type Definitions_Branch struct {
+}
+
 // Definitions_Concurrency 
 type Definitions_Concurrency struct {
 
@@ -12,6 +40,18 @@ type Definitions_Concurrency struct {
 
   // When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled.
   Definitions_Concurrency_Group Definitions_Concurrency_GroupRaw `yaml:"group"`
+}
+
+// Definitions_Concurrency_CancelInProgress To cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
+type Definitions_Concurrency_CancelInProgress struct {
+}
+
+// Definitions_Concurrency_Group When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled.
+type Definitions_Concurrency_Group struct {
+}
+
+// Definitions_Configuration 
+type Definitions_Configuration struct {
 }
 
 // Definitions_Container 
@@ -44,6 +84,34 @@ type Definitions_Container_Credentials struct {
   Definitions_Container_Credentials_Username Definitions_Container_Credentials_UsernameRaw `yaml:"username,omitempty"`
 }
 
+// Definitions_Container_Credentials_Password 
+type Definitions_Container_Credentials_Password struct {
+}
+
+// Definitions_Container_Credentials_Username 
+type Definitions_Container_Credentials_Username struct {
+}
+
+// Definitions_Container_Env Sets an array of environment variables in the container.
+type Definitions_Container_Env struct {
+}
+
+// Definitions_Container_Image The Docker image to use as the container to run the action. The value can be the Docker Hub image name or a registry name.
+type Definitions_Container_Image struct {
+}
+
+// Definitions_Container_Options Additional Docker container resource options. For a list of options, see https://docs.docker.com/engine/reference/commandline/create/#options.
+type Definitions_Container_Options struct {
+}
+
+// Definitions_Container_Ports 
+type Definitions_Container_Ports struct {
+}
+
+// Definitions_Container_Volumes 
+type Definitions_Container_Volumes struct {
+}
+
 // Definitions_Defaults 
 type Definitions_Defaults struct {
   Definitions_Defaults_Run Definitions_Defaults_RunRaw `yaml:"run,omitempty"`
@@ -53,6 +121,14 @@ type Definitions_Defaults struct {
 type Definitions_Defaults_Run struct {
   Definitions_Defaults_Run_Shell Definitions_Defaults_Run_ShellRaw `yaml:"shell,omitempty"`
   Definitions_Defaults_Run_WorkingDirectory Definitions_Defaults_Run_WorkingDirectoryRaw `yaml:"working-directory,omitempty"`
+}
+
+// Definitions_Defaults_Run_Shell 
+type Definitions_Defaults_Run_Shell struct {
+}
+
+// Definitions_Defaults_Run_WorkingDirectory 
+type Definitions_Defaults_Run_WorkingDirectory struct {
 }
 
 // Definitions_Env 
@@ -70,6 +146,50 @@ type Definitions_Environment struct {
   Definitions_Environment_Url Definitions_Environment_UrlRaw `yaml:"url,omitempty"`
 }
 
+// Definitions_Environment_Name The name of the environment configured in the repo.
+type Definitions_Environment_Name struct {
+}
+
+// Definitions_Environment_Url A deployment URL
+type Definitions_Environment_Url struct {
+}
+
+// Definitions_Event 
+type Definitions_Event struct {
+}
+
+// Definitions_EventObject 
+type Definitions_EventObject struct {
+}
+
+// Definitions_ExpressionSyntax 
+type Definitions_ExpressionSyntax struct {
+}
+
+// Definitions_Globs 
+type Definitions_Globs struct {
+}
+
+// Definitions_Machine 
+type Definitions_Machine struct {
+}
+
+// Definitions_Name 
+type Definitions_Name struct {
+}
+
+// Definitions_Path When using the push and pull_request events, you can configure a workflow to run when at least one file does not match paths-ignore or at least one modified file matches the configured paths. Path filters are not evaluated for pushes to tags.
+// The paths-ignore and paths keywords accept glob patterns that use the * and ** wildcard characters to match more than one path name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
+// You can exclude paths using two types of filters. You cannot use both of these filters for the same event in a workflow.
+// - paths-ignore - Use the paths-ignore filter when you only need to exclude path names.
+// - paths - Use the paths filter when you need to filter paths for positive matches and exclude paths.
+type Definitions_Path struct {
+}
+
+// Definitions_Permissions You can modify the default permissions granted to the GITHUB_TOKEN, adding or removing access as required, so that you only allow the minimum required access.
+type Definitions_Permissions struct {
+}
+
 // Definitions_PermissionsEvent 
 type Definitions_PermissionsEvent struct {
   Definitions_PermissionsEvent_Actions Definitions_PermissionsEvent_ActionsRaw `yaml:"actions,omitempty"`
@@ -84,6 +204,50 @@ type Definitions_PermissionsEvent struct {
   Definitions_PermissionsEvent_Statuses Definitions_PermissionsEvent_StatusesRaw `yaml:"statuses,omitempty"`
 }
 
+// Definitions_PermissionsEvent_Actions 
+type Definitions_PermissionsEvent_Actions struct {
+}
+
+// Definitions_PermissionsEvent_Checks 
+type Definitions_PermissionsEvent_Checks struct {
+}
+
+// Definitions_PermissionsEvent_Contents 
+type Definitions_PermissionsEvent_Contents struct {
+}
+
+// Definitions_PermissionsEvent_Deployments 
+type Definitions_PermissionsEvent_Deployments struct {
+}
+
+// Definitions_PermissionsEvent_Issues 
+type Definitions_PermissionsEvent_Issues struct {
+}
+
+// Definitions_PermissionsEvent_Packages 
+type Definitions_PermissionsEvent_Packages struct {
+}
+
+// Definitions_PermissionsEvent_PullRequests 
+type Definitions_PermissionsEvent_PullRequests struct {
+}
+
+// Definitions_PermissionsEvent_RepositoryProjects 
+type Definitions_PermissionsEvent_RepositoryProjects struct {
+}
+
+// Definitions_PermissionsEvent_SecurityEvents 
+type Definitions_PermissionsEvent_SecurityEvents struct {
+}
+
+// Definitions_PermissionsEvent_Statuses 
+type Definitions_PermissionsEvent_Statuses struct {
+}
+
+// Definitions_PermissionsLevel 
+type Definitions_PermissionsLevel struct {
+}
+
 // Definitions_Ref 
 type Definitions_Ref struct {
   Definitions_Ref_Branches Definitions_Ref_BranchesRaw `yaml:"branches,omitempty"`
@@ -94,42 +258,132 @@ type Definitions_Ref struct {
   Definitions_Ref_TagsIgnore Definitions_Ref_TagsIgnoreRaw `yaml:"tags-ignore,omitempty"`
 }
 
-// Env 
-type Env struct {
-  AdditionalProperties AdditionalPropertiesRaw `yaml:"-,omitempty"`
+// Definitions_Ref_Branches 
+type Definitions_Ref_Branches struct {
 }
 
-// Properties 
-type Properties struct {
+// Definitions_Ref_BranchesIgnore 
+type Definitions_Ref_BranchesIgnore struct {
+}
+
+// Definitions_Ref_Paths 
+type Definitions_Ref_Paths struct {
+}
+
+// Definitions_Ref_PathsIgnore 
+type Definitions_Ref_PathsIgnore struct {
+}
+
+// Definitions_Ref_Tags 
+type Definitions_Ref_Tags struct {
+}
+
+// Definitions_Ref_TagsIgnore 
+type Definitions_Ref_TagsIgnore struct {
+}
+
+// Definitions_Shell You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
+type Definitions_Shell struct {
+}
+
+// Definitions_Types Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
+// You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
+type Definitions_Types struct {
+}
+
+// Definitions_WorkingDirectory Using the working-directory keyword, you can specify the working directory of where to run the command.
+type Definitions_WorkingDirectory struct {
+}
+
+// Env_Item 
+type Env_Item struct {
+}
+
+// Globs 
+type Globs struct {
+}
+
+// Path When using the push and pull_request events, you can configure a workflow to run when at least one file does not match paths-ignore or at least one modified file matches the configured paths. Path filters are not evaluated for pushes to tags.
+// The paths-ignore and paths keywords accept glob patterns that use the * and ** wildcard characters to match more than one path name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
+// You can exclude paths using two types of filters. You cannot use both of these filters for the same event in a workflow.
+// - paths-ignore - Use the paths-ignore filter when you only need to exclude path names.
+// - paths - Use the paths filter when you need to filter paths for positive matches and exclude paths.
+type Path struct {
+}
+
+// Permissions You can modify the default permissions granted to the GITHUB_TOKEN, adding or removing access as required, so that you only allow the minimum required access.
+type Permissions struct {
+}
+
+// PermissionsLevel 
+type PermissionsLevel struct {
+}
+
+// Root 
+type Root struct {
 
   // Concurrency ensures that only a single job or workflow using the same concurrency group will run at a time. A concurrency group can be any string or expression. The expression can use any context except for the secrets context. 
   // You can also specify concurrency at the workflow level. 
   // When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled. To also cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
-  Properties_Concurrency Properties_ConcurrencyRaw `yaml:"concurrency,omitempty"`
+  Root_Concurrency Root_ConcurrencyRaw `yaml:"concurrency,omitempty"`
 
   // A map of default settings that will apply to all jobs in the workflow.
-  Properties_Defaults Properties_DefaultsRaw `yaml:"defaults,omitempty"`
+  Root_Defaults Root_DefaultsRaw `yaml:"defaults,omitempty"`
 
   // A map of environment variables that are available to all jobs and steps in the workflow.
-  Properties_Env Properties_EnvRaw `yaml:"env,omitempty"`
+  Root_Env Root_EnvRaw `yaml:"env,omitempty"`
 
   // A workflow run is made up of one or more jobs. Jobs run in parallel by default. To run jobs sequentially, you can define dependencies on other jobs using the jobs.<job_id>.needs keyword.
   // Each job runs in a fresh instance of the virtual environment specified by runs-on.
   // You can run an unlimited number of jobs as long as you are within the workflow usage limits. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#usage-limits.
-  Properties_Jobs Properties_JobsRaw `yaml:"jobs"`
+  Root_Jobs Root_JobsRaw `yaml:"jobs"`
 
   // The name of your workflow. GitHub displays the names of your workflows on your repository's actions page. If you omit this field, GitHub sets the name to the workflow's filename.
-  Properties_Name Properties_NameRaw `yaml:"name,omitempty"`
+  Root_Name Root_NameRaw `yaml:"name,omitempty"`
 
   // The name of the GitHub event that triggers the workflow. You can provide a single event string, array of events, array of event types, or an event configuration map that schedules a workflow or restricts the execution of a workflow to specific files, tags, or branch changes. For a list of available events, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/events-that-trigger-workflows.
-  Properties_On Properties_OnRaw `yaml:"on"`
-  Properties_Permissions Properties_PermissionsRaw `yaml:"permissions,omitempty"`
+  Root_On Root_OnRaw `yaml:"on"`
+  Root_Permissions Root_PermissionsRaw `yaml:"permissions,omitempty"`
 }
 
-// Properties_Jobs A workflow run is made up of one or more jobs. Jobs run in parallel by default. To run jobs sequentially, you can define dependencies on other jobs using the jobs.<job_id>.needs keyword.
+// Root_Concurrency Concurrency ensures that only a single job or workflow using the same concurrency group will run at a time. A concurrency group can be any string or expression. The expression can use any context except for the secrets context. 
+// You can also specify concurrency at the workflow level. 
+// When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled. To also cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
+type Root_Concurrency struct {
+}
+
+// Root_Defaults A map of default settings that will apply to all jobs in the workflow.
+type Root_Defaults struct {
+}
+
+// Root_Env A map of environment variables that are available to all jobs and steps in the workflow.
+type Root_Env struct {
+}
+
+// Root_Jobs A workflow run is made up of one or more jobs. Jobs run in parallel by default. To run jobs sequentially, you can define dependencies on other jobs using the jobs.<job_id>.needs keyword.
 // Each job runs in a fresh instance of the virtual environment specified by runs-on.
 // You can run an unlimited number of jobs as long as you are within the workflow usage limits. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#usage-limits.
-type Properties_Jobs struct {
+type Root_Jobs struct {
+}
+
+// Root_Name The name of your workflow. GitHub displays the names of your workflows on your repository's actions page. If you omit this field, GitHub sets the name to the workflow's filename.
+type Root_Name struct {
+}
+
+// Root_On The name of the GitHub event that triggers the workflow. You can provide a single event string, array of events, array of event types, or an event configuration map that schedules a workflow or restricts the execution of a workflow to specific files, tags, or branch changes. For a list of available events, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/events-that-trigger-workflows.
+type Root_On struct {
+}
+
+// Root_Permissions 
+type Root_Permissions struct {
+}
+
+// Shell You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
+type Shell struct {
+}
+
+// WorkingDirectory Using the working-directory keyword, you can specify the working directory of where to run the command.
+type WorkingDirectory struct {
 }
 
 type Definitions_Concurrency_CancelInProgressRaw struct {
@@ -170,7 +424,7 @@ func (node *Definitions_Container_CredentialsRaw) UnmarshalYAML(value *yaml.Node
 
 type Definitions_Container_EnvRaw struct {
 	Raw *yaml.Node
-	Value *Env
+	Value *Definitions_Env
 }
 
 
@@ -516,97 +770,85 @@ func (node *Definitions_Ref_TagsIgnoreRaw) UnmarshalYAML(value *yaml.Node) error
 }
 
 
-type AdditionalPropertiesRaw struct {
-	Raw *yaml.Node
-	Value map[string]interface{}
-}
-
-
-func (node *AdditionalPropertiesRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Properties_ConcurrencyRaw struct {
+type Root_ConcurrencyRaw struct {
 	Raw *yaml.Node
 	Value interface{}
 }
 
 
-func (node *Properties_ConcurrencyRaw) UnmarshalYAML(value *yaml.Node) error {
+func (node *Root_ConcurrencyRaw) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	return value.Decode(&node.Value)
 }
 
 
-type Properties_DefaultsRaw struct {
+type Root_DefaultsRaw struct {
 	Raw *yaml.Node
 	Value *Definitions_Defaults
 }
 
 
-func (node *Properties_DefaultsRaw) UnmarshalYAML(value *yaml.Node) error {
+func (node *Root_DefaultsRaw) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	return value.Decode(&node.Value)
 }
 
 
-type Properties_EnvRaw struct {
+type Root_EnvRaw struct {
 	Raw *yaml.Node
 	Value *Definitions_Env
 }
 
 
-func (node *Properties_EnvRaw) UnmarshalYAML(value *yaml.Node) error {
+func (node *Root_EnvRaw) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	return value.Decode(&node.Value)
 }
 
 
-type Properties_JobsRaw struct {
+type Root_JobsRaw struct {
 	Raw *yaml.Node
-	Value *Properties_Jobs
+	Value *Root_Jobs
 }
 
 
-func (node *Properties_JobsRaw) UnmarshalYAML(value *yaml.Node) error {
+func (node *Root_JobsRaw) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	return value.Decode(&node.Value)
 }
 
 
-type Properties_NameRaw struct {
+type Root_NameRaw struct {
 	Raw *yaml.Node
 	Value string
 }
 
 
-func (node *Properties_NameRaw) UnmarshalYAML(value *yaml.Node) error {
+func (node *Root_NameRaw) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	return value.Decode(&node.Value)
 }
 
 
-type Properties_OnRaw struct {
+type Root_OnRaw struct {
 	Raw *yaml.Node
 	Value interface{}
 }
 
 
-func (node *Properties_OnRaw) UnmarshalYAML(value *yaml.Node) error {
+func (node *Root_OnRaw) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	return value.Decode(&node.Value)
 }
 
 
-type Properties_PermissionsRaw struct {
+type Root_PermissionsRaw struct {
 	Raw *yaml.Node
 	Value interface{}
 }
 
 
-func (node *Properties_PermissionsRaw) UnmarshalYAML(value *yaml.Node) error {
+func (node *Root_PermissionsRaw) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	return value.Decode(&node.Value)
 }
