@@ -17,6 +17,7 @@ package gen_mock
 
 import (
 	"fmt"
+
 	"gopkg.in/yaml.v3"
 )
 
@@ -55,7 +56,7 @@ type WorkflowValue struct {
 	// Env  WorkflowEnvNode  `yaml:"env"`
 	Defaults    *WorkflowDefaultsNode    `yaml:"defaults"`
 	Concurrency *WorkflowConcurrencyNode `yaml:"concurrency"`
-	Jobs *WorkflowJobsNode `yaml:"jobs"`
+	Jobs        *WorkflowJobsNode        `yaml:"jobs"`
 }
 
 type WorkflowNameNode struct {
@@ -77,7 +78,7 @@ type WorkflowOnNode struct {
 type WorkflowOnOneOf struct {
 	ScalarNode   *OnEventConstants
 	SequenceNode *[]OnEventConstants
-	MappingNode  *WorkFlowOnValue
+	MappingNode  []*WorkFlowOnValue
 }
 
 func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
@@ -93,11 +94,48 @@ func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
 	case yaml.SequenceNode:
 		return value.Decode(&node.OneOf.SequenceNode)
 	case yaml.MappingNode:
-		// for _, c := range *&node.Raw.Content {
-		// 	fmt.Printf("%+v\n", c)
-		// }
-		// fmt.Printf("%+v\n", node.Raw)
-		return value.Decode(&node.OneOf.MappingNode)
+		value := node.Raw
+
+		if len(value.Content)%2 != 0 {
+			// Uneven set of key value pairs (this shouldn't happen)
+			return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		}
+
+		for i := 0; i < len(value.Content); i += 2 {
+			keyEntry := value.Content[i]
+			valueEntry := value.Content[i+1]
+
+			// fmt.Printf("KeyEntry: %v\n", keyEntry)
+			// fmt.Printf("ValueEntry: %v\n", valueEntry)
+			// fmt.Printf("Event: %s\n", keyEntry.Value)
+			event := new(WorkFlowOnValue)
+			eventKey := keyEntry.Value
+			switch eventKey {
+			case "check_run":
+				event.CheckRun = new(OnCheckRunNode)
+				err := valueEntry.Decode(event.CheckRun)
+				if err != nil {
+					return err
+				}
+			case "check_suite":
+				event.CheckSuite = new(OnCheckSuiteNode)
+				err := valueEntry.Decode(event.CheckSuite)
+				if err != nil {
+					return err
+				}
+			case "create":
+				event.Create = new(OnCreateNode)
+				err := valueEntry.Decode(event.Create)
+				if err != nil {
+					return err
+				}
+			default:
+				return fmt.Errorf("%d:%d  error  Expected one of: check_run, check_suite, create", node.Raw.Line, node.Raw.Column)
+			}
+
+			node.OneOf.MappingNode = append(node.OneOf.MappingNode, event)
+		}
+		return nil
 	default:
 		return fmt.Errorf("%d:%d  error  Expected one of: string, array, map type", node.Raw.Line, node.Raw.Column)
 	}
@@ -114,8 +152,8 @@ const (
 )
 
 type WorkFlowOnValue struct {
-	CheckRun   *OnCheckRunNode    `yaml:"check_run,omitempty"`
-	CheckSuite *OnCheckSuiteNode `yaml:"check_suite"`
+	CheckRun   *OnCheckRunNode   `yaml:"check_run,omitempty"`
+	CheckSuite *OnCheckSuiteNode `yaml:"check_suite,omitempty"`
 	Create     *OnCreateNode     `yaml:"create,omitempty"`
 }
 
@@ -349,7 +387,7 @@ func (node *ConcurrencyCancelInProgressNode) UnmarshalYAML(value *yaml.Node) err
 }
 
 type WorkflowJobsNode struct {
-	Raw *yaml.Node
+	Raw   *yaml.Node
 	Value *WorkflowJobsValue
 }
 
@@ -359,5 +397,4 @@ func (node *WorkflowJobsNode) UnmarshalYAML(value *yaml.Node) error {
 }
 
 type WorkflowJobsValue struct {
-
 }
