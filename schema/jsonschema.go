@@ -27,7 +27,7 @@ type Schema struct {
 
 	// TypeValue is the schema instance type.
 	// http://json-schema.org/draft-07/json-schema-validation.html#rfc.section.6.1.1
-	TypeValue interface{} `json:"type"`
+	Type string `json:"type"`
 
 	// Definitions are inline re-usable schemas.
 	// http://json-schema.org/draft-07/json-schema-validation.html#rfc.section.9
@@ -137,56 +137,6 @@ func (schema *Schema) ID() string {
 		return schema.ID04
 	}
 	return schema.ID06
-}
-
-// Type returns the type which is permitted or an empty string if the type field is missing.
-// The 'type' field in JSON schema also allows for a single string value or an array of strings.
-// Examples:
-//   "a" => "a", false
-//   [] => "", false
-//   ["a"] => "a", false
-//   ["a", "b"] => "a", true
-func (schema *Schema) Type() (firstOrDefault string, multiple bool) {
-	// We've got a single value, e.g. { "type": "object" }
-	if ts, ok := schema.TypeValue.(string); ok {
-		firstOrDefault = ts
-		multiple = false
-		return
-	}
-
-	// We could have multiple types in the type value, e.g. { "type": [ "object", "array" ] }
-	if a, ok := schema.TypeValue.([]interface{}); ok {
-		multiple = len(a) > 1
-		for _, n := range a {
-			if s, ok := n.(string); ok {
-				firstOrDefault = s
-				return
-			}
-		}
-	}
-
-	return "", multiple
-}
-
-// MultiType returns "type" as an array
-func (schema *Schema) MultiType() ([]string, bool) {
-	// We've got a single value, e.g. { "type": "object" }
-	if ts, ok := schema.TypeValue.(string); ok {
-		return []string{ts}, false
-	}
-
-	// We could have multiple types in the type value, e.g. { "type": [ "object", "array" ] }
-	if a, ok := schema.TypeValue.([]interface{}); ok {
-		rv := []string{}
-		for _, n := range a {
-			if s, ok := n.(string); ok {
-				rv = append(rv, s)
-			}
-		}
-		return rv, len(rv) > 1
-	}
-
-	return nil, false
 }
 
 // GetRoot returns the root schema.
@@ -321,13 +271,13 @@ func (schema *Schema) ensureSchemaKeyword() error {
 
 // FixMissingTypeValue is backwards compatible, guessing the users intention when they didn't specify a type.
 func (schema *Schema) FixMissingTypeValue() {
-	if schema.TypeValue == nil {
+	if schema.Type == "" {
 		if schema.Reference == "" && len(schema.Properties) > 0 {
-			schema.TypeValue = "object"
+			schema.Type = "object"
 			return
 		}
 		if schema.Items != nil {
-			schema.TypeValue = "array"
+			schema.Type = "array"
 			return
 		}
 	}
