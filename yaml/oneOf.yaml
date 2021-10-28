@@ -2,10 +2,15 @@ name: Hank
 
 on: 
   check_run:
-    
+    types: [requested]
   check_suite:
+    
+  # check_suite:
   # check_run:
   #   types: [rerequested, completed]
+
+jobs:
+  
 
 defaults:
   run: 
@@ -15,4 +20,3 @@ defaults:
 concurrency: 
   cancel-in-progress: true
   group: staging_environment
-
