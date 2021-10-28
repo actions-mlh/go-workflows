@@ -3,7 +3,6 @@ package lint
 import (
 	// "strings"
 	"c2c-actions-mlh-workflow-parser/gen_mock"
-	"fmt"
 )
 
 // use this to convert interface{} into slice of types
@@ -12,36 +11,14 @@ import (
 // 		fmt.Println(s.Index(i))
 // }
 
-func LintWorkflow(sink *ProblemSink, target *gen_mock.WorkflowNode) error {
-	workflow := target
+func LintWorkflow(sink *ProblemSink, workflow *gen_mock.WorkflowNode) error {
 	// fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode)
 	// fmt.Printf("%+v\n", *&workflow.Value.Concurrency.OneOf.MappingNode.CancelInProgress.Value)
-	fmt.Println("------------------------------")
-	fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode)
+	// fmt.Println("------------------------------")
+	// fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode)
+	sink.Record(workflow.Raw, "testing")
 
 	// fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode.CheckRun.OneOf.MappingNode.Types.Value)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	// fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode.CheckRun.OneOf.MappingNode[0].Types.Value)
 	// fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode.CheckSuite)

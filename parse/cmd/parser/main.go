@@ -38,6 +38,7 @@ func realMain(inputFilename string) error {
 	if err := lint.LintWorkflow(sink, node); err != nil {
 		return err
 	}
+	sink.Render()
 
 	return nil
 }

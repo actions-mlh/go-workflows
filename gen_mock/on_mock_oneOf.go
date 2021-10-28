@@ -559,7 +559,7 @@ type JobsPatternPropertiesOneOfType struct {
 func (node *JobsPatternPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	// output.go get both required arrays and loop through contents to get values
-	fmt.Printf("%+v\n", node.ID)
+	// fmt.Printf("%+v\n", node.ID)
 
 	contentArr := func(content []*yaml.Node) []string {
 		var contentArr []string
@@ -601,18 +601,18 @@ func (node *JobsPatternPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 		}
 	}
 
-	var event interface{}
-	switch jobsPatternPropertiesString {
-	case "reusableWorkflowCallJob":
-		event = (ReusableWorkflowCallJobValue)(*new(ReusableWorkflowCallJobValue))
-	case "normalJob":
+	// var event interface{}
+	// switch jobsPatternPropertiesString {
+	// case "reusableWorkflowCallJob":
+	// 	event = (ReusableWorkflowCallJobValue)(*new(ReusableWorkflowCallJobValue))
+	// case "normalJob":
 
-	default:
+	// default:
 
-	}
+	// }
 
 	// event = ReusableWorkflowCallJobValue(*new(ReusableWorkflowCallJobValue)) // type conversion, one type is an alias of another; ex. type Name string
-	fmt.Printf("%+v\n", event.(ReusableWorkflowCallJobValue).Name) //-> an actual type
+	// fmt.Printf("%+v\n", event.(ReusableWorkflowCallJobValue).Name) //-> an actual type
 
 	if len(value.Content)%2 != 0 {
 		// Uneven set of key value pairs (this shouldn't happen)
