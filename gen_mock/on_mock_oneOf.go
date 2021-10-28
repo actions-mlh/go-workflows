@@ -25,10 +25,6 @@ type WorkflowNode struct {
 func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
-	if len(value.Content)%2 != 0 {
-		// Uneven set of key value pairs (this shouldn't happen)
-		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
-	}
 	event := new(WorkflowValue)
 
 	for i := 0; i < len(value.Content); i += 2 {
@@ -44,17 +40,11 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 			}
 			// if "type" or oneOf -> array of "type", Does not exist
 			// might be OneOf or Value -> so we just use Raw == nil check
-			if event.Name.Raw == nil {
-				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
-			}
 		case "on":
 			event.On = new(WorkflowOnNode)
 			err := valueEntry.Decode(event.On)
 			if err != nil {
 				return err
-			}
-			if event.On.Raw == nil {
-				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
 			}
 		case "defaults":
 			event.Defaults = new(WorkflowDefaultsNode)
@@ -62,26 +52,17 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 			if err != nil {
 				return err
 			}
-			if event.Defaults.Raw == nil {
-				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
-			}
 		case "concurrency":
 			event.Concurrency = new(WorkflowConcurrencyNode)
 			err := valueEntry.Decode(event.Concurrency)
 			if err != nil {
 				return err
 			}
-			if event.Concurrency.Raw == nil {
-				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
-			}
 		case "jobs":
 			event.Jobs = new(WorkflowJobsNode)
 			err := valueEntry.Decode(event.Jobs)
 			if err != nil {
 				return err
-			}
-			if event.Jobs.Raw == nil {
-				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
 			}
 		default:
 			return fmt.Errorf("%d:%d  error  Expected: name, on, defaults, concurrency", node.Raw.Line, node.Raw.Column)
@@ -108,7 +89,25 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 }
 
 func (node WorkflowNode) Lint(sink *lint.ProblemSink) error {
-	sink.Record(node.Raw, "test error")
+	if len(node.Raw.Content)%2 != 0 {
+		// Uneven set of key value pairs (this shouldn't happen)
+		sink.Record(node.Raw, "%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+	}
+	if node.Value.Name == nil {
+		sink.Record(node.Raw, "%d:%d  error  missing name", node.Raw.Line, node.Raw.Column)
+	}
+	if node.Value.On == nil {
+		sink.Record(node.Raw, "%d:%d  error  missing on", node.Raw.Line, node.Raw.Column)
+	}
+	if node.Value.Defaults == nil {
+		sink.Record(node.Raw, "%d:%d  error  missing defaults", node.Raw.Line, node.Raw.Column)
+	}
+	if node.Value.Concurrency == nil {
+		sink.Record(node.Raw, "%d:%d  error  missing concurrency", node.Raw.Line, node.Raw.Column)
+	}
+	if node.Value.Jobs == nil {
+		sink.Record(node.Raw, "%d:%d  error  missing jobs", node.Raw.Line, node.Raw.Column)
+	}
 	return nil
 }
 
