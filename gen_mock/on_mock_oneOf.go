@@ -28,6 +28,7 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
 	}
 	event := new(WorkflowValue)
+
 	for i := 0; i < len(value.Content); i += 2 {
 		keyEntry := value.Content[i]
 		valueEntry := value.Content[i+1]
@@ -69,6 +70,15 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 				return err
 			}
 			if event.Concurrency.Raw == nil {
+				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
+			}
+		case "jobs":
+			event.Jobs = new(WorkflowJobsNode)
+			err := valueEntry.Decode(event.Jobs)
+			if err != nil {
+				return err
+			}
+			if event.Jobs.Raw == nil {
 				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
 			}
 		default:
@@ -500,59 +510,183 @@ func (node *ConcurrencyCancelInProgressNode) UnmarshalYAML(value *yaml.Node) err
 
 type WorkflowJobsNode struct {
 	Raw   *yaml.Node
-	Value *WorkflowJobsOneOfType
+	Value []*WorkflowJobsPatternProperties
 }
 
-type WorkflowJobsOneOfType struct {
-	ReusableWorkflowCallJob *JobsReusableWorkflowCallJobValue
-	NormalJob               *JobsNormalJobValue
-}
-
-type JobsNormalJobValue struct {
-	Name        *NormalJobNameNode        `yaml:"name"`
-	Needs       *NormalJobNeedsNode       `yaml:"needs"`
-	Permissions *NormalJobPermissionsNode `yaml:"permissions"`
-	If          *NormalJobIfNode          `yaml:"if"`
-	Uses        *NormalJobUsesNode        `yaml:"uses"`
-	With        *NormalJobWithNode        `yaml:"with"`
-	Secrets     *NormalJobSecretsNode     `yaml:"secrets"`
+type WorkflowJobsPatternProperties struct {
+	ID                string `yaml:"-"`
+	PatternProperties *JobsPatternPropertiesNode
 }
 
 func (node *WorkflowJobsNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
-	
 	if len(value.Content)%2 != 0 {
 		// Uneven set of key value pairs (this shouldn't happen)
 		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
 	}
-	event := new(JobsNormalJobValue)
 	for i := 0; i < len(value.Content); i += 2 {
 		keyEntry := value.Content[i]
-		valueEntry := value.Content[i+1]
-		eventKey := keyEntry.Value
 
-		switch eventKey {
-		case "name":
-			event.Name = new(NormalJobNameNode)
-			err := valueEntry.Decode(event.Name)
-			if err != nil {
-				return err
-			}
-			if event.Name.Raw == nil {
-				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
-			}
-		case "needs":
-
+		job := &WorkflowJobsPatternProperties{
+			ID: keyEntry.Value,
+			PatternProperties: &JobsPatternPropertiesNode{
+				ID: keyEntry.Value,
+			},
+		}
+		if err := value.Decode(&job.PatternProperties); err != nil {
+			return err // change stderr message
 		}
 
+		node.Value = append(node.Value, job)
 
 	}
 
 	return nil
 }
 
-type NormalJobNameNode struct {
+type JobsPatternPropertiesNode struct {
+	Raw   *yaml.Node
+	Value JobsPatternPropertiesOneOfType //Since all oneOf "type"(s) are the same its Types not Kind
+	ID    string
+}
+
+type JobsPatternPropertiesOneOfType struct {
+	ReusableWorkflowCallJob *ReusableWorkflowCallJobValue
+	// NormalJob               *NormalJobValue
+}
+
+func (node *JobsPatternPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	// output.go get both required arrays and loop through contents to get values
+	fmt.Printf("%+v\n", node.ID)
+
+	contentArr := func(content []*yaml.Node) []string {
+		var contentArr []string
+
+		for i := 0; i < len(value.Content); i += 2 {
+			if node.ID == value.Content[i].Value {
+				OuterContent := value.Content[i+1]
+				for i := 0; i < len(OuterContent.Content); i += 2 {
+					keyEntry := OuterContent.Content[i]
+					contentArr = append(contentArr, keyEntry.Value)
+				}
+				break
+			}
+		}
+		return contentArr
+	}(value.Content)
+
+	var jobsPatternPropertiesString string
+	for _, content := range contentArr { // content -> string
+		mapOfJobs := map[string][]string{
+			"reusableWorkflowCallJob": []string{ //could be more than 1 required value, which is why we should keep this
+				"uses",
+			},
+			"normalJob": []string{ //could be more than 1 required value, which is why we should keep this
+				"runs-on",
+			},
+		}
+
+		for keyName, require := range mapOfJobs {
+			for _, requiredString := range require {
+				if content == requiredString {
+					jobsPatternPropertiesString = keyName
+				}
+				break
+			}
+			if jobsPatternPropertiesString != "" {
+				break
+			}
+		}
+	}
+
+	var event interface{}
+	switch jobsPatternPropertiesString {
+	case "reusableWorkflowCallJob":
+		event = (ReusableWorkflowCallJobValue)(*new(ReusableWorkflowCallJobValue))
+	case "normalJob":
+
+	default:
+
+	}
+
+	// event = ReusableWorkflowCallJobValue(*new(ReusableWorkflowCallJobValue)) // type conversion, one type is an alias of another; ex. type Name string
+	fmt.Printf("%+v\n", event.(ReusableWorkflowCallJobValue).Name) //-> an actual type
+
+	if len(value.Content)%2 != 0 {
+		// Uneven set of key value pairs (this shouldn't happen)
+		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+	}
+	for i := 0; i < len(value.Content); i += 2 {
+		keyEntry := value.Content[i]
+		// valueEntry := value.Content[i+1]
+		eventKey := keyEntry.Value
+
+		switch eventKey {
+		case "name":
+			// event.Name = new(ReusableWorkflowCallJobNameNode)
+			// err := valueEntry.Decode(event.Name)
+			// if err != nil {
+			// 	return err
+			// }
+		case "needs":
+
+		case "uses":
+
+			// case "jobs":
+			// 	event.Jobs = new(WorkflowJobsNode) --> new(Parent's Parent + Parent's Child + Node)1
+			// 	err := valueEntry.Decode(event.Jobs)
+			// 	if err != nil {
+			// 		return err
+			// 	}
+			// 	if event.Jobs.Raw == nil {
+			// 		return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
+			// 	}
+			// default:
+			// 	return fmt.Errorf("%d:%d  error  Expected: ", node.Raw.Line, node.Raw.Column)
+		}
+	}
+	// node.Value = event
+
+	return nil
+}
+
+type ReusableWorkflowCallJobValue struct {
+	Name  ReusableWorkflowCallJobNameNode  `yaml:"name"`
+	Needs ReusableWorkflowCallJobNeedsNode `yaml:"needs"`
+	Uses  ReusableWorkflowCallJobUsesNode  `yaml:"uses"`
+}
+
+type ReusableWorkflowCallJobNameNode struct {
 	Raw *yaml.Node
 	
 }
+
+type ReusableWorkflowCallJobNeedsNode struct {
+	Raw *yaml.Node
+}
+
+type ReusableWorkflowCallJobUsesNode struct {
+	Raw *yaml.Node
+}
+
+
+
+
+
+
+// type JobsNormalJobValue struct {
+// 	Name        *NormalJobNameNode        `yaml:"name"`
+// 	Needs       *NormalJobNeedsNode       `yaml:"needs"`
+// 	Permissions *NormalJobPermissionsNode `yaml:"permissions"`
+// 	If          *NormalJobIfNode          `yaml:"if"`
+// 	Uses        *NormalJobUsesNode        `yaml:"uses"`
+// 	With        *NormalJobWithNode        `yaml:"with"`
+// 	Secrets     *NormalJobSecretsNode     `yaml:"secrets"`
+// }
+
+// type NormalJobNameNode struct {
+// 	Raw *yaml.Node
+
+// }
