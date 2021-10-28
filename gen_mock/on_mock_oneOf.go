@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"gopkg.in/yaml.v3"
+
+	"c2c-actions-mlh-workflow-parser/parse/lint"
 )
 
 // field checks ->
@@ -23,10 +25,6 @@ type WorkflowNode struct {
 func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
-	if len(value.Content)%2 != 0 {
-		// Uneven set of key value pairs (this shouldn't happen)
-		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
-	}
 	event := new(WorkflowValue)
 
 	for i := 0; i < len(value.Content); i += 2 {
@@ -42,17 +40,11 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 			}
 			// if "type" or oneOf -> array of "type", Does not exist
 			// might be OneOf or Value -> so we just use Raw == nil check
-			if event.Name.Raw == nil {
-				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
-			}
 		case "on":
 			event.On = new(WorkflowOnNode)
 			err := valueEntry.Decode(event.On)
 			if err != nil {
 				return err
-			}
-			if event.On.Raw == nil {
-				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
 			}
 		case "defaults":
 			event.Defaults = new(WorkflowDefaultsNode)
@@ -60,26 +52,17 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 			if err != nil {
 				return err
 			}
-			if event.Defaults.Raw == nil {
-				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
-			}
 		case "concurrency":
 			event.Concurrency = new(WorkflowConcurrencyNode)
 			err := valueEntry.Decode(event.Concurrency)
 			if err != nil {
 				return err
 			}
-			if event.Concurrency.Raw == nil {
-				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
-			}
 		case "jobs":
 			event.Jobs = new(WorkflowJobsNode)
 			err := valueEntry.Decode(event.Jobs)
 			if err != nil {
 				return err
-			}
-			if event.Jobs.Raw == nil {
-				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
 			}
 		default:
 			return fmt.Errorf("%d:%d  error  Expected: name, on, defaults, concurrency", node.Raw.Line, node.Raw.Column)
@@ -103,6 +86,27 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 
 	return nil
 	// ----------------------------------------------------------------------------------
+}
+
+func (node WorkflowNode) Lint(sink *lint.ProblemSink) error {
+	if len(node.Raw.Content)%2 != 0 {
+		// Uneven set of key value pairs (this shouldn't happen)
+		sink.Record(node.Raw, "%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+	}
+	if node.Value.Name == nil {
+		sink.Record(node.Raw, "%d:%d  error  missing name", node.Raw.Line, node.Raw.Column)
+	}
+	if node.Value.On == nil {
+		sink.Record(node.Raw, "%d:%d  error  missing on", node.Raw.Line, node.Raw.Column)
+	} else {
+		node.Value.On.Lint(sink)
+	}
+	if node.Value.Jobs == nil {
+		sink.Record(node.Raw, "%d:%d  error  missing jobs", node.Raw.Line, node.Raw.Column)
+	} else {
+		node.Value.Jobs.Lint(sink)
+	}
+	return nil
 }
 
 type WorkflowValue struct { // created at parent level -> code buffer
@@ -147,9 +151,6 @@ func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
 		// handles -> "configuration" -> "string", "number", "boolean"
 		// output.go -> create array called scalars := []{"string", "number", "boolean"}
 		// !!str, !!float, !!int
-		if node.Raw.Tag != "!!str" {
-			return fmt.Errorf("%d:%d  error  Expected one of: string type", node.Raw.Line, node.Raw.Column)
-		}
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.SequenceNode:
 		// will handle if key exists in linter for now, unless we decide to change
@@ -157,10 +158,6 @@ func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
 	case yaml.MappingNode:
 		value := node.Raw
 
-		if len(value.Content)%2 != 0 {
-			// Uneven set of key value pairs (this shouldn't happen)
-			return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
-		}
 		event := new(WorkFlowOnValue)
 		for i := 0; i < len(value.Content); i += 2 {
 			keyEntry := value.Content[i]
@@ -200,6 +197,17 @@ func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
 	}
 
 	// --- no required array field
+}
+
+func (node *WorkflowOnNode) Lint(sink *lint.ProblemSink) error {
+	if node.Raw.Kind == yaml.ScalarNode && node.Raw.Tag != "!!str" {
+		sink.Record(node.Raw, "%d:%d  error  Expected one of: string type", node.Raw.Line, node.Raw.Column)
+	}
+	if len(node.Raw.Content)%2 != 0 {
+		// Uneven set of key value pairs (this shouldn't happen)
+		sink.Record(node.Raw, "%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+	}
+	return nil
 }
 
 type OnEventConstants string
@@ -270,6 +278,10 @@ func (node *OnCheckRunNode) UnmarshalYAML(value *yaml.Node) error {
 	default:
 		return fmt.Errorf("%d:%d  error  Expected one of: map type", node.Raw.Line, node.Raw.Column)
 	}
+}
+
+func (node *OnCheckRunNode) Lint(sink *lint.ProblemSink) error {
+	return nil
 }
 
 type OnCheckRunValue struct {
@@ -521,10 +533,6 @@ type WorkflowJobsPatternProperties struct {
 func (node *WorkflowJobsNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
-	if len(value.Content)%2 != 0 {
-		// Uneven set of key value pairs (this shouldn't happen)
-		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
-	}
 	for i := 0; i < len(value.Content); i += 2 {
 		keyEntry := value.Content[i]
 
@@ -545,6 +553,14 @@ func (node *WorkflowJobsNode) UnmarshalYAML(value *yaml.Node) error {
 	return nil
 }
 
+func (node *WorkflowJobsNode) Lint(sink *lint.ProblemSink) error {
+	if len(node.Raw.Content)%2 != 0 {
+		// Uneven set of key value pairs (this shouldn't happen)
+		sink.Record(node.Raw, "%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+	}
+	return nil
+}
+
 type JobsPatternPropertiesNode struct {
 	Raw   *yaml.Node
 	Value JobsPatternPropertiesOneOfType //Since all oneOf "type"(s) are the same its Types not Kind
@@ -559,7 +575,7 @@ type JobsPatternPropertiesOneOfType struct {
 func (node *JobsPatternPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	// output.go get both required arrays and loop through contents to get values
-	fmt.Printf("%+v\n", node.ID)
+	// fmt.Printf("%+v\n", node.ID)
 
 	contentArr := func(content []*yaml.Node) []string {
 		var contentArr []string
@@ -601,18 +617,18 @@ func (node *JobsPatternPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 		}
 	}
 
-	var event interface{}
-	switch jobsPatternPropertiesString {
-	case "reusableWorkflowCallJob":
-		event = (ReusableWorkflowCallJobValue)(*new(ReusableWorkflowCallJobValue))
-	case "normalJob":
+	// var event interface{}
+	// switch jobsPatternPropertiesString {
+	// case "reusableWorkflowCallJob":
+	// 	event = (ReusableWorkflowCallJobValue)(*new(ReusableWorkflowCallJobValue))
+	// case "normalJob":
 
-	default:
+	// default:
 
-	}
+	// }
 
 	// event = ReusableWorkflowCallJobValue(*new(ReusableWorkflowCallJobValue)) // type conversion, one type is an alias of another; ex. type Name string
-	fmt.Printf("%+v\n", event.(ReusableWorkflowCallJobValue).Name) //-> an actual type
+	// fmt.Printf("%+v\n", event.(ReusableWorkflowCallJobValue).Name) //-> an actual type
 
 	if len(value.Content)%2 != 0 {
 		// Uneven set of key value pairs (this shouldn't happen)
@@ -697,13 +713,13 @@ type ReusableWorkflowCallJobUsesNode struct {
 // two types of oneOf check -> 
 // 1) if "type" exists on same key level as "oneOf" -> oneOf refers to the Node
 // 2) else: it refers to the Kind
-type WorkflowJobsOneOf struct {
-	NormalJob *JobsNormalJobValue
-	ReusableWorkflowCallJob *JobsReusableWorkflowCallJobValue
-}
+// type WorkflowJobsOneOf struct {
+// 	NormalJob *JobsNormalJobValue
+// 	ReusableWorkflowCallJob *JobsReusableWorkflowCallJobValue
+// }
 
-func (node *WorkflowJobsNode) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
+// func (node *WorkflowJobsNode) UnmarshalYAML(value *yaml.Node) error {
+// 	node.Raw = value
 
 	
-}
+// }
