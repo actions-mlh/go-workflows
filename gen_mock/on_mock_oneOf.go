@@ -543,10 +543,8 @@ func (node *WorkflowJobsNode) UnmarshalYAML(value *yaml.Node) error {
 				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
 			}
 		case "needs":
-
+			
 		}
-
-
 	}
 
 	return nil
