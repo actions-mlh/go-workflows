@@ -697,13 +697,13 @@ type ReusableWorkflowCallJobUsesNode struct {
 // two types of oneOf check -> 
 // 1) if "type" exists on same key level as "oneOf" -> oneOf refers to the Node
 // 2) else: it refers to the Kind
-type WorkflowJobsOneOf struct {
-	NormalJob *JobsNormalJobValue
-	ReusableWorkflowCallJob *JobsReusableWorkflowCallJobValue
-}
+// type WorkflowJobsOneOf struct {
+// 	NormalJob *JobsNormalJobValue
+// 	ReusableWorkflowCallJob *JobsReusableWorkflowCallJobValue
+// }
 
-func (node *WorkflowJobsNode) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
+// func (node *WorkflowJobsNode) UnmarshalYAML(value *yaml.Node) error {
+// 	node.Raw = value
 
 	
-}
+// }
