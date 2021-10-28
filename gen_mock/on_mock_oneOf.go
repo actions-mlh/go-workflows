@@ -702,8 +702,4 @@ type WorkflowJobsOneOf struct {
 	ReusableWorkflowCallJob *JobsReusableWorkflowCallJobValue
 }
 
-func (node *WorkflowJobsNode) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
 
-	
-}

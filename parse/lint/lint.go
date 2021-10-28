@@ -22,7 +22,7 @@ func LintWorkflow(sink *ProblemSink, target *gen_mock.WorkflowNode) error {
 	// fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode.CheckRun.OneOf.MappingNode.Types.Value)
 
 
-
+	
 
 
 
