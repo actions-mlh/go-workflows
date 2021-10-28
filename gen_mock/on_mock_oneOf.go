@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"gopkg.in/yaml.v3"
+
+	"c2c-actions-mlh-workflow-parser/parse/lint"
 )
 
 // field checks ->
@@ -103,6 +105,11 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 
 	return nil
 	// ----------------------------------------------------------------------------------
+}
+
+func (node WorkflowNode) Lint(sink *lint.ProblemSink) error {
+	sink.Record(node.Raw, "test error")
+	return nil
 }
 
 type WorkflowValue struct { // created at parent level -> code buffer
