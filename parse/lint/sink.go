@@ -9,9 +9,18 @@ import (
 type ProblemSink struct {
 	Filename string
 	Output   io.Writer
+	Problems []string
 }
 
-func (sink *ProblemSink) RecordProblem(node *yaml.Node, format string, args ...interface{}) {
-	fmt.Fprintf(sink.Output, "%s:%d:%d\n", sink.Filename, node.Line, node.Column)
-	fmt.Fprintf(sink.Output, "\t"+format+" \n", args...)
+func (sink *ProblemSink) Record(raw *yaml.Node, format string, args ...interface{}) {
+	sink.Problems = append(sink.Problems,
+		fmt.Sprintf("%s:%d:%d", sink.Filename, raw.Line, raw.Column) + 
+		fmt.Sprintf("\terror\t"+format+" \n", args...),
+	)
+}
+
+func (sink *ProblemSink) Render() {
+	for _, problem := range sink.Problems {
+		fmt.Fprint(sink.Output, problem)
+	}
 }
