@@ -4,1007 +4,904 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// Definitions_Architecture 
-type Definitions_Architecture struct {
-  Definitions_Architecture_Value Definitions_Architecture_ValueRaw `yaml:"Definitions_Architecture_Value,omitempty"`
-}
-
-// Definitions_Concurrency 
-type Definitions_Concurrency struct {
-
-  // To cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
-  Definitions_Concurrency_CancelInProgress Definitions_Concurrency_CancelInProgressRaw `yaml:"cancel-in-progress,omitempty"`
-
-  // When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled.
-  Definitions_Concurrency_Group Definitions_Concurrency_GroupRaw `yaml:"group"`
-}
-
-// Definitions_Concurrency_CancelInProgress To cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
-type Definitions_Concurrency_CancelInProgress struct {
-
-  // To cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
-  Definitions_Concurrency_CancelInProgress_Value Definitions_Concurrency_CancelInProgress_ValueRaw `yaml:"Definitions_Concurrency_CancelInProgress_Value,omitempty"`
-}
-
-// Definitions_Concurrency_Group When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled.
-type Definitions_Concurrency_Group struct {
-
-  // When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled.
-  Definitions_Concurrency_Group_Value Definitions_Concurrency_Group_ValueRaw `yaml:"Definitions_Concurrency_Group_Value,omitempty"`
-}
-
-// Definitions_Configuration 
-type Definitions_Configuration struct {
-}
-
-// Definitions_Container 
-type Definitions_Container struct {
-
-  // If the image's container registry requires authentication to pull the image, you can use credentials to set a map of the username and password. The credentials are the same values that you would provide to the `docker login` command.
-  Definitions_Container_Credentials Definitions_Container_CredentialsRaw `yaml:"credentials,omitempty"`
-
-  // Sets an array of environment variables in the container.
-  Definitions_Container_Env Definitions_Container_EnvRaw `yaml:"env,omitempty"`
-
-  // The Docker image to use as the container to run the action. The value can be the Docker Hub image name or a registry name.
-  Definitions_Container_Image Definitions_Container_ImageRaw `yaml:"image"`
-
-  // Additional Docker container resource options. For a list of options, see https://docs.docker.com/engine/reference/commandline/create/#options.
-  Definitions_Container_Options Definitions_Container_OptionsRaw `yaml:"options,omitempty"`
-
-  // Sets an array of ports to expose on the container.
-  Definitions_Container_Ports Definitions_Container_PortsRaw `yaml:"ports,omitempty"`
-
-  // Sets an array of volumes for the container to use. You can use volumes to share data between services or other steps in a job. You can specify named Docker volumes, anonymous Docker volumes, or bind mounts on the host.
-  // To specify a volume, you specify the source and destination path: <source>:<destinationPath>
-  // The <source> is a volume name or an absolute path on the host machine, and <destinationPath> is an absolute path in the container.
-  Definitions_Container_Volumes Definitions_Container_VolumesRaw `yaml:"volumes,omitempty"`
-}
-
-// Definitions_Container_Credentials If the image's container registry requires authentication to pull the image, you can use credentials to set a map of the username and password. The credentials are the same values that you would provide to the `docker login` command.
-type Definitions_Container_Credentials struct {
-  Definitions_Container_Credentials_Password Definitions_Container_Credentials_PasswordRaw `yaml:"password,omitempty"`
-  Definitions_Container_Credentials_Username Definitions_Container_Credentials_UsernameRaw `yaml:"username,omitempty"`
-}
-
-// Definitions_Container_Credentials_Password 
-type Definitions_Container_Credentials_Password struct {
-  Definitions_Container_Credentials_Password_Value Definitions_Container_Credentials_Password_ValueRaw `yaml:"Definitions_Container_Credentials_Password_Value,omitempty"`
-}
-
-// Definitions_Container_Credentials_Username 
-type Definitions_Container_Credentials_Username struct {
-  Definitions_Container_Credentials_Username_Value Definitions_Container_Credentials_Username_ValueRaw `yaml:"Definitions_Container_Credentials_Username_Value,omitempty"`
-}
-
-// Definitions_Container_Image The Docker image to use as the container to run the action. The value can be the Docker Hub image name or a registry name.
-type Definitions_Container_Image struct {
-
-  // The Docker image to use as the container to run the action. The value can be the Docker Hub image name or a registry name.
-  Definitions_Container_Image_Value Definitions_Container_Image_ValueRaw `yaml:"Definitions_Container_Image_Value,omitempty"`
-}
-
-// Definitions_Container_Options Additional Docker container resource options. For a list of options, see https://docs.docker.com/engine/reference/commandline/create/#options.
-type Definitions_Container_Options struct {
-
-  // Additional Docker container resource options. For a list of options, see https://docs.docker.com/engine/reference/commandline/create/#options.
-  Definitions_Container_Options_Value Definitions_Container_Options_ValueRaw `yaml:"Definitions_Container_Options_Value,omitempty"`
-}
-
-// Definitions_Container_Ports Sets an array of ports to expose on the container.
-type Definitions_Container_Ports struct {
-
-  // Sets an array of ports to expose on the container.
-  Definitions_Container_Ports Definitions_Container_PortsRaw `yaml:"Definitions_Container_Ports,omitempty"`
-}
-
-// Definitions_Container_Volumes Sets an array of volumes for the container to use. You can use volumes to share data between services or other steps in a job. You can specify named Docker volumes, anonymous Docker volumes, or bind mounts on the host.
-// To specify a volume, you specify the source and destination path: <source>:<destinationPath>
-// The <source> is a volume name or an absolute path on the host machine, and <destinationPath> is an absolute path in the container.
-type Definitions_Container_Volumes struct {
-
-  // Sets an array of volumes for the container to use. You can use volumes to share data between services or other steps in a job. You can specify named Docker volumes, anonymous Docker volumes, or bind mounts on the host.
-  // To specify a volume, you specify the source and destination path: <source>:<destinationPath>
-  // The <source> is a volume name or an absolute path on the host machine, and <destinationPath> is an absolute path in the container.
-  Definitions_Container_Volumes Definitions_Container_VolumesRaw `yaml:"Definitions_Container_Volumes,omitempty"`
-}
-
-// Definitions_Defaults 
-type Definitions_Defaults struct {
-  Definitions_Defaults_Run Definitions_Defaults_RunRaw `yaml:"run,omitempty"`
-}
-
-// Definitions_Defaults_Run 
-type Definitions_Defaults_Run struct {
-  Definitions_Defaults_Run_Shell Definitions_Defaults_Run_ShellRaw `yaml:"shell,omitempty"`
-  Definitions_Defaults_Run_WorkingDirectory Definitions_Defaults_Run_WorkingDirectoryRaw `yaml:"working-directory,omitempty"`
-}
-
-// Definitions_Env 
-type Definitions_Env struct {
-}
-
-// Definitions_Environment The environment that the job references
-type Definitions_Environment struct {
-
-  // The name of the environment configured in the repo.
-  Definitions_Environment_Name Definitions_Environment_NameRaw `yaml:"name"`
-
-  // A deployment URL
-  Definitions_Environment_Url Definitions_Environment_UrlRaw `yaml:"url,omitempty"`
-}
-
-// Definitions_Environment_Name The name of the environment configured in the repo.
-type Definitions_Environment_Name struct {
-
-  // The name of the environment configured in the repo.
-  Definitions_Environment_Name_Value Definitions_Environment_Name_ValueRaw `yaml:"Definitions_Environment_Name_Value,omitempty"`
-}
-
-// Definitions_Environment_Url A deployment URL
-type Definitions_Environment_Url struct {
-
-  // A deployment URL
-  Definitions_Environment_Url_Value Definitions_Environment_Url_ValueRaw `yaml:"Definitions_Environment_Url_Value,omitempty"`
-}
-
-// Definitions_Event 
-type Definitions_Event struct {
-  Definitions_Event_Value Definitions_Event_ValueRaw `yaml:"Definitions_Event_Value,omitempty"`
-}
-
-// Definitions_EventObject 
-type Definitions_EventObject struct {
-}
-
-// Definitions_ExpressionSyntax 
-type Definitions_ExpressionSyntax struct {
-  Definitions_ExpressionSyntax_Value Definitions_ExpressionSyntax_ValueRaw `yaml:"Definitions_ExpressionSyntax_Value,omitempty"`
-}
-
-// Definitions_Globs 
-type Definitions_Globs struct {
-  Definitions_Globs Definitions_GlobsRaw `yaml:"Definitions_Globs,omitempty"`
-}
-
-// Definitions_Machine 
-type Definitions_Machine struct {
-  Definitions_Machine_Value Definitions_Machine_ValueRaw `yaml:"Definitions_Machine_Value,omitempty"`
-}
-
-// Definitions_Name 
-type Definitions_Name struct {
-  Definitions_Name_Value Definitions_Name_ValueRaw `yaml:"Definitions_Name_Value,omitempty"`
-}
-
-// Definitions_Permissions You can modify the default permissions granted to the GITHUB_TOKEN, adding or removing access as required, so that you only allow the minimum required access.
-type Definitions_Permissions struct {
-}
-
-// Definitions_PermissionsEvent 
-type Definitions_PermissionsEvent struct {
-  Definitions_PermissionsEvent_Actions Definitions_PermissionsEvent_ActionsRaw `yaml:"actions,omitempty"`
-  Definitions_PermissionsEvent_Checks Definitions_PermissionsEvent_ChecksRaw `yaml:"checks,omitempty"`
-  Definitions_PermissionsEvent_Contents Definitions_PermissionsEvent_ContentsRaw `yaml:"contents,omitempty"`
-  Definitions_PermissionsEvent_Deployments Definitions_PermissionsEvent_DeploymentsRaw `yaml:"deployments,omitempty"`
-  Definitions_PermissionsEvent_Issues Definitions_PermissionsEvent_IssuesRaw `yaml:"issues,omitempty"`
-  Definitions_PermissionsEvent_Packages Definitions_PermissionsEvent_PackagesRaw `yaml:"packages,omitempty"`
-  Definitions_PermissionsEvent_PullRequests Definitions_PermissionsEvent_PullRequestsRaw `yaml:"pull-requests,omitempty"`
-  Definitions_PermissionsEvent_RepositoryProjects Definitions_PermissionsEvent_RepositoryProjectsRaw `yaml:"repository-projects,omitempty"`
-  Definitions_PermissionsEvent_SecurityEvents Definitions_PermissionsEvent_SecurityEventsRaw `yaml:"security-events,omitempty"`
-  Definitions_PermissionsEvent_Statuses Definitions_PermissionsEvent_StatusesRaw `yaml:"statuses,omitempty"`
-}
-
-// Definitions_PermissionsLevel 
-type Definitions_PermissionsLevel struct {
-  Definitions_PermissionsLevel_Value Definitions_PermissionsLevel_ValueRaw `yaml:"Definitions_PermissionsLevel_Value,omitempty"`
-}
-
-// Definitions_Ref 
-type Definitions_Ref struct {
-  Definitions_Ref_Branches Definitions_Ref_BranchesRaw `yaml:"branches,omitempty"`
-  Definitions_Ref_BranchesIgnore Definitions_Ref_BranchesIgnoreRaw `yaml:"branches-ignore,omitempty"`
-  Definitions_Ref_Paths Definitions_Ref_PathsRaw `yaml:"paths,omitempty"`
-  Definitions_Ref_PathsIgnore Definitions_Ref_PathsIgnoreRaw `yaml:"paths-ignore,omitempty"`
-  Definitions_Ref_Tags Definitions_Ref_TagsRaw `yaml:"tags,omitempty"`
-  Definitions_Ref_TagsIgnore Definitions_Ref_TagsIgnoreRaw `yaml:"tags-ignore,omitempty"`
-}
-
-// Definitions_Shell You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
-type Definitions_Shell struct {
-
-  // You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
-  Definitions_Shell_Value Definitions_Shell_ValueRaw `yaml:"Definitions_Shell_Value,omitempty"`
-}
-
-// Definitions_Types Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
-// You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
-type Definitions_Types struct {
-}
-
-// Definitions_WorkingDirectory Using the working-directory keyword, you can specify the working directory of where to run the command.
-type Definitions_WorkingDirectory struct {
-
-  // Using the working-directory keyword, you can specify the working directory of where to run the command.
-  Definitions_WorkingDirectory_Value Definitions_WorkingDirectory_ValueRaw `yaml:"Definitions_WorkingDirectory_Value,omitempty"`
-}
-
-// Globs 
-type Globs struct {
-  Globs GlobsRaw `yaml:"Globs,omitempty"`
-}
-
-// PermissionsLevel 
-type PermissionsLevel struct {
-  PermissionsLevel_Value PermissionsLevel_ValueRaw `yaml:"PermissionsLevel_Value,omitempty"`
-}
-
 // Root 
 type Root struct {
+	Architecture Root_Definitions_Architecture `yaml:"architecture,omitempty"`
+
+  // When using the push and pull_request events, you can configure a workflow to run on specific branches or tags. If you only define only tags or only branches, the workflow won't run for events affecting the undefined Git ref.
+  // The branches, branches-ignore, tags, and tags-ignore keywords accept glob patterns that use the * and ** wildcard characters to match more than one branch or tag name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
+  // The patterns defined in branches and tags are evaluated against the Git ref's name. For example, defining the pattern mona/octocat in branches will match the refs/heads/mona/octocat Git ref. The pattern releases/** will match the refs/heads/releases/10 Git ref.
+  // You can use two types of filters to prevent a workflow from running on pushes and pull requests to tags and branches:
+  // - branches or branches-ignore - You cannot use both the branches and branches-ignore filters for the same event in a workflow. Use the branches filter when you need to filter branches for positive matches and exclude branches. Use the branches-ignore filter when you only need to exclude branch names.
+  // - tags or tags-ignore - You cannot use both the tags and tags-ignore filters for the same event in a workflow. Use the tags filter when you need to filter tags for positive matches and exclude tags. Use the tags-ignore filter when you only need to exclude tag names.
+  // You can exclude tags and branches using the ! character. The order that you define patterns matters.
+  // - A matching negative pattern (prefixed with !) after a positive match will exclude the Git ref.
+  // - A matching positive pattern after a negative match will include the Git ref again.
+	Branch Root_Definitions_Branch `yaml:"branch,omitempty"`
+	Configuration Root_Definitions_Configuration `yaml:"configuration,omitempty"`
+	Container Root_Definitions_Container `yaml:"container,omitempty"`
+
+  // The environment that the job references
+	Environment Root_Definitions_Environment `yaml:"environment,omitempty"`
+	Event Root_Definitions_Event `yaml:"event,omitempty"`
+	EventObject Root_Definitions_EventObject `yaml:"eventObject,omitempty"`
+	ExpressionSyntax Root_Definitions_ExpressionSyntax `yaml:"expressionSyntax,omitempty"`
+	Globs Root_Definitions_Globs `yaml:"globs,omitempty"`
+	Machine Root_Definitions_Machine `yaml:"machine,omitempty"`
+
+  // When using the push and pull_request events, you can configure a workflow to run when at least one file does not match paths-ignore or at least one modified file matches the configured paths. Path filters are not evaluated for pushes to tags.
+  // The paths-ignore and paths keywords accept glob patterns that use the * and ** wildcard characters to match more than one path name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
+  // You can exclude paths using two types of filters. You cannot use both of these filters for the same event in a workflow.
+  // - paths-ignore - Use the paths-ignore filter when you only need to exclude path names.
+  // - paths - Use the paths filter when you need to filter paths for positive matches and exclude paths.
+	Path Root_Definitions_Path `yaml:"path,omitempty"`
+	Permissions_Event Root_Definitions_Permissions_Event `yaml:"permissions-event,omitempty"`
+	Permissions_Level Root_Definitions_Permissions_Level `yaml:"permissions-level,omitempty"`
+	Ref Root_Definitions_Ref `yaml:"ref,omitempty"`
+
+  // You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
+	Shell Root_Definitions_Shell `yaml:"shell,omitempty"`
+
+  // Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
+  // You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
+	Types Root_Definitions_Types `yaml:"types,omitempty"`
+
+  // Using the working-directory keyword, you can specify the working directory of where to run the command.
+	Working_Directory Root_Definitions_Working_Directory `yaml:"working-directory,omitempty"`
 
   // Concurrency ensures that only a single job or workflow using the same concurrency group will run at a time. A concurrency group can be any string or expression. The expression can use any context except for the secrets context. 
   // You can also specify concurrency at the workflow level. 
   // When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled. To also cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
-  Root_Concurrency Root_ConcurrencyRaw `yaml:"concurrency,omitempty"`
+	Concurrency Root_Properties_Concurrency `yaml:"concurrency,omitempty"`
 
   // A map of default settings that will apply to all jobs in the workflow.
-  Root_Defaults Root_DefaultsRaw `yaml:"defaults,omitempty"`
+	Defaults Root_Properties_Defaults `yaml:"defaults,omitempty"`
 
   // A map of environment variables that are available to all jobs and steps in the workflow.
-  Root_Env Root_EnvRaw `yaml:"env,omitempty"`
+	Env Root_Properties_Env `yaml:"env,omitempty"`
 
   // A workflow run is made up of one or more jobs. Jobs run in parallel by default. To run jobs sequentially, you can define dependencies on other jobs using the jobs.<job_id>.needs keyword.
   // Each job runs in a fresh instance of the virtual environment specified by runs-on.
   // You can run an unlimited number of jobs as long as you are within the workflow usage limits. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#usage-limits.
-  Root_Jobs Root_JobsRaw `yaml:"jobs"`
+	Jobs Root_Properties_Jobs `yaml:"jobs"`
 
   // The name of your workflow. GitHub displays the names of your workflows on your repository's actions page. If you omit this field, GitHub sets the name to the workflow's filename.
-  Root_Name Root_NameRaw `yaml:"name,omitempty"`
+	Name Root_Properties_Name `yaml:"name,omitempty"`
 
   // The name of the GitHub event that triggers the workflow. You can provide a single event string, array of events, array of event types, or an event configuration map that schedules a workflow or restricts the execution of a workflow to specific files, tags, or branch changes. For a list of available events, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/events-that-trigger-workflows.
-  Root_On Root_OnRaw `yaml:"on"`
-  Root_Permissions Root_PermissionsRaw `yaml:"permissions,omitempty"`
+	On Root_Properties_On `yaml:"on"`
+	Permissions Root_Properties_Permissions `yaml:"permissions,omitempty"`
+	Raw *yaml.Node
 }
 
-// Root_Concurrency Concurrency ensures that only a single job or workflow using the same concurrency group will run at a time. A concurrency group can be any string or expression. The expression can use any context except for the secrets context. 
+func (node *Root) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Architecture 
+type Root_Definitions_Architecture struct {
+	Value string `yaml:"Root_Definitions_Architecture,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Architecture) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Branch When using the push and pull_request events, you can configure a workflow to run on specific branches or tags. If you only define only tags or only branches, the workflow won't run for events affecting the undefined Git ref.
+// The branches, branches-ignore, tags, and tags-ignore keywords accept glob patterns that use the * and ** wildcard characters to match more than one branch or tag name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
+// The patterns defined in branches and tags are evaluated against the Git ref's name. For example, defining the pattern mona/octocat in branches will match the refs/heads/mona/octocat Git ref. The pattern releases/** will match the refs/heads/releases/10 Git ref.
+// You can use two types of filters to prevent a workflow from running on pushes and pull requests to tags and branches:
+// - branches or branches-ignore - You cannot use both the branches and branches-ignore filters for the same event in a workflow. Use the branches filter when you need to filter branches for positive matches and exclude branches. Use the branches-ignore filter when you only need to exclude branch names.
+// - tags or tags-ignore - You cannot use both the tags and tags-ignore filters for the same event in a workflow. Use the tags filter when you need to filter tags for positive matches and exclude tags. Use the tags-ignore filter when you only need to exclude tag names.
+// You can exclude tags and branches using the ! character. The order that you define patterns matters.
+// - A matching negative pattern (prefixed with !) after a positive match will exclude the Git ref.
+// - A matching positive pattern after a negative match will include the Git ref again.
+type Root_Definitions_Branch struct {
+	Ref Root_Definitions_Globs `yaml:"Globs,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Branch) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Concurrency 
+type Root_Definitions_Concurrency struct {
+
+  // To cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
+	Cancel_In_Progress Root_Definitions_Concurrency_Properties_Cancel_In_Progress `yaml:"cancel-in-progress,omitempty"`
+
+  // When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled.
+	Group Root_Definitions_Concurrency_Properties_Group `yaml:"group"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Concurrency) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Concurrency_Properties_Cancel_In_Progress To cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
+type Root_Definitions_Concurrency_Properties_Cancel_In_Progress struct {
+
+  // To cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
+	Value bool `yaml:"Root_Definitions_Concurrency_Properties_Cancel_In_Progress,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Concurrency_Properties_Cancel_In_Progress) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Concurrency_Properties_Group When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled.
+type Root_Definitions_Concurrency_Properties_Group struct {
+
+  // When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled.
+	Value string `yaml:"Root_Definitions_Concurrency_Properties_Group,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Concurrency_Properties_Group) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Configuration 
+type Root_Definitions_Configuration struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Configuration) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Container 
+type Root_Definitions_Container struct {
+
+  // If the image's container registry requires authentication to pull the image, you can use credentials to set a map of the username and password. The credentials are the same values that you would provide to the `docker login` command.
+	Credentials Root_Definitions_Container_Properties_Credentials `yaml:"credentials,omitempty"`
+
+  // Sets an array of environment variables in the container.
+	Env Root_Definitions_Container_Properties_Env `yaml:"env,omitempty"`
+
+  // The Docker image to use as the container to run the action. The value can be the Docker Hub image name or a registry name.
+	Image Root_Definitions_Container_Properties_Image `yaml:"image"`
+
+  // Additional Docker container resource options. For a list of options, see https://docs.docker.com/engine/reference/commandline/create/#options.
+	Options Root_Definitions_Container_Properties_Options `yaml:"options,omitempty"`
+
+  // Sets an array of ports to expose on the container.
+	Ports Root_Definitions_Container_Properties_Ports `yaml:"ports,omitempty"`
+
+  // Sets an array of volumes for the container to use. You can use volumes to share data between services or other steps in a job. You can specify named Docker volumes, anonymous Docker volumes, or bind mounts on the host.
+  // To specify a volume, you specify the source and destination path: <source>:<destinationPath>
+  // The <source> is a volume name or an absolute path on the host machine, and <destinationPath> is an absolute path in the container.
+	Volumes Root_Definitions_Container_Properties_Volumes `yaml:"volumes,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Container) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Container_Properties_Credentials If the image's container registry requires authentication to pull the image, you can use credentials to set a map of the username and password. The credentials are the same values that you would provide to the `docker login` command.
+type Root_Definitions_Container_Properties_Credentials struct {
+	Password Root_Definitions_Container_Properties_Credentials_Properties_Password `yaml:"password,omitempty"`
+	Username Root_Definitions_Container_Properties_Credentials_Properties_Username `yaml:"username,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Container_Properties_Credentials) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Container_Properties_Credentials_Properties_Password 
+type Root_Definitions_Container_Properties_Credentials_Properties_Password struct {
+	Value string `yaml:"Root_Definitions_Container_Properties_Credentials_Properties_Password,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Container_Properties_Credentials_Properties_Password) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Container_Properties_Credentials_Properties_Username 
+type Root_Definitions_Container_Properties_Credentials_Properties_Username struct {
+	Value string `yaml:"Root_Definitions_Container_Properties_Credentials_Properties_Username,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Container_Properties_Credentials_Properties_Username) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Container_Properties_Env Sets an array of environment variables in the container.
+type Root_Definitions_Container_Properties_Env struct {
+	Ref Root_Definitions_Env `yaml:"Env,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Container_Properties_Env) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Container_Properties_Image The Docker image to use as the container to run the action. The value can be the Docker Hub image name or a registry name.
+type Root_Definitions_Container_Properties_Image struct {
+
+  // The Docker image to use as the container to run the action. The value can be the Docker Hub image name or a registry name.
+	Value string `yaml:"Root_Definitions_Container_Properties_Image,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Container_Properties_Image) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Container_Properties_Options Additional Docker container resource options. For a list of options, see https://docs.docker.com/engine/reference/commandline/create/#options.
+type Root_Definitions_Container_Properties_Options struct {
+
+  // Additional Docker container resource options. For a list of options, see https://docs.docker.com/engine/reference/commandline/create/#options.
+	Value string `yaml:"Root_Definitions_Container_Properties_Options,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Container_Properties_Options) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Container_Properties_Ports Sets an array of ports to expose on the container.
+type Root_Definitions_Container_Properties_Ports struct {
+
+  // Sets an array of ports to expose on the container.
+	Root_Definitions_Container_Properties_Ports []Root_Definitions_Container_Properties_Ports_Items_Root_Definitions_Container_Properties_Ports `yaml:"Root_Definitions_Container_Properties_Ports,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Container_Properties_Ports) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Container_Properties_Ports_Items_Root_Definitions_Container_Properties_Ports 
+type Root_Definitions_Container_Properties_Ports_Items_Root_Definitions_Container_Properties_Ports struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Container_Properties_Ports_Items_Root_Definitions_Container_Properties_Ports) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Container_Properties_Volumes Sets an array of volumes for the container to use. You can use volumes to share data between services or other steps in a job. You can specify named Docker volumes, anonymous Docker volumes, or bind mounts on the host.
+// To specify a volume, you specify the source and destination path: <source>:<destinationPath>
+// The <source> is a volume name or an absolute path on the host machine, and <destinationPath> is an absolute path in the container.
+type Root_Definitions_Container_Properties_Volumes struct {
+
+  // Sets an array of volumes for the container to use. You can use volumes to share data between services or other steps in a job. You can specify named Docker volumes, anonymous Docker volumes, or bind mounts on the host.
+  // To specify a volume, you specify the source and destination path: <source>:<destinationPath>
+  // The <source> is a volume name or an absolute path on the host machine, and <destinationPath> is an absolute path in the container.
+	Root_Definitions_Container_Properties_Volumes []Root_Definitions_Container_Properties_Volumes_Items_Root_Definitions_Container_Properties_Volumes `yaml:"Root_Definitions_Container_Properties_Volumes,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Container_Properties_Volumes) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Container_Properties_Volumes_Items_Root_Definitions_Container_Properties_Volumes 
+type Root_Definitions_Container_Properties_Volumes_Items_Root_Definitions_Container_Properties_Volumes struct {
+	Value string `yaml:"Root_Definitions_Container_Properties_Volumes_Items_Root_Definitions_Container_Properties_Volumes,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Container_Properties_Volumes_Items_Root_Definitions_Container_Properties_Volumes) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Defaults 
+type Root_Definitions_Defaults struct {
+	Run Root_Definitions_Defaults_Properties_Run `yaml:"run,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Defaults) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Defaults_Properties_Run 
+type Root_Definitions_Defaults_Properties_Run struct {
+	Shell Root_Definitions_Defaults_Properties_Run_Properties_Shell `yaml:"shell,omitempty"`
+	Working_Directory Root_Definitions_Defaults_Properties_Run_Properties_Working_Directory `yaml:"working-directory,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Defaults_Properties_Run) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Defaults_Properties_Run_Properties_Shell 
+type Root_Definitions_Defaults_Properties_Run_Properties_Shell struct {
+
+  // You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
+	Ref Root_Definitions_Shell `yaml:"Shell,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Defaults_Properties_Run_Properties_Shell) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Defaults_Properties_Run_Properties_Working_Directory 
+type Root_Definitions_Defaults_Properties_Run_Properties_Working_Directory struct {
+
+  // Using the working-directory keyword, you can specify the working directory of where to run the command.
+	Ref Root_Definitions_Working_Directory `yaml:"Working_Directory,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Defaults_Properties_Run_Properties_Working_Directory) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Env 
+type Root_Definitions_Env struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Env) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Environment The environment that the job references
+type Root_Definitions_Environment struct {
+
+  // The name of the environment configured in the repo.
+	Name Root_Definitions_Environment_Properties_Name `yaml:"name"`
+
+  // A deployment URL
+	Url Root_Definitions_Environment_Properties_Url `yaml:"url,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Environment) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Environment_Properties_Name The name of the environment configured in the repo.
+type Root_Definitions_Environment_Properties_Name struct {
+
+  // The name of the environment configured in the repo.
+	Value string `yaml:"Root_Definitions_Environment_Properties_Name,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Environment_Properties_Name) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Environment_Properties_Url A deployment URL
+type Root_Definitions_Environment_Properties_Url struct {
+
+  // A deployment URL
+	Value string `yaml:"Root_Definitions_Environment_Properties_Url,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Environment_Properties_Url) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Event 
+type Root_Definitions_Event struct {
+	Value string `yaml:"Root_Definitions_Event,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Event) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_EventObject 
+type Root_Definitions_EventObject struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_EventObject) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_ExpressionSyntax 
+type Root_Definitions_ExpressionSyntax struct {
+	Value string `yaml:"Root_Definitions_ExpressionSyntax,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_ExpressionSyntax) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Globs 
+type Root_Definitions_Globs struct {
+	Root_Definitions_Globs []Root_Definitions_Globs_Items_Root_Definitions_Globs `yaml:"Root_Definitions_Globs,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Globs) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Globs_Items_Root_Definitions_Globs 
+type Root_Definitions_Globs_Items_Root_Definitions_Globs struct {
+	Value string `yaml:"Root_Definitions_Globs_Items_Root_Definitions_Globs,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Globs_Items_Root_Definitions_Globs) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Machine 
+type Root_Definitions_Machine struct {
+	Value string `yaml:"Root_Definitions_Machine,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Machine) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Name 
+type Root_Definitions_Name struct {
+	Value string `yaml:"Root_Definitions_Name,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Name) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Path When using the push and pull_request events, you can configure a workflow to run when at least one file does not match paths-ignore or at least one modified file matches the configured paths. Path filters are not evaluated for pushes to tags.
+// The paths-ignore and paths keywords accept glob patterns that use the * and ** wildcard characters to match more than one path name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
+// You can exclude paths using two types of filters. You cannot use both of these filters for the same event in a workflow.
+// - paths-ignore - Use the paths-ignore filter when you only need to exclude path names.
+// - paths - Use the paths filter when you need to filter paths for positive matches and exclude paths.
+type Root_Definitions_Path struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Path) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Permissions You can modify the default permissions granted to the GITHUB_TOKEN, adding or removing access as required, so that you only allow the minimum required access.
+type Root_Definitions_Permissions struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Permissions) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Permissions_Event 
+type Root_Definitions_Permissions_Event struct {
+	Actions Root_Definitions_Permissions_Event_Properties_Actions `yaml:"actions,omitempty"`
+	Checks Root_Definitions_Permissions_Event_Properties_Checks `yaml:"checks,omitempty"`
+	Contents Root_Definitions_Permissions_Event_Properties_Contents `yaml:"contents,omitempty"`
+	Deployments Root_Definitions_Permissions_Event_Properties_Deployments `yaml:"deployments,omitempty"`
+	Issues Root_Definitions_Permissions_Event_Properties_Issues `yaml:"issues,omitempty"`
+	Packages Root_Definitions_Permissions_Event_Properties_Packages `yaml:"packages,omitempty"`
+	Pull_Requests Root_Definitions_Permissions_Event_Properties_Pull_Requests `yaml:"pull-requests,omitempty"`
+	Repository_Projects Root_Definitions_Permissions_Event_Properties_Repository_Projects `yaml:"repository-projects,omitempty"`
+	Security_Events Root_Definitions_Permissions_Event_Properties_Security_Events `yaml:"security-events,omitempty"`
+	Statuses Root_Definitions_Permissions_Event_Properties_Statuses `yaml:"statuses,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Permissions_Event) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Permissions_Event_Properties_Actions 
+type Root_Definitions_Permissions_Event_Properties_Actions struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Permissions_Event_Properties_Actions) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Permissions_Event_Properties_Checks 
+type Root_Definitions_Permissions_Event_Properties_Checks struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Permissions_Event_Properties_Checks) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Permissions_Event_Properties_Contents 
+type Root_Definitions_Permissions_Event_Properties_Contents struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Permissions_Event_Properties_Contents) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Permissions_Event_Properties_Deployments 
+type Root_Definitions_Permissions_Event_Properties_Deployments struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Permissions_Event_Properties_Deployments) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Permissions_Event_Properties_Issues 
+type Root_Definitions_Permissions_Event_Properties_Issues struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Permissions_Event_Properties_Issues) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Permissions_Event_Properties_Packages 
+type Root_Definitions_Permissions_Event_Properties_Packages struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Permissions_Event_Properties_Packages) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Permissions_Event_Properties_Pull_Requests 
+type Root_Definitions_Permissions_Event_Properties_Pull_Requests struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Permissions_Event_Properties_Pull_Requests) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Permissions_Event_Properties_Repository_Projects 
+type Root_Definitions_Permissions_Event_Properties_Repository_Projects struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Permissions_Event_Properties_Repository_Projects) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Permissions_Event_Properties_Security_Events 
+type Root_Definitions_Permissions_Event_Properties_Security_Events struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Permissions_Event_Properties_Security_Events) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Permissions_Event_Properties_Statuses 
+type Root_Definitions_Permissions_Event_Properties_Statuses struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Permissions_Event_Properties_Statuses) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Permissions_Level 
+type Root_Definitions_Permissions_Level struct {
+	Value string `yaml:"Root_Definitions_Permissions_Level,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Permissions_Level) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Ref 
+type Root_Definitions_Ref struct {
+	Branches Root_Definitions_Ref_Properties_Branches `yaml:"branches,omitempty"`
+	Branches_Ignore Root_Definitions_Ref_Properties_Branches_Ignore `yaml:"branches-ignore,omitempty"`
+	Paths Root_Definitions_Ref_Properties_Paths `yaml:"paths,omitempty"`
+	Paths_Ignore Root_Definitions_Ref_Properties_Paths_Ignore `yaml:"paths-ignore,omitempty"`
+	Tags Root_Definitions_Ref_Properties_Tags `yaml:"tags,omitempty"`
+	Tags_Ignore Root_Definitions_Ref_Properties_Tags_Ignore `yaml:"tags-ignore,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Ref) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Ref_Properties_Branches 
+type Root_Definitions_Ref_Properties_Branches struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Ref_Properties_Branches) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Ref_Properties_Branches_Ignore 
+type Root_Definitions_Ref_Properties_Branches_Ignore struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Ref_Properties_Branches_Ignore) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Ref_Properties_Paths 
+type Root_Definitions_Ref_Properties_Paths struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Ref_Properties_Paths) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Ref_Properties_Paths_Ignore 
+type Root_Definitions_Ref_Properties_Paths_Ignore struct {
+
+  // When using the push and pull_request events, you can configure a workflow to run when at least one file does not match paths-ignore or at least one modified file matches the configured paths. Path filters are not evaluated for pushes to tags.
+  // The paths-ignore and paths keywords accept glob patterns that use the * and ** wildcard characters to match more than one path name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
+  // You can exclude paths using two types of filters. You cannot use both of these filters for the same event in a workflow.
+  // - paths-ignore - Use the paths-ignore filter when you only need to exclude path names.
+  // - paths - Use the paths filter when you need to filter paths for positive matches and exclude paths.
+	Ref Root_Definitions_Path `yaml:"Path,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Ref_Properties_Paths_Ignore) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Ref_Properties_Tags 
+type Root_Definitions_Ref_Properties_Tags struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Ref_Properties_Tags) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Ref_Properties_Tags_Ignore 
+type Root_Definitions_Ref_Properties_Tags_Ignore struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Ref_Properties_Tags_Ignore) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Shell You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
+type Root_Definitions_Shell struct {
+
+  // You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
+	Value string `yaml:"Root_Definitions_Shell,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Shell) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Types Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
+// You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
+type Root_Definitions_Types struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Types) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Definitions_Working_Directory Using the working-directory keyword, you can specify the working directory of where to run the command.
+type Root_Definitions_Working_Directory struct {
+
+  // Using the working-directory keyword, you can specify the working directory of where to run the command.
+	Value string `yaml:"Root_Definitions_Working_Directory,omitempty"`
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Working_Directory) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Properties_Concurrency Concurrency ensures that only a single job or workflow using the same concurrency group will run at a time. A concurrency group can be any string or expression. The expression can use any context except for the secrets context. 
 // You can also specify concurrency at the workflow level. 
 // When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled. To also cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
-type Root_Concurrency struct {
+type Root_Properties_Concurrency struct {
+	Raw *yaml.Node
 }
 
-// Root_Jobs A workflow run is made up of one or more jobs. Jobs run in parallel by default. To run jobs sequentially, you can define dependencies on other jobs using the jobs.<job_id>.needs keyword.
+func (node *Root_Properties_Concurrency) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Properties_Defaults A map of default settings that will apply to all jobs in the workflow.
+type Root_Properties_Defaults struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Properties_Defaults) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Properties_Env A map of environment variables that are available to all jobs and steps in the workflow.
+type Root_Properties_Env struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Properties_Env) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Properties_Jobs A workflow run is made up of one or more jobs. Jobs run in parallel by default. To run jobs sequentially, you can define dependencies on other jobs using the jobs.<job_id>.needs keyword.
 // Each job runs in a fresh instance of the virtual environment specified by runs-on.
 // You can run an unlimited number of jobs as long as you are within the workflow usage limits. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#usage-limits.
-type Root_Jobs struct {
+type Root_Properties_Jobs struct {
+	Raw *yaml.Node
 }
 
-// Root_Name The name of your workflow. GitHub displays the names of your workflows on your repository's actions page. If you omit this field, GitHub sets the name to the workflow's filename.
-type Root_Name struct {
+func (node *Root_Properties_Jobs) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(node)
+}
+
+
+// Root_Properties_Name The name of your workflow. GitHub displays the names of your workflows on your repository's actions page. If you omit this field, GitHub sets the name to the workflow's filename.
+type Root_Properties_Name struct {
 
   // The name of your workflow. GitHub displays the names of your workflows on your repository's actions page. If you omit this field, GitHub sets the name to the workflow's filename.
-  Root_Name_Value Root_Name_ValueRaw `yaml:"Root_Name_Value,omitempty"`
-}
-
-// Root_On The name of the GitHub event that triggers the workflow. You can provide a single event string, array of events, array of event types, or an event configuration map that schedules a workflow or restricts the execution of a workflow to specific files, tags, or branch changes. For a list of available events, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/events-that-trigger-workflows.
-type Root_On struct {
-}
-
-type Definitions_Architecture_ValueRaw struct {
+	Value string `yaml:"Root_Properties_Name,omitempty"`
 	Raw *yaml.Node
-	Value string
 }
 
-
-func (node *Definitions_Architecture_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
+func (node *Root_Properties_Name) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	return value.Decode(&node.Value)
+	return value.Decode(node)
 }
 
 
-type Definitions_Concurrency_CancelInProgressRaw struct {
+// Root_Properties_On The name of the GitHub event that triggers the workflow. You can provide a single event string, array of events, array of event types, or an event configuration map that schedules a workflow or restricts the execution of a workflow to specific files, tags, or branch changes. For a list of available events, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/events-that-trigger-workflows.
+type Root_Properties_On struct {
 	Raw *yaml.Node
-	Value Definitions_Concurrency_CancelInProgress
 }
 
-
-func (node *Definitions_Concurrency_CancelInProgressRaw) UnmarshalYAML(value *yaml.Node) error {
+func (node *Root_Properties_On) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	return value.Decode(&node.Value)
+	return value.Decode(node)
 }
 
 
-type Definitions_Concurrency_GroupRaw struct {
+// Root_Properties_Permissions 
+type Root_Properties_Permissions struct {
 	Raw *yaml.Node
-	Value Definitions_Concurrency_Group
 }
 
-
-func (node *Definitions_Concurrency_GroupRaw) UnmarshalYAML(value *yaml.Node) error {
+func (node *Root_Properties_Permissions) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Concurrency_CancelInProgress_ValueRaw struct {
-	Raw *yaml.Node
-	Value bool
-}
-
-
-func (node *Definitions_Concurrency_CancelInProgress_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Concurrency_Group_ValueRaw struct {
-	Raw *yaml.Node
-	Value string
-}
-
-
-func (node *Definitions_Concurrency_Group_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Container_CredentialsRaw struct {
-	Raw *yaml.Node
-	Value Definitions_Container_Credentials
-}
-
-
-func (node *Definitions_Container_CredentialsRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Container_EnvRaw struct {
-	Raw *yaml.Node
-	Value *Definitions_Env
-}
-
-
-func (node *Definitions_Container_EnvRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Container_ImageRaw struct {
-	Raw *yaml.Node
-	Value Definitions_Container_Image
-}
-
-
-func (node *Definitions_Container_ImageRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Container_OptionsRaw struct {
-	Raw *yaml.Node
-	Value Definitions_Container_Options
-}
-
-
-func (node *Definitions_Container_OptionsRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Container_PortsRaw struct {
-	Raw *yaml.Node
-	Value Definitions_Container_Ports
-}
-
-
-func (node *Definitions_Container_PortsRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Container_VolumesRaw struct {
-	Raw *yaml.Node
-	Value Definitions_Container_Volumes
-}
-
-
-func (node *Definitions_Container_VolumesRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Container_Credentials_PasswordRaw struct {
-	Raw *yaml.Node
-	Value Definitions_Container_Credentials_Password
-}
-
-
-func (node *Definitions_Container_Credentials_PasswordRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Container_Credentials_UsernameRaw struct {
-	Raw *yaml.Node
-	Value Definitions_Container_Credentials_Username
-}
-
-
-func (node *Definitions_Container_Credentials_UsernameRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Container_Credentials_Password_ValueRaw struct {
-	Raw *yaml.Node
-	Value string
-}
-
-
-func (node *Definitions_Container_Credentials_Password_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Container_Credentials_Username_ValueRaw struct {
-	Raw *yaml.Node
-	Value string
-}
-
-
-func (node *Definitions_Container_Credentials_Username_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Container_Image_ValueRaw struct {
-	Raw *yaml.Node
-	Value string
-}
-
-
-func (node *Definitions_Container_Image_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Container_Options_ValueRaw struct {
-	Raw *yaml.Node
-	Value string
-}
-
-
-func (node *Definitions_Container_Options_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Container_PortsRaw struct {
-	Raw *yaml.Node
-	Value []Definitions_Container_Ports
-}
-
-
-func (node *Definitions_Container_PortsRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Container_VolumesRaw struct {
-	Raw *yaml.Node
-	Value []Definitions_Container_Volumes
-}
-
-
-func (node *Definitions_Container_VolumesRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Defaults_RunRaw struct {
-	Raw *yaml.Node
-	Value Definitions_Defaults_Run
-}
-
-
-func (node *Definitions_Defaults_RunRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Defaults_Run_ShellRaw struct {
-	Raw *yaml.Node
-	Value *Definitions_Shell
-}
-
-
-func (node *Definitions_Defaults_Run_ShellRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Defaults_Run_WorkingDirectoryRaw struct {
-	Raw *yaml.Node
-	Value *Definitions_WorkingDirectory
-}
-
-
-func (node *Definitions_Defaults_Run_WorkingDirectoryRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Environment_NameRaw struct {
-	Raw *yaml.Node
-	Value Definitions_Environment_Name
-}
-
-
-func (node *Definitions_Environment_NameRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Environment_UrlRaw struct {
-	Raw *yaml.Node
-	Value Definitions_Environment_Url
-}
-
-
-func (node *Definitions_Environment_UrlRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Environment_Name_ValueRaw struct {
-	Raw *yaml.Node
-	Value string
-}
-
-
-func (node *Definitions_Environment_Name_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Environment_Url_ValueRaw struct {
-	Raw *yaml.Node
-	Value string
-}
-
-
-func (node *Definitions_Environment_Url_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Event_ValueRaw struct {
-	Raw *yaml.Node
-	Value string
-}
-
-
-func (node *Definitions_Event_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_ExpressionSyntax_ValueRaw struct {
-	Raw *yaml.Node
-	Value string
-}
-
-
-func (node *Definitions_ExpressionSyntax_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_GlobsRaw struct {
-	Raw *yaml.Node
-	Value []Definitions_Globs
-}
-
-
-func (node *Definitions_GlobsRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Machine_ValueRaw struct {
-	Raw *yaml.Node
-	Value string
-}
-
-
-func (node *Definitions_Machine_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Name_ValueRaw struct {
-	Raw *yaml.Node
-	Value string
-}
-
-
-func (node *Definitions_Name_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_PermissionsEvent_ActionsRaw struct {
-	Raw *yaml.Node
-	Value *PermissionsLevel
-}
-
-
-func (node *Definitions_PermissionsEvent_ActionsRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_PermissionsEvent_ChecksRaw struct {
-	Raw *yaml.Node
-	Value *PermissionsLevel
-}
-
-
-func (node *Definitions_PermissionsEvent_ChecksRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_PermissionsEvent_ContentsRaw struct {
-	Raw *yaml.Node
-	Value *PermissionsLevel
-}
-
-
-func (node *Definitions_PermissionsEvent_ContentsRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_PermissionsEvent_DeploymentsRaw struct {
-	Raw *yaml.Node
-	Value *PermissionsLevel
-}
-
-
-func (node *Definitions_PermissionsEvent_DeploymentsRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_PermissionsEvent_IssuesRaw struct {
-	Raw *yaml.Node
-	Value *PermissionsLevel
-}
-
-
-func (node *Definitions_PermissionsEvent_IssuesRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_PermissionsEvent_PackagesRaw struct {
-	Raw *yaml.Node
-	Value *PermissionsLevel
-}
-
-
-func (node *Definitions_PermissionsEvent_PackagesRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_PermissionsEvent_PullRequestsRaw struct {
-	Raw *yaml.Node
-	Value PermissionsLevel
-}
-
-
-func (node *Definitions_PermissionsEvent_PullRequestsRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_PermissionsEvent_RepositoryProjectsRaw struct {
-	Raw *yaml.Node
-	Value *PermissionsLevel
-}
-
-
-func (node *Definitions_PermissionsEvent_RepositoryProjectsRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_PermissionsEvent_SecurityEventsRaw struct {
-	Raw *yaml.Node
-	Value *PermissionsLevel
-}
-
-
-func (node *Definitions_PermissionsEvent_SecurityEventsRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_PermissionsEvent_StatusesRaw struct {
-	Raw *yaml.Node
-	Value *PermissionsLevel
-}
-
-
-func (node *Definitions_PermissionsEvent_StatusesRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_PermissionsLevel_ValueRaw struct {
-	Raw *yaml.Node
-	Value string
-}
-
-
-func (node *Definitions_PermissionsLevel_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Ref_BranchesRaw struct {
-	Raw *yaml.Node
-	Value *Definitions_Branch
-}
-
-
-func (node *Definitions_Ref_BranchesRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Ref_BranchesIgnoreRaw struct {
-	Raw *yaml.Node
-	Value *Definitions_Branch
-}
-
-
-func (node *Definitions_Ref_BranchesIgnoreRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Ref_PathsRaw struct {
-	Raw *yaml.Node
-	Value *Definitions_Path
-}
-
-
-func (node *Definitions_Ref_PathsRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Ref_PathsIgnoreRaw struct {
-	Raw *yaml.Node
-	Value *Definitions_Path
-}
-
-
-func (node *Definitions_Ref_PathsIgnoreRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Ref_TagsRaw struct {
-	Raw *yaml.Node
-	Value *Definitions_Branch
-}
-
-
-func (node *Definitions_Ref_TagsRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Ref_TagsIgnoreRaw struct {
-	Raw *yaml.Node
-	Value *Definitions_Branch
-}
-
-
-func (node *Definitions_Ref_TagsIgnoreRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_Shell_ValueRaw struct {
-	Raw *yaml.Node
-	Value string
-}
-
-
-func (node *Definitions_Shell_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Definitions_WorkingDirectory_ValueRaw struct {
-	Raw *yaml.Node
-	Value string
-}
-
-
-func (node *Definitions_WorkingDirectory_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type GlobsRaw struct {
-	Raw *yaml.Node
-	Value []Globs
-}
-
-
-func (node *GlobsRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type PermissionsLevel_ValueRaw struct {
-	Raw *yaml.Node
-	Value string
-}
-
-
-func (node *PermissionsLevel_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Root_ConcurrencyRaw struct {
-	Raw *yaml.Node
-	Value Root_Concurrency
-}
-
-
-func (node *Root_ConcurrencyRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Root_DefaultsRaw struct {
-	Raw *yaml.Node
-	Value *Definitions_Defaults
-}
-
-
-func (node *Root_DefaultsRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Root_EnvRaw struct {
-	Raw *yaml.Node
-	Value *Definitions_Env
-}
-
-
-func (node *Root_EnvRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Root_JobsRaw struct {
-	Raw *yaml.Node
-	Value Root_Jobs
-}
-
-
-func (node *Root_JobsRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Root_NameRaw struct {
-	Raw *yaml.Node
-	Value Root_Name
-}
-
-
-func (node *Root_NameRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Root_OnRaw struct {
-	Raw *yaml.Node
-	Value Root_On
-}
-
-
-func (node *Root_OnRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Root_PermissionsRaw struct {
-	Raw *yaml.Node
-	Value *Definitions_Permissions
-}
-
-
-func (node *Root_PermissionsRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-
-type Root_Name_ValueRaw struct {
-	Raw *yaml.Node
-	Value string
-}
-
-
-func (node *Root_Name_ValueRaw) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
+	return value.Decode(node)
 }
 

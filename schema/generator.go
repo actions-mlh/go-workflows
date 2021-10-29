@@ -37,8 +37,8 @@ type Struct struct {
 type Field struct {
 	// The golang name, e.g. "Address1"
 	Name string
-	// The JSON name, e.g. "address1"
-	JSONName string
+	// The YAML name, e.g. "address1"
+	YAMLName string
 	// The golang type of the field, e.g. a built-in type like "string" or the name of a struct generated
 	// from the JSON schema.
 	Type string
@@ -74,7 +74,7 @@ func (g *Generator) CreateTypes() (err error) {
 		if rootType != "*"+name {
 			a := Field{
 				Name:        name,
-				JSONName:    "",
+				YAMLName:    "",
 				Type:        rootType,
 				Required:    false,
 				Description: schema.Description,
@@ -87,13 +87,6 @@ func (g *Generator) CreateTypes() (err error) {
 
 // returns the type refered to by schema after resolving all dependencies
 func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
-	if len(schema.Definitions) > 0 {
-		err := g.processDefinitions(schema)
-		if (err != nil) {
-			return "", err
-		}
-	}
-	
 	if schema.Type == "" {
 		if schema.Items != nil {
 			schema.Type = "array"
@@ -115,8 +108,8 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 			return "", err
 		}
 		f := Field{
-			Name:        name + "_Value",
-			JSONName:    name + "_Value",
+			Name:        "Value",
+			YAMLName:    name,
 			Type:        typeName,
 			Required:    contains(schema.Required, "Value"),
 			Description: schema.Description,
@@ -126,20 +119,40 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 		}
 		strct.Fields[f.Name] = f
 	}
-	
-	// cache the object name in case any sub-schemas recursively reference it
-	schema.GeneratedType = "*" + name
-	for propKey, prop := range schema.Properties {
-		fieldName := name + "_" + getGolangName(propKey)
+	// definitions
+	for key, subSchema := range schema.Definitions {
+		fieldName := getGolangName(key)
 		// calculate sub-schema name here, may not actually be used depending on type of schema!
-		subSchemaName := g.getSchemaName(fieldName, prop)
-		fieldType, err := g.processSchema(subSchemaName, prop)
+		subSchemaName := g.getSchemaName(fieldName, subSchema)
+		fieldType, err := g.processSchema(name + "_Definitions_" + subSchemaName, subSchema)
 		if err != nil {
 			return "", err
 		}
 		f := Field{
 			Name:        fieldName,
-			JSONName:    propKey,
+			YAMLName:    key,
+			Type:        fieldType,
+			Required:    contains(schema.Required, key),
+			Description: subSchema.Description,
+		}
+		if f.Required {
+			strct.GenerateCode = true
+		}
+		strct.Fields[f.Name] = f
+	}
+	// cache the object name in case any sub-schemas recursively reference it
+	schema.GeneratedType = "*" + name
+	for propKey, prop := range schema.Properties {
+		fieldName := getGolangName(propKey)
+		// calculate sub-schema name here, may not actually be used depending on type of schema!
+		subSchemaName := g.getSchemaName(fieldName, prop)
+		fieldType, err := g.processSchema(name + "_Properties_" + subSchemaName, prop)
+		if err != nil {
+			return "", err
+		}
+		f := Field{
+			Name:        fieldName,
+			YAMLName:    propKey,
 			Type:        fieldType,
 			Required:    contains(schema.Required, propKey),
 			Description: prop.Description,
@@ -152,7 +165,7 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 	if schema.Items != nil {
 		// subType: fallback name in case this array contains inline object without a title
 		subName := g.getSchemaName(name, (*Schema)(schema.Items))
-		subTyp, err := g.processSchema(subName, (*Schema)(schema.Items))
+		subTyp, err := g.processSchema(name + "_Items_" + subName, (*Schema)(schema.Items))
 		if err != nil {
 			return "", err
 		}
@@ -162,7 +175,7 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 		}
 		f := Field{
 			Name:        subName,
-			JSONName:    subName,
+			YAMLName:    subName,
 			Type:        finalType,
 			Required:    contains(schema.Required, subName),
 			Description: schema.Description,
@@ -174,42 +187,37 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 	}
 
 	if schema.Reference != "" {
-		return g.processReference(schema)
+		schemaPath := g.resolver.GetPath(schema)
+		if schema.Reference == "" {
+			return "", errors.New("processReference empty reference: " + schemaPath)
+		}
+		refSchema, err := g.resolver.GetSchemaByReference(schema)
+		if err != nil {
+			return "", errors.New("processReference: reference \"" + schema.Reference + "\" not found at \"" + schemaPath + "\"")
+		}
+		if refSchema.GeneratedType == "" {
+			// reference is not resolved yet. Do that now.
+			refSchemaName := g.getSchemaName("", refSchema)
+			typeName, err := g.processSchema("Root_Definitions_" + refSchemaName, refSchema)
+			if err != nil {
+				return "", err
+			}
+			f := Field{
+				Name: "Ref",
+				YAMLName: refSchemaName, // change to something appropriate when you know what it is
+				Type: typeName,
+				Required: contains(schema.Required, refSchemaName),
+				Description: refSchema.Description,
+			}
+			if f.Required {
+				strct.GenerateCode = true
+			}
+			strct.Fields[f.Name] = f
+		}
 	}
+	
 	g.Structs[name] = strct
 	return name, nil
-}
-
-// process a block of definitions
-func (g *Generator) processDefinitions(schema *Schema) error {
-	for key, subSchema := range schema.Definitions {
-		if _, err := g.processSchema("Definitions_" + getGolangName(key), subSchema); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// process a reference string
-func (g *Generator) processReference(schema *Schema) (string, error) {
-	schemaPath := g.resolver.GetPath(schema)
-	if schema.Reference == "" {
-		return "", errors.New("processReference empty reference: " + schemaPath)
-	}
-	refSchema, err := g.resolver.GetSchemaByReference(schema)
-	if err != nil {
-		return "", errors.New("processReference: reference \"" + schema.Reference + "\" not found at \"" + schemaPath + "\"")
-	}
-	if refSchema.GeneratedType == "" {
-		// reference is not resolved yet. Do that now.
-		refSchemaName := g.getSchemaName("", refSchema)
-		typeName, err := g.processSchema(refSchemaName, refSchema)
-		if err != nil {
-			return "", err
-		}
-		return typeName, nil
-	}
-	return refSchema.GeneratedType, nil
 }
 
 // util --------------------------------
@@ -281,6 +289,9 @@ func getGolangName(s string) string {
 	for i, v := range splitOnAll(s, isNotAGoNameCharacter) {
 		if i == 0 && strings.IndexAny(v, "0123456789") == 0 {
 			// Go types are not allowed to start with a number, lets prefix with an underscore.
+			buf.WriteRune('_')
+		}
+		if i > 0 {
 			buf.WriteRune('_')
 		}
 		buf.WriteString(capitaliseFirstLetter(v))
