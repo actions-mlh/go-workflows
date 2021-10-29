@@ -19,6 +19,34 @@ type Generator struct {
 	anonCount int
 }
 
+// Struct defines the data required to generate a struct in Go.
+type Struct struct {
+	// The ID within the JSON schema, e.g. #/definitions/address
+	ID string
+	// The golang name, e.g. "Address"
+	Name string
+	// Description of the struct
+	Description string
+	Fields      map[string]Field
+
+	GenerateCode   bool
+	AdditionalType string
+}
+
+// Field defines the data required to generate a field in Go.
+type Field struct {
+	// The golang name, e.g. "Address1"
+	Name string
+	// The YAML name, e.g. "address1"
+	YAMLName string
+	// The golang type of the field, e.g. a built-in type like "string" or the name of a struct generated
+	// from the JSON schema.
+	Type string
+	// Required is set to true when the field is required.
+	Required    bool
+	Description string
+}
+
 // New creates an instance of a generator which will produce structs.
 func New(schemas ...*Schema) *Generator {
 	return &Generator{
@@ -46,7 +74,7 @@ func (g *Generator) CreateTypes() (err error) {
 		if rootType != "*"+name {
 			a := Field{
 				Name:        name,
-				JSONName:    "",
+				YAMLName:    "",
 				Type:        rootType,
 				Required:    false,
 				Description: schema.Description,
@@ -57,145 +85,74 @@ func (g *Generator) CreateTypes() (err error) {
 	return
 }
 
-// process a block of definitions
-func (g *Generator) processDefinitions(schema *Schema) error {
-	for key, subSchema := range schema.Definitions {
-		if _, err := g.processSchema("Definitions_" + getGolangName(key), subSchema); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// process a reference string
-func (g *Generator) processReference(schema *Schema) (string, error) {
-	schemaPath := g.resolver.GetPath(schema)
-	if schema.Reference == "" {
-		return "", errors.New("processReference empty reference: " + schemaPath)
-	}
-	refSchema, err := g.resolver.GetSchemaByReference(schema)
-	if err != nil {
-		return "", errors.New("processReference: reference \"" + schema.Reference + "\" not found at \"" + schemaPath + "\"")
-	}
-	if refSchema.GeneratedType == "" {
-		// reference is not resolved yet. Do that now.
-		refSchemaName := g.getSchemaName("", refSchema)
-		typeName, err := g.processSchema(refSchemaName, refSchema)
-		if err != nil {
-			return "", err
-		}
-		return typeName, nil
-	}
-	return refSchema.GeneratedType, nil
-}
-
 // returns the type refered to by schema after resolving all dependencies
-func (g *Generator) processSchema(schemaName string, schema *Schema) (typ string, err error) {
-	if len(schema.Definitions) > 0 {
-		err := g.processDefinitions(schema)
-		if (err != nil) {
-			return "", err
+func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
+	if schema.Type == "" {
+		if schema.Items != nil {
+			schema.Type = "array"
+		} else {
+			schema.Type = "object"
 		}
 	}
-	schema.FixMissingTypeValue()
-	// if we have multiple schema types, the golang type will be interface{}
-	typ = "interface{}"
-	types, isMultiType := schema.MultiType()
-	if len(types) > 0 {
-		for _, schemaType := range types {
-			name := schemaName
-			if isMultiType {
-				name = name + "_" + schemaType
-			}
-			switch schemaType {
-			case "object":
-				rv, err := g.processObject(name, schema)
-				if err != nil {
-					return "", err
-				}
-				if !isMultiType {
-					return rv, nil
-				}
-			case "array":
-				rv, err := g.processArray(name, schema)
-				if err != nil {
-					return "", err
-				}
-				if !isMultiType {
-					return rv, nil
-				}
-			default:
-				rv, err := getPrimitiveTypeName(schemaType, "", false)
-				if err != nil {
-					return "", err
-				}
-				if !isMultiType {
-					return rv, nil
-				}
-			}
-		}
-	} else {
-		if schema.Reference != "" {
-			return g.processReference(schema)
-		}
-	}
-	return
-}
-
-// name: name of this array, usually the js key
-// schema: items element
-func (g *Generator) processArray(name string, schema *Schema) (typeStr string, err error) {
-	if schema.Items != nil {
-		// subType: fallback name in case this array contains inline object without a title
-		subName := g.getSchemaName(name, schema.Items)
-		subTyp, err := g.processSchema(subName, schema.Items)
-		if err != nil {
-			return "", err
-		}
-		finalType, err := getPrimitiveTypeName("array", subTyp, true)
-		if err != nil {
-			return "", err
-		}
-		// only alias root arrays
-		if schema.Parent == nil {
-			array := Field{
-				Name:        name,
-				JSONName:    "",
-				Type:        finalType,
-				Required:    contains(schema.Required, name),
-				Description: schema.Description,
-			}
-			g.Aliases[array.Name] = array
-		}
-		return finalType, nil
-	}
-	return "[]interface{}", nil
-}
-
-// name: name of the struct (calculated by caller)
-// schema: detail incl properties & child objects
-// returns: generated type
-func (g *Generator) processObject(name string, schema *Schema) (typ string, err error) {
+	
 	strct := Struct{
 		ID:          schema.ID(),
 		Name:        name,
 		Description: schema.Description,
 		Fields:      make(map[string]Field, len(schema.Properties)),
 	}
-	// cache the object name in case any sub-schemas recursively reference it
-	schema.GeneratedType = "*" + name
-	// regular properties
-	for propKey, prop := range schema.Properties {
-		fieldName := name + "_" + getGolangName(propKey)
+
+	if schema.Type != "array" && schema.Type != "object" {
+		typeName, err := getPrimitiveTypeName(schema.Type, "", false)
+		if err != nil {
+			return "", err
+		}
+		f := Field{
+			Name:        "Value",
+			YAMLName:    name,
+			Type:        typeName,
+			Required:    contains(schema.Required, "Value"),
+			Description: schema.Description,
+		}
+		if f.Required {
+			strct.GenerateCode = true
+		}
+		strct.Fields[f.Name] = f
+	}
+	// definitions
+	for key, subSchema := range schema.Definitions {
+		fieldName := getGolangName(key)
 		// calculate sub-schema name here, may not actually be used depending on type of schema!
-		subSchemaName := g.getSchemaName(fieldName, prop)
-		fieldType, err := g.processSchema(subSchemaName, prop)
+		subSchemaName := g.getSchemaName(fieldName, subSchema)
+		fieldType, err := g.processSchema(name + "_Definitions_" + subSchemaName, subSchema)
 		if err != nil {
 			return "", err
 		}
 		f := Field{
 			Name:        fieldName,
-			JSONName:    propKey,
+			YAMLName:    key,
+			Type:        fieldType,
+			Required:    contains(schema.Required, key),
+			Description: subSchema.Description,
+		}
+		if f.Required {
+			strct.GenerateCode = true
+		}
+		strct.Fields[f.Name] = f
+	}
+	// cache the object name in case any sub-schemas recursively reference it
+	schema.GeneratedType = "*" + name
+	for propKey, prop := range schema.Properties {
+		fieldName := getGolangName(propKey)
+		// calculate sub-schema name here, may not actually be used depending on type of schema!
+		subSchemaName := g.getSchemaName(fieldName, prop)
+		fieldType, err := g.processSchema(name + "_Properties_" + subSchemaName, prop)
+		if err != nil {
+			return "", err
+		}
+		f := Field{
+			Name:        fieldName,
+			YAMLName:    propKey,
 			Type:        fieldType,
 			Required:    contains(schema.Required, propKey),
 			Description: prop.Description,
@@ -205,66 +162,65 @@ func (g *Generator) processObject(name string, schema *Schema) (typ string, err 
 		}
 		strct.Fields[f.Name] = f
 	}
-
-	// additionalProperties with typed sub-schema
-	if schema.AdditionalProperties != nil && schema.AdditionalProperties.AdditionalPropertiesBool == nil {
-		ap := (*Schema)(schema.AdditionalProperties)
-		apName := g.getSchemaName("", ap)
-		subTyp, err := g.processSchema(apName, ap)
+	if schema.Items != nil {
+		// subType: fallback name in case this array contains inline object without a title
+		subName := g.getSchemaName(name, (*Schema)(schema.Items))
+		subTyp, err := g.processSchema(name + "_Items_" + subName, (*Schema)(schema.Items))
 		if err != nil {
 			return "", err
 		}
-		mapTyp := "map[string]" + subTyp
-		// If this object is inline property for another object, and only contains additional properties, we can
-		// collapse the structure down to a map.
-		//
-		// If this object is a definition and only contains additional properties, we can't do that or we end up with
-		// no struct
-		isDefinitionObject := strings.HasPrefix(schema.PathElement, "definitions")
-		if len(schema.Properties) == 0 && !isDefinitionObject {
-			// since there are no regular properties, we don't need to emit a struct for this object - return the
-			// additionalProperties map type.
-			return mapTyp, nil
+		finalType, err := getPrimitiveTypeName("array", subTyp, true)
+		if err != nil {
+			return "", err
 		}
-		// this struct will have both regular and additional properties
 		f := Field{
-			Name:        "AdditionalProperties",
-			JSONName:    "-",
-			Type:        mapTyp,
-			Required:    false,
-			Description: "",
+			Name:        subName,
+			YAMLName:    subName,
+			Type:        finalType,
+			Required:    contains(schema.Required, subName),
+			Description: schema.Description,
+		}
+		if f.Required {
+			strct.GenerateCode = true
 		}
 		strct.Fields[f.Name] = f
-		// setting this will cause marshal code to be emitted in Output()
-		strct.GenerateCode = true
-		strct.AdditionalType = subTyp
 	}
-	// additionalProperties as either true (everything) or false (nothing)
-	if schema.AdditionalProperties != nil && schema.AdditionalProperties.AdditionalPropertiesBool != nil {
-		if *schema.AdditionalProperties.AdditionalPropertiesBool == true {
-			// everything is valid additional
-			subTyp := "map[string]interface{}"
+
+	if schema.Reference != "" {
+		schemaPath := g.resolver.GetPath(schema)
+		if schema.Reference == "" {
+			return "", errors.New("processReference empty reference: " + schemaPath)
+		}
+		refSchema, err := g.resolver.GetSchemaByReference(schema)
+		if err != nil {
+			return "", errors.New("processReference: reference \"" + schema.Reference + "\" not found at \"" + schemaPath + "\"")
+		}
+		if refSchema.GeneratedType == "" {
+			// reference is not resolved yet. Do that now.
+			refSchemaName := g.getSchemaName("", refSchema)
+			typeName, err := g.processSchema("Root_Definitions_" + refSchemaName, refSchema)
+			if err != nil {
+				return "", err
+			}
 			f := Field{
-				Name:        "AdditionalProperties",
-				JSONName:    "-",
-				Type:        subTyp,
-				Required:    false,
-				Description: "",
+				Name: "Ref",
+				YAMLName: refSchemaName, // change to something appropriate when you know what it is
+				Type: typeName,
+				Required: contains(schema.Required, refSchemaName),
+				Description: refSchema.Description,
+			}
+			if f.Required {
+				strct.GenerateCode = true
 			}
 			strct.Fields[f.Name] = f
-			// setting this will cause marshal code to be emitted in Output()
-			strct.GenerateCode = true
-			strct.AdditionalType = "interface{}"
-		} else {
-			// nothing
-			strct.GenerateCode = true
-			strct.AdditionalType = "false"
 		}
 	}
-	g.Structs[strct.Name] = strct
-	// objects are always a pointer
-	return getPrimitiveTypeName("object", name, true)
+	
+	g.Structs[name] = strct
+	return name, nil
 }
+
+// util --------------------------------
 
 func contains(s []string, e string) bool {
 	for _, a := range s {
@@ -315,7 +271,7 @@ func (g *Generator) getSchemaName(keyName string, schema *Schema) string {
 		return getGolangName(keyName)
 	}
 	if schema.Parent == nil {
-		return "Properties"
+		return "Root"
 	}
 	if schema.JSONKey != "" {
 		return getGolangName(schema.JSONKey)
@@ -333,6 +289,9 @@ func getGolangName(s string) string {
 	for i, v := range splitOnAll(s, isNotAGoNameCharacter) {
 		if i == 0 && strings.IndexAny(v, "0123456789") == 0 {
 			// Go types are not allowed to start with a number, lets prefix with an underscore.
+			buf.WriteRune('_')
+		}
+		if i > 0 {
 			buf.WriteRune('_')
 		}
 		buf.WriteString(capitaliseFirstLetter(v))
@@ -371,32 +330,4 @@ func capitaliseFirstLetter(s string) string {
 	prefix := s[0:1]
 	suffix := s[1:]
 	return strings.ToUpper(prefix) + suffix
-}
-
-// Struct defines the data required to generate a struct in Go.
-type Struct struct {
-	// The ID within the JSON schema, e.g. #/definitions/address
-	ID string
-	// The golang name, e.g. "Address"
-	Name string
-	// Description of the struct
-	Description string
-	Fields      map[string]Field
-
-	GenerateCode   bool
-	AdditionalType string
-}
-
-// Field defines the data required to generate a field in Go.
-type Field struct {
-	// The golang name, e.g. "Address1"
-	Name string
-	// The JSON name, e.g. "address1"
-	JSONName string
-	// The golang type of the field, e.g. a built-in type like "string" or the name of a struct generated
-	// from the JSON schema.
-	Type string
-	// Required is set to true when the field is required.
-	Required    bool
-	Description string
 }
