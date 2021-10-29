@@ -1,15 +1,20 @@
-name: "Hank"
-
+name: Hank
 
 on: 
-  checkrun
-
-on:
-  checkrun:
-    type: [com, rereq]
-
-
-
-
+  check_run:
+    types: [requested]
+  check_suite:
+    
+  # check_suite:
+  # check_run:
+  #   types: [rerequested, completed]
 
 
+defaults:
+  run: 
+    shell: bash
+    working-directory: scripts
+
+concurrency: 
+  cancel-in-progress: true
+  group: staging_environment

@@ -1,4 +1,4 @@
-package main
+package test
 
 import (
 	"flag"
@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"c2c-actions-mlh-workflow-parser/parse"
+	
 )
 
 //go:generate make -C schema/
@@ -41,7 +41,7 @@ func process(name string, data []byte, err error) bool {
 		error = true
 	}
 
-	_, err = parser.Parse(data)
+	// _, err = parser.Parse(data)
 	if err != nil {
 		fmt.Printf("error parsing %v:\n    %v\n", name, err)
 		error = true

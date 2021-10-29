@@ -14,7 +14,12 @@ import (
 
 func LintWorkflow(sink *ProblemSink, target *gen_mock.WorkflowNode) error {
 	workflow := target
-	fmt.Println(*workflow.Value.On.OneOf.ScalarNode)
+	// fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode)
+	// fmt.Printf("%+v\n", *&workflow.Value.Concurrency.OneOf.MappingNode.CancelInProgress.Value)
+	fmt.Println("------------------------------")
+	fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode)
+
+	// fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode.CheckRun.OneOf.MappingNode.Types.Value)
 
 
 
@@ -28,7 +33,22 @@ func LintWorkflow(sink *ProblemSink, target *gen_mock.WorkflowNode) error {
 
 
 
-	
+
+
+
+
+
+
+
+
+
+
+	// fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode.CheckRun.OneOf.MappingNode[0].Types.Value)
+	// fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode.CheckSuite)
+	// for _, node := range workflow.Value.On.OneOf.MappingNode {
+		// fmt.Printf("%+v\n", *node)
+		// fmt.Printf("%+v\n", *node.CheckRun.OneOf.MappingNode[0].Types.Value)
+	// }
 
 	// if err := lintWorkflowName(sink, workflow.Name); err != nil {
 	// 	return err
@@ -62,9 +82,9 @@ func LintWorkflow(sink *ProblemSink, target *gen_mock.WorkflowNode) error {
 // }
 
 // if len(value.Steps) > 0 && value.Uses != "" {
-	// 	sink.RecordProblem(target.Raw, `can't use "steps" with "uses"`)
-	// }
+// 	sink.RecordProblem(target.Raw, `can't use "steps" with "uses"`)
+// }
 
 // if err := lintWorkflowOn(sink, workflow.On); err != nil {
-	// 	return err
-	// }
+// 	return err
+// }
