@@ -99,7 +99,7 @@ func (node *%s) UnmarshalYAML(value *yaml.Node) error {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
 `, s.Name)
-	for _, field := range s.Fields {
+	for _, field := range getOrderedFields(s.Fields) {
 		fmt.Fprintf(w, `
 			case "%s":
 				i++
