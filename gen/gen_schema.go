@@ -81,6 +81,234 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
 
+			case "types":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Types = new(Root_Definitions_Types)
+				err := nodeValue.Decode(node.Types)
+				if err != nil {
+					return err
+				}
+
+			case "eventobject":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.EventObject = new(Root_Definitions_EventObject)
+				err := nodeValue.Decode(node.EventObject)
+				if err != nil {
+					return err
+				}
+
+			case "architecture":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Architecture = new(Root_Definitions_Architecture)
+				err := nodeValue.Decode(node.Architecture)
+				if err != nil {
+					return err
+				}
+
+			case "environment":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Environment = new(Root_Definitions_Environment)
+				err := nodeValue.Decode(node.Environment)
+				if err != nil {
+					return err
+				}
+
+			case "permissions_level":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Permissions_Level = new(Root_Definitions_Permissions_Level)
+				err := nodeValue.Decode(node.Permissions_Level)
+				if err != nil {
+					return err
+				}
+
+			case "expressionsyntax":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.ExpressionSyntax = new(Root_Definitions_ExpressionSyntax)
+				err := nodeValue.Decode(node.ExpressionSyntax)
+				if err != nil {
+					return err
+				}
+
+			case "container":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Container = new(Root_Definitions_Container)
+				err := nodeValue.Decode(node.Container)
+				if err != nil {
+					return err
+				}
+
+			case "event":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Event = new(Root_Definitions_Event)
+				err := nodeValue.Decode(node.Event)
+				if err != nil {
+					return err
+				}
+
+			case "machine":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Machine = new(Root_Definitions_Machine)
+				err := nodeValue.Decode(node.Machine)
+				if err != nil {
+					return err
+				}
+
+			case "branch":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Branch = new(Root_Definitions_Branch)
+				err := nodeValue.Decode(node.Branch)
+				if err != nil {
+					return err
+				}
+
+			case "env":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Env = new(Root_Properties_Env)
+				err := nodeValue.Decode(node.Env)
+				if err != nil {
+					return err
+				}
+
+			case "jobs":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Jobs = new(Root_Properties_Jobs)
+				err := nodeValue.Decode(node.Jobs)
+				if err != nil {
+					return err
+				}
+
+			case "on":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.On = new(Root_Properties_On)
+				err := nodeValue.Decode(node.On)
+				if err != nil {
+					return err
+				}
+
+			case "concurrency":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Concurrency = new(Root_Properties_Concurrency)
+				err := nodeValue.Decode(node.Concurrency)
+				if err != nil {
+					return err
+				}
+
+			case "configuration":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Configuration = new(Root_Definitions_Configuration)
+				err := nodeValue.Decode(node.Configuration)
+				if err != nil {
+					return err
+				}
+
+			case "name":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Name = new(Root_Properties_Name)
+				err := nodeValue.Decode(node.Name)
+				if err != nil {
+					return err
+				}
+
+			case "permissions_event":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Permissions_Event = new(Root_Definitions_Permissions_Event)
+				err := nodeValue.Decode(node.Permissions_Event)
+				if err != nil {
+					return err
+				}
+
+			case "shell":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Shell = new(Root_Definitions_Shell)
+				err := nodeValue.Decode(node.Shell)
+				if err != nil {
+					return err
+				}
+
+			case "globs":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Globs = new(Root_Definitions_Globs)
+				err := nodeValue.Decode(node.Globs)
+				if err != nil {
+					return err
+				}
+
 			case "working_directory":
 				i++
 				if i >= len(value.Content) {
@@ -105,90 +333,6 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 					return err
 				}
 
-			case "permissions_event":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Permissions_Event = new(Root_Definitions_Permissions_Event)
-				err := nodeValue.Decode(node.Permissions_Event)
-				if err != nil {
-					return err
-				}
-
-			case "expressionsyntax":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.ExpressionSyntax = new(Root_Definitions_ExpressionSyntax)
-				err := nodeValue.Decode(node.ExpressionSyntax)
-				if err != nil {
-					return err
-				}
-
-			case "env":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Env = new(Root_Properties_Env)
-				err := nodeValue.Decode(node.Env)
-				if err != nil {
-					return err
-				}
-
-			case "environment":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Environment = new(Root_Definitions_Environment)
-				err := nodeValue.Decode(node.Environment)
-				if err != nil {
-					return err
-				}
-
-			case "eventobject":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.EventObject = new(Root_Definitions_EventObject)
-				err := nodeValue.Decode(node.EventObject)
-				if err != nil {
-					return err
-				}
-
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Ref)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
-
-			case "on":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.On = new(Root_Properties_On)
-				err := nodeValue.Decode(node.On)
-				if err != nil {
-					return err
-				}
-
 			case "path":
 				i++
 				if i >= len(value.Content) {
@@ -197,138 +341,6 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				nodeValue := value.Content[i]
 				node.Path = new(Root_Definitions_Path)
 				err := nodeValue.Decode(node.Path)
-				if err != nil {
-					return err
-				}
-
-			case "machine":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Machine = new(Root_Definitions_Machine)
-				err := nodeValue.Decode(node.Machine)
-				if err != nil {
-					return err
-				}
-
-			case "architecture":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Architecture = new(Root_Definitions_Architecture)
-				err := nodeValue.Decode(node.Architecture)
-				if err != nil {
-					return err
-				}
-
-			case "jobs":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Jobs = new(Root_Properties_Jobs)
-				err := nodeValue.Decode(node.Jobs)
-				if err != nil {
-					return err
-				}
-
-			case "configuration":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Configuration = new(Root_Definitions_Configuration)
-				err := nodeValue.Decode(node.Configuration)
-				if err != nil {
-					return err
-				}
-
-			case "permissions_level":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Permissions_Level = new(Root_Definitions_Permissions_Level)
-				err := nodeValue.Decode(node.Permissions_Level)
-				if err != nil {
-					return err
-				}
-
-			case "concurrency":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Concurrency = new(Root_Properties_Concurrency)
-				err := nodeValue.Decode(node.Concurrency)
-				if err != nil {
-					return err
-				}
-
-			case "globs":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Globs = new(Root_Definitions_Globs)
-				err := nodeValue.Decode(node.Globs)
-				if err != nil {
-					return err
-				}
-
-			case "event":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Event = new(Root_Definitions_Event)
-				err := nodeValue.Decode(node.Event)
-				if err != nil {
-					return err
-				}
-
-			case "name":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Name = new(Root_Properties_Name)
-				err := nodeValue.Decode(node.Name)
-				if err != nil {
-					return err
-				}
-
-			case "types":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Types = new(Root_Definitions_Types)
-				err := nodeValue.Decode(node.Types)
-				if err != nil {
-					return err
-				}
-
-			case "branch":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Branch = new(Root_Definitions_Branch)
-				err := nodeValue.Decode(node.Branch)
 				if err != nil {
 					return err
 				}
@@ -345,26 +357,14 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 					return err
 				}
 
-			case "shell":
+			case "ref":
 				i++
 				if i >= len(value.Content) {
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Shell = new(Root_Definitions_Shell)
-				err := nodeValue.Decode(node.Shell)
-				if err != nil {
-					return err
-				}
-
-			case "container":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Container = new(Root_Definitions_Container)
-				err := nodeValue.Decode(node.Container)
+				node.Ref = new(Root_Definitions_Ref)
+				err := nodeValue.Decode(node.Ref)
 				if err != nil {
 					return err
 				}
@@ -575,6 +575,18 @@ func (node *Root_Definitions_Container) UnmarshalYAML(value *yaml.Node) error {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
 
+			case "ports":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ports = new(Root_Definitions_Container_Properties_Ports)
+				err := nodeValue.Decode(node.Ports)
+				if err != nil {
+					return err
+				}
+
 			case "volumes":
 				i++
 				if i >= len(value.Content) {
@@ -635,18 +647,6 @@ func (node *Root_Definitions_Container) UnmarshalYAML(value *yaml.Node) error {
 					return err
 				}
 
-			case "ports":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ports = new(Root_Definitions_Container_Properties_Ports)
-				err := nodeValue.Decode(node.Ports)
-				if err != nil {
-					return err
-				}
-
 		}
 	}
 	return nil
@@ -664,18 +664,6 @@ func (node *Root_Definitions_Container_Properties_Credentials) UnmarshalYAML(val
 		nodeName := value.Content[i]
 		switch nodeName.Value {
 
-			case "username":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Username = new(Root_Definitions_Container_Properties_Credentials_Properties_Username)
-				err := nodeValue.Decode(node.Username)
-				if err != nil {
-					return err
-				}
-
 			case "password":
 				i++
 				if i >= len(value.Content) {
@@ -684,6 +672,18 @@ func (node *Root_Definitions_Container_Properties_Credentials) UnmarshalYAML(val
 				nodeValue := value.Content[i]
 				node.Password = new(Root_Definitions_Container_Properties_Credentials_Properties_Password)
 				err := nodeValue.Decode(node.Password)
+				if err != nil {
+					return err
+				}
+
+			case "username":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Username = new(Root_Definitions_Container_Properties_Credentials_Properties_Username)
+				err := nodeValue.Decode(node.Username)
 				if err != nil {
 					return err
 				}
@@ -1014,6 +1014,9 @@ func (node *Root_Definitions_Defaults_Properties_Run) UnmarshalYAML(value *yaml.
 }
 // Root_Definitions_Defaults_Properties_Run_Properties_Shell 
 type Root_Definitions_Defaults_Properties_Run_Properties_Shell struct {
+
+  // You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
+	Ref *Root_Definitions_Shell `yaml:"shell,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1022,6 +1025,18 @@ func (node *Root_Definitions_Defaults_Properties_Run_Properties_Shell) Unmarshal
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
+
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Shell)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
 
 		}
 	}
@@ -1074,18 +1089,6 @@ func (node *Root_Definitions_Environment) UnmarshalYAML(value *yaml.Node) error 
 		nodeName := value.Content[i]
 		switch nodeName.Value {
 
-			case "url":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Url = new(Root_Definitions_Environment_Properties_Url)
-				err := nodeValue.Decode(node.Url)
-				if err != nil {
-					return err
-				}
-
 			case "name":
 				i++
 				if i >= len(value.Content) {
@@ -1094,6 +1097,18 @@ func (node *Root_Definitions_Environment) UnmarshalYAML(value *yaml.Node) error 
 				nodeValue := value.Content[i]
 				node.Name = new(Root_Definitions_Environment_Properties_Name)
 				err := nodeValue.Decode(node.Name)
+				if err != nil {
+					return err
+				}
+
+			case "url":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Url = new(Root_Definitions_Environment_Properties_Url)
+				err := nodeValue.Decode(node.Url)
 				if err != nil {
 					return err
 				}
@@ -1351,7 +1366,6 @@ func (node *Root_Definitions_Name) UnmarshalYAML(value *yaml.Node) error {
 // - paths-ignore - Use the paths-ignore filter when you only need to exclude path names.
 // - paths - Use the paths filter when you need to filter paths for positive matches and exclude paths.
 type Root_Definitions_Path struct {
-	Ref *Root_Definitions_Globs `yaml:"globs,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1360,18 +1374,6 @@ func (node *Root_Definitions_Path) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Globs)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
 
 		}
 	}
@@ -1413,14 +1415,14 @@ func (node *Root_Definitions_Permissions_Event) UnmarshalYAML(value *yaml.Node) 
 		nodeName := value.Content[i]
 		switch nodeName.Value {
 
-			case "checks":
+			case "actions":
 				i++
 				if i >= len(value.Content) {
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Checks = new(Root_Definitions_Permissions_Event_Properties_Checks)
-				err := nodeValue.Decode(node.Checks)
+				node.Actions = new(Root_Definitions_Permissions_Event_Properties_Actions)
+				err := nodeValue.Decode(node.Actions)
 				if err != nil {
 					return err
 				}
@@ -1437,26 +1439,14 @@ func (node *Root_Definitions_Permissions_Event) UnmarshalYAML(value *yaml.Node) 
 					return err
 				}
 
-			case "repository_projects":
+			case "pull_requests":
 				i++
 				if i >= len(value.Content) {
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Repository_Projects = new(Root_Definitions_Permissions_Event_Properties_Repository_Projects)
-				err := nodeValue.Decode(node.Repository_Projects)
-				if err != nil {
-					return err
-				}
-
-			case "security_events":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Security_Events = new(Root_Definitions_Permissions_Event_Properties_Security_Events)
-				err := nodeValue.Decode(node.Security_Events)
+				node.Pull_Requests = new(Root_Definitions_Permissions_Event_Properties_Pull_Requests)
+				err := nodeValue.Decode(node.Pull_Requests)
 				if err != nil {
 					return err
 				}
@@ -1485,6 +1475,30 @@ func (node *Root_Definitions_Permissions_Event) UnmarshalYAML(value *yaml.Node) 
 					return err
 				}
 
+			case "repository_projects":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Repository_Projects = new(Root_Definitions_Permissions_Event_Properties_Repository_Projects)
+				err := nodeValue.Decode(node.Repository_Projects)
+				if err != nil {
+					return err
+				}
+
+			case "checks":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Checks = new(Root_Definitions_Permissions_Event_Properties_Checks)
+				err := nodeValue.Decode(node.Checks)
+				if err != nil {
+					return err
+				}
+
 			case "contents":
 				i++
 				if i >= len(value.Content) {
@@ -1509,26 +1523,14 @@ func (node *Root_Definitions_Permissions_Event) UnmarshalYAML(value *yaml.Node) 
 					return err
 				}
 
-			case "pull_requests":
+			case "security_events":
 				i++
 				if i >= len(value.Content) {
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Pull_Requests = new(Root_Definitions_Permissions_Event_Properties_Pull_Requests)
-				err := nodeValue.Decode(node.Pull_Requests)
-				if err != nil {
-					return err
-				}
-
-			case "actions":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Actions = new(Root_Definitions_Permissions_Event_Properties_Actions)
-				err := nodeValue.Decode(node.Actions)
+				node.Security_Events = new(Root_Definitions_Permissions_Event_Properties_Security_Events)
+				err := nodeValue.Decode(node.Security_Events)
 				if err != nil {
 					return err
 				}
@@ -1569,7 +1571,6 @@ func (node *Root_Definitions_Permissions_Event_Properties_Checks) UnmarshalYAML(
 }
 // Root_Definitions_Permissions_Event_Properties_Contents 
 type Root_Definitions_Permissions_Event_Properties_Contents struct {
-	Ref *Root_Definitions_Permissions_Level `yaml:"permissions_level,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1578,18 +1579,6 @@ func (node *Root_Definitions_Permissions_Event_Properties_Contents) UnmarshalYAM
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Permissions_Level)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
 
 		}
 	}
@@ -1745,6 +1734,30 @@ func (node *Root_Definitions_Ref) UnmarshalYAML(value *yaml.Node) error {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
 
+			case "branches_ignore":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Branches_Ignore = new(Root_Definitions_Ref_Properties_Branches_Ignore)
+				err := nodeValue.Decode(node.Branches_Ignore)
+				if err != nil {
+					return err
+				}
+
+			case "tags":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Tags = new(Root_Definitions_Ref_Properties_Tags)
+				err := nodeValue.Decode(node.Tags)
+				if err != nil {
+					return err
+				}
+
 			case "tags_ignore":
 				i++
 				if i >= len(value.Content) {
@@ -1793,36 +1806,23 @@ func (node *Root_Definitions_Ref) UnmarshalYAML(value *yaml.Node) error {
 					return err
 				}
 
-			case "branches_ignore":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Branches_Ignore = new(Root_Definitions_Ref_Properties_Branches_Ignore)
-				err := nodeValue.Decode(node.Branches_Ignore)
-				if err != nil {
-					return err
-				}
-
-			case "tags":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Tags = new(Root_Definitions_Ref_Properties_Tags)
-				err := nodeValue.Decode(node.Tags)
-				if err != nil {
-					return err
-				}
-
 		}
 	}
 	return nil
 }
 // Root_Definitions_Ref_Properties_Branches 
 type Root_Definitions_Ref_Properties_Branches struct {
+
+  // When using the push and pull_request events, you can configure a workflow to run on specific branches or tags. If you only define only tags or only branches, the workflow won't run for events affecting the undefined Git ref.
+  // The branches, branches-ignore, tags, and tags-ignore keywords accept glob patterns that use the * and ** wildcard characters to match more than one branch or tag name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
+  // The patterns defined in branches and tags are evaluated against the Git ref's name. For example, defining the pattern mona/octocat in branches will match the refs/heads/mona/octocat Git ref. The pattern releases/** will match the refs/heads/releases/10 Git ref.
+  // You can use two types of filters to prevent a workflow from running on pushes and pull requests to tags and branches:
+  // - branches or branches-ignore - You cannot use both the branches and branches-ignore filters for the same event in a workflow. Use the branches filter when you need to filter branches for positive matches and exclude branches. Use the branches-ignore filter when you only need to exclude branch names.
+  // - tags or tags-ignore - You cannot use both the tags and tags-ignore filters for the same event in a workflow. Use the tags filter when you need to filter tags for positive matches and exclude tags. Use the tags-ignore filter when you only need to exclude tag names.
+  // You can exclude tags and branches using the ! character. The order that you define patterns matters.
+  // - A matching negative pattern (prefixed with !) after a positive match will exclude the Git ref.
+  // - A matching positive pattern after a negative match will include the Git ref again.
+	Ref *Root_Definitions_Branch `yaml:"branch,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1831,6 +1831,18 @@ func (node *Root_Definitions_Ref_Properties_Branches) UnmarshalYAML(value *yaml.
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
+
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Branch)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
 
 		}
 	}

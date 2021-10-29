@@ -12,6 +12,10 @@ import (
 	"c2c-actions-mlh-workflow-parser/schema"
 )
 
+//go:generate make -C ../
+//go:generate ../schema-generate -i ../json/github-workflow.json -o ../../gen/gen_schema.go
+//go:generate rm ..//schema-generate
+
 var (
 	o                     = flag.String("o", "", "The output file for the schema.")
 	p                     = flag.String("p", "gen", "The package that the structs are created in.")
