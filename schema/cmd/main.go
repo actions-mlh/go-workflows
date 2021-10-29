@@ -14,7 +14,7 @@ import (
 
 var (
 	o                     = flag.String("o", "", "The output file for the schema.")
-	p                     = flag.String("p", "gen_schema", "The package that the structs are created in.")
+	p                     = flag.String("p", "gen", "The package that the structs are created in.")
 	i                     = flag.String("i", "", "A single file path (used for backwards compatibility).")
 	schemaKeyRequiredFlag = flag.Bool("schemaKeyRequired", false, "Allow input files with no $schema key.")
 )

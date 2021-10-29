@@ -43,6 +43,7 @@ func Output(w io.Writer, g *Generator, pkg string) {
 	// write list of imports into main output stream, followed by the code
 
 	imports := []string{
+		"fmt",
 		"gopkg.in/yaml.v3",
 	}
 
@@ -71,13 +72,13 @@ func Output(w io.Writer, g *Generator, pkg string) {
 			if f.Description != "" {
 				outputFieldDescriptionComment(f.Description, w)
 			}
-			fmt.Fprintf(w, "\t%s %s `yaml:\"%s%s\"`\n", f.Name, f.Type, f.YAMLName, omitempty)
+			fmt.Fprintf(w, "\t%s *%s `yaml:\"%s%s\"`\n", f.Name, f.Type, f.YAMLName, omitempty)
 
 			// emitRawYAMLNodeCode(codeBuf, f.Name, f.Type)
 		}
 		fmt.Fprintf(w, "\tRaw *yaml.Node\n")
 		fmt.Fprintln(w, "}")
-		emitUnMarshalCode(w, s.Name)
+		emitUnMarshalCode(w, s)
 	}
 }
 
@@ -90,13 +91,34 @@ func emitRawYAMLNodeCode(w io.Writer, fieldName string, fieldType string) {
 	fmt.Fprintf(w, "\n")
 }
 
-func emitUnMarshalCode(w io.Writer, schemaType string) {
-	fmt.Fprintf(w, "\n")
-	fmt.Fprintf(w, "func (node *%s) UnmarshalYAML(value *yaml.Node) error {\n", schemaType)
-	fmt.Fprintf(w, "\tnode.Raw = value\n")
-	fmt.Fprintf(w, "\treturn value.Decode(node)\n")
-	fmt.Fprintf(w, "}\n")
-	fmt.Fprintf(w, "\n")
+func emitUnMarshalCode(w io.Writer, s Struct) {
+	fmt.Fprintf(w, `
+func (node *%s) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	for i := 0; i < len(value.Content); i++ {
+		nodeName := value.Content[i]
+		switch nodeName.Value {
+`, s.Name)
+	for _, field := range s.Fields {
+		fmt.Fprintf(w, `
+			case "%s":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.%s = new(%s)
+				err := nodeValue.Decode(node.%s)
+				if err != nil {
+					return err
+				}
+`, strings.ToLower(field.Name), field.Name, field.Type, field.Name)
+	}
+	fmt.Fprintf(w, `
+		}
+	}
+	return nil
+}`)
 }
 
 func outputNameAndDescriptionComment(name, description string, w io.Writer) {

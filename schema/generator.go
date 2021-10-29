@@ -103,14 +103,16 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 	}
 
 	if schema.Type != "array" && schema.Type != "object" {
-		typeName, err := getPrimitiveTypeName(schema.Type, "", false)
-		if err != nil {
-			return "", err
-		}
+		// typeName, err := getPrimitiveTypeName(schema.Type, "", false)
+		// if err != nil {
+		// 	return "", err
+		// }
+		s := strings.Split(name, "_")
+		yamlName := strings.ToLower(s[len(s)-1])
 		f := Field{
 			Name:        "Value",
-			YAMLName:    name,
-			Type:        typeName,
+			YAMLName:    yamlName,
+			Type:        name,
 			Required:    contains(schema.Required, "Value"),
 			Description: schema.Description,
 		}
@@ -165,6 +167,8 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 	if schema.Items != nil {
 		// subType: fallback name in case this array contains inline object without a title
 		subName := g.getSchemaName(name, (*Schema)(schema.Items))
+		s := strings.Split(subName, "_")
+		yamlName := strings.ToLower(s[len(s)-1])
 		subTyp, err := g.processSchema(name + "_Items_" + subName, (*Schema)(schema.Items))
 		if err != nil {
 			return "", err
@@ -175,7 +179,7 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 		}
 		f := Field{
 			Name:        subName,
-			YAMLName:    subName,
+			YAMLName:    yamlName,
 			Type:        finalType,
 			Required:    contains(schema.Required, subName),
 			Description: schema.Description,
@@ -204,7 +208,7 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 			}
 			f := Field{
 				Name: "Ref",
-				YAMLName: refSchemaName, // change to something appropriate when you know what it is
+				YAMLName: strings.ToLower(refSchemaName), // change to something appropriate when you know what it is
 				Type: typeName,
 				Required: contains(schema.Required, refSchemaName),
 				Description: refSchema.Description,
