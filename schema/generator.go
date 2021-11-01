@@ -112,7 +112,7 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 		f := Field{
 			Name:        "Value",
 			YAMLName:    yamlName,
-			Type:        name,
+			Type:        schema.Type,
 			Required:    contains(schema.Required, "Value"),
 			Description: schema.Description,
 		}
