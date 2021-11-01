@@ -750,6 +750,7 @@ func (node *Root_Definitions_Container_Properties_Credentials_Properties_Usernam
 }
 // Root_Definitions_Container_Properties_Env Sets an array of environment variables in the container.
 type Root_Definitions_Container_Properties_Env struct {
+	Ref *Root_Definitions_Env `yaml:"env,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -758,6 +759,18 @@ func (node *Root_Definitions_Container_Properties_Env) UnmarshalYAML(value *yaml
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
+
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Env)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
 
 		}
 	}
@@ -1001,6 +1014,9 @@ func (node *Root_Definitions_Defaults_Properties_Run) UnmarshalYAML(value *yaml.
 }
 // Root_Definitions_Defaults_Properties_Run_Properties_Shell 
 type Root_Definitions_Defaults_Properties_Run_Properties_Shell struct {
+
+  // You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
+	Ref *Root_Definitions_Shell `yaml:"shell,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1009,6 +1025,18 @@ func (node *Root_Definitions_Defaults_Properties_Run_Properties_Shell) Unmarshal
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
+
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Shell)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
 
 		}
 	}
@@ -1353,6 +1381,7 @@ func (node *Root_Definitions_Name) UnmarshalYAML(value *yaml.Node) error {
 // - paths-ignore - Use the paths-ignore filter when you only need to exclude path names.
 // - paths - Use the paths filter when you need to filter paths for positive matches and exclude paths.
 type Root_Definitions_Path struct {
+	Ref *Root_Definitions_Globs `yaml:"globs,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1361,6 +1390,18 @@ func (node *Root_Definitions_Path) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
+
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Globs)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
 
 		}
 	}
@@ -1543,7 +1584,6 @@ func (node *Root_Definitions_Permissions_Event_Properties_Actions) UnmarshalYAML
 }
 // Root_Definitions_Permissions_Event_Properties_Checks 
 type Root_Definitions_Permissions_Event_Properties_Checks struct {
-	Ref *Root_Definitions_Permissions_Level `yaml:"permissions_level,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1552,18 +1592,6 @@ func (node *Root_Definitions_Permissions_Event_Properties_Checks) UnmarshalYAML(
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Permissions_Level)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
 
 		}
 	}
@@ -1586,6 +1614,7 @@ func (node *Root_Definitions_Permissions_Event_Properties_Contents) UnmarshalYAM
 }
 // Root_Definitions_Permissions_Event_Properties_Deployments 
 type Root_Definitions_Permissions_Event_Properties_Deployments struct {
+	Ref *Root_Definitions_Permissions_Level `yaml:"permissions_level,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1594,6 +1623,18 @@ func (node *Root_Definitions_Permissions_Event_Properties_Deployments) Unmarshal
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
+
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Permissions_Level)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
 
 		}
 	}
