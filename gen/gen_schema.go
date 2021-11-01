@@ -80,7 +80,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "architecture":
 				i++
 				if i >= len(value.Content) {
@@ -92,7 +92,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "branch":
 				i++
 				if i >= len(value.Content) {
@@ -104,7 +104,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "configuration":
 				i++
 				if i >= len(value.Content) {
@@ -116,7 +116,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "container":
 				i++
 				if i >= len(value.Content) {
@@ -128,7 +128,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "environment":
 				i++
 				if i >= len(value.Content) {
@@ -140,7 +140,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "event":
 				i++
 				if i >= len(value.Content) {
@@ -152,7 +152,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "eventobject":
 				i++
 				if i >= len(value.Content) {
@@ -164,7 +164,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "expressionsyntax":
 				i++
 				if i >= len(value.Content) {
@@ -176,7 +176,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "globs":
 				i++
 				if i >= len(value.Content) {
@@ -188,7 +188,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "machine":
 				i++
 				if i >= len(value.Content) {
@@ -200,7 +200,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "path":
 				i++
 				if i >= len(value.Content) {
@@ -212,7 +212,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "permissions_event":
 				i++
 				if i >= len(value.Content) {
@@ -224,7 +224,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "permissions_level":
 				i++
 				if i >= len(value.Content) {
@@ -236,7 +236,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "ref":
 				i++
 				if i >= len(value.Content) {
@@ -248,7 +248,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "shell":
 				i++
 				if i >= len(value.Content) {
@@ -260,7 +260,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "types":
 				i++
 				if i >= len(value.Content) {
@@ -272,7 +272,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "working_directory":
 				i++
 				if i >= len(value.Content) {
@@ -284,7 +284,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "concurrency":
 				i++
 				if i >= len(value.Content) {
@@ -296,7 +296,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "defaults":
 				i++
 				if i >= len(value.Content) {
@@ -308,7 +308,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "env":
 				i++
 				if i >= len(value.Content) {
@@ -320,7 +320,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "jobs":
 				i++
 				if i >= len(value.Content) {
@@ -332,7 +332,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "name":
 				i++
 				if i >= len(value.Content) {
@@ -344,7 +344,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "on":
 				i++
 				if i >= len(value.Content) {
@@ -356,7 +356,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "permissions":
 				i++
 				if i >= len(value.Content) {
@@ -368,11 +368,12 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Architecture 
 type Root_Definitions_Architecture struct {
 	Value *Root_Definitions_Architecture `yaml:"architecture,omitempty"`
@@ -384,7 +385,7 @@ func (node *Root_Definitions_Architecture) UnmarshalYAML(value *yaml.Node) error
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -396,11 +397,12 @@ func (node *Root_Definitions_Architecture) UnmarshalYAML(value *yaml.Node) error
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Branch When using the push and pull_request events, you can configure a workflow to run on specific branches or tags. If you only define only tags or only branches, the workflow won't run for events affecting the undefined Git ref.
 // The branches, branches-ignore, tags, and tags-ignore keywords accept glob patterns that use the * and ** wildcard characters to match more than one branch or tag name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
 // The patterns defined in branches and tags are evaluated against the Git ref's name. For example, defining the pattern mona/octocat in branches will match the refs/heads/mona/octocat Git ref. The pattern releases/** will match the refs/heads/releases/10 Git ref.
@@ -419,11 +421,12 @@ func (node *Root_Definitions_Branch) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Concurrency 
 type Root_Definitions_Concurrency struct {
 
@@ -440,7 +443,7 @@ func (node *Root_Definitions_Concurrency) UnmarshalYAML(value *yaml.Node) error 
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "cancel_in_progress":
 				i++
 				if i >= len(value.Content) {
@@ -452,7 +455,7 @@ func (node *Root_Definitions_Concurrency) UnmarshalYAML(value *yaml.Node) error 
 				if err != nil {
 					return err
 				}
-
+			
 			case "group":
 				i++
 				if i >= len(value.Content) {
@@ -464,11 +467,12 @@ func (node *Root_Definitions_Concurrency) UnmarshalYAML(value *yaml.Node) error 
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Concurrency_Properties_Cancel_In_Progress To cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
 type Root_Definitions_Concurrency_Properties_Cancel_In_Progress struct {
 
@@ -482,7 +486,7 @@ func (node *Root_Definitions_Concurrency_Properties_Cancel_In_Progress) Unmarsha
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -494,11 +498,12 @@ func (node *Root_Definitions_Concurrency_Properties_Cancel_In_Progress) Unmarsha
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Concurrency_Properties_Group When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled.
 type Root_Definitions_Concurrency_Properties_Group struct {
 
@@ -512,7 +517,7 @@ func (node *Root_Definitions_Concurrency_Properties_Group) UnmarshalYAML(value *
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -524,11 +529,12 @@ func (node *Root_Definitions_Concurrency_Properties_Group) UnmarshalYAML(value *
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Configuration 
 type Root_Definitions_Configuration struct {
 	Raw *yaml.Node
@@ -539,11 +545,12 @@ func (node *Root_Definitions_Configuration) UnmarshalYAML(value *yaml.Node) erro
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Container 
 type Root_Definitions_Container struct {
 
@@ -574,7 +581,7 @@ func (node *Root_Definitions_Container) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "credentials":
 				i++
 				if i >= len(value.Content) {
@@ -586,7 +593,7 @@ func (node *Root_Definitions_Container) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "env":
 				i++
 				if i >= len(value.Content) {
@@ -598,7 +605,7 @@ func (node *Root_Definitions_Container) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "image":
 				i++
 				if i >= len(value.Content) {
@@ -610,7 +617,7 @@ func (node *Root_Definitions_Container) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "options":
 				i++
 				if i >= len(value.Content) {
@@ -622,7 +629,7 @@ func (node *Root_Definitions_Container) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "ports":
 				i++
 				if i >= len(value.Content) {
@@ -634,7 +641,7 @@ func (node *Root_Definitions_Container) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "volumes":
 				i++
 				if i >= len(value.Content) {
@@ -646,11 +653,12 @@ func (node *Root_Definitions_Container) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Container_Properties_Credentials If the image's container registry requires authentication to pull the image, you can use credentials to set a map of the username and password. The credentials are the same values that you would provide to the `docker login` command.
 type Root_Definitions_Container_Properties_Credentials struct {
 	Password *Root_Definitions_Container_Properties_Credentials_Properties_Password `yaml:"password,omitempty"`
@@ -663,7 +671,7 @@ func (node *Root_Definitions_Container_Properties_Credentials) UnmarshalYAML(val
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "password":
 				i++
 				if i >= len(value.Content) {
@@ -675,7 +683,7 @@ func (node *Root_Definitions_Container_Properties_Credentials) UnmarshalYAML(val
 				if err != nil {
 					return err
 				}
-
+			
 			case "username":
 				i++
 				if i >= len(value.Content) {
@@ -687,11 +695,12 @@ func (node *Root_Definitions_Container_Properties_Credentials) UnmarshalYAML(val
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Container_Properties_Credentials_Properties_Password 
 type Root_Definitions_Container_Properties_Credentials_Properties_Password struct {
 	Value *Root_Definitions_Container_Properties_Credentials_Properties_Password `yaml:"password,omitempty"`
@@ -703,7 +712,7 @@ func (node *Root_Definitions_Container_Properties_Credentials_Properties_Passwor
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -715,11 +724,12 @@ func (node *Root_Definitions_Container_Properties_Credentials_Properties_Passwor
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Container_Properties_Credentials_Properties_Username 
 type Root_Definitions_Container_Properties_Credentials_Properties_Username struct {
 	Value *Root_Definitions_Container_Properties_Credentials_Properties_Username `yaml:"username,omitempty"`
@@ -731,7 +741,7 @@ func (node *Root_Definitions_Container_Properties_Credentials_Properties_Usernam
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -743,14 +753,14 @@ func (node *Root_Definitions_Container_Properties_Credentials_Properties_Usernam
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Container_Properties_Env Sets an array of environment variables in the container.
 type Root_Definitions_Container_Properties_Env struct {
-	Ref *Root_Definitions_Env `yaml:"env,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -759,23 +769,12 @@ func (node *Root_Definitions_Container_Properties_Env) UnmarshalYAML(value *yaml
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Env)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Container_Properties_Image The Docker image to use as the container to run the action. The value can be the Docker Hub image name or a registry name.
 type Root_Definitions_Container_Properties_Image struct {
 
@@ -789,7 +788,7 @@ func (node *Root_Definitions_Container_Properties_Image) UnmarshalYAML(value *ya
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -801,11 +800,12 @@ func (node *Root_Definitions_Container_Properties_Image) UnmarshalYAML(value *ya
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Container_Properties_Options Additional Docker container resource options. For a list of options, see https://docs.docker.com/engine/reference/commandline/create/#options.
 type Root_Definitions_Container_Properties_Options struct {
 
@@ -819,7 +819,7 @@ func (node *Root_Definitions_Container_Properties_Options) UnmarshalYAML(value *
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -831,11 +831,12 @@ func (node *Root_Definitions_Container_Properties_Options) UnmarshalYAML(value *
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Container_Properties_Ports Sets an array of ports to expose on the container.
 type Root_Definitions_Container_Properties_Ports struct {
 
@@ -849,7 +850,7 @@ func (node *Root_Definitions_Container_Properties_Ports) UnmarshalYAML(value *ya
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "root_definitions_container_properties_ports":
 				i++
 				if i >= len(value.Content) {
@@ -861,11 +862,12 @@ func (node *Root_Definitions_Container_Properties_Ports) UnmarshalYAML(value *ya
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Container_Properties_Ports_Items_Root_Definitions_Container_Properties_Ports 
 type Root_Definitions_Container_Properties_Ports_Items_Root_Definitions_Container_Properties_Ports struct {
 	Raw *yaml.Node
@@ -876,11 +878,12 @@ func (node *Root_Definitions_Container_Properties_Ports_Items_Root_Definitions_C
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Container_Properties_Volumes Sets an array of volumes for the container to use. You can use volumes to share data between services or other steps in a job. You can specify named Docker volumes, anonymous Docker volumes, or bind mounts on the host.
 // To specify a volume, you specify the source and destination path: <source>:<destinationPath>
 // The <source> is a volume name or an absolute path on the host machine, and <destinationPath> is an absolute path in the container.
@@ -898,7 +901,7 @@ func (node *Root_Definitions_Container_Properties_Volumes) UnmarshalYAML(value *
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "root_definitions_container_properties_volumes":
 				i++
 				if i >= len(value.Content) {
@@ -910,11 +913,12 @@ func (node *Root_Definitions_Container_Properties_Volumes) UnmarshalYAML(value *
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Container_Properties_Volumes_Items_Root_Definitions_Container_Properties_Volumes 
 type Root_Definitions_Container_Properties_Volumes_Items_Root_Definitions_Container_Properties_Volumes struct {
 	Value *Root_Definitions_Container_Properties_Volumes_Items_Root_Definitions_Container_Properties_Volumes `yaml:"volumes,omitempty"`
@@ -926,7 +930,7 @@ func (node *Root_Definitions_Container_Properties_Volumes_Items_Root_Definitions
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -938,11 +942,12 @@ func (node *Root_Definitions_Container_Properties_Volumes_Items_Root_Definitions
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Defaults 
 type Root_Definitions_Defaults struct {
 	Run *Root_Definitions_Defaults_Properties_Run `yaml:"run,omitempty"`
@@ -954,7 +959,7 @@ func (node *Root_Definitions_Defaults) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "run":
 				i++
 				if i >= len(value.Content) {
@@ -966,11 +971,12 @@ func (node *Root_Definitions_Defaults) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Defaults_Properties_Run 
 type Root_Definitions_Defaults_Properties_Run struct {
 	Shell *Root_Definitions_Defaults_Properties_Run_Properties_Shell `yaml:"shell,omitempty"`
@@ -983,7 +989,7 @@ func (node *Root_Definitions_Defaults_Properties_Run) UnmarshalYAML(value *yaml.
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "shell":
 				i++
 				if i >= len(value.Content) {
@@ -995,7 +1001,7 @@ func (node *Root_Definitions_Defaults_Properties_Run) UnmarshalYAML(value *yaml.
 				if err != nil {
 					return err
 				}
-
+			
 			case "working_directory":
 				i++
 				if i >= len(value.Content) {
@@ -1007,16 +1013,14 @@ func (node *Root_Definitions_Defaults_Properties_Run) UnmarshalYAML(value *yaml.
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Defaults_Properties_Run_Properties_Shell 
 type Root_Definitions_Defaults_Properties_Run_Properties_Shell struct {
-
-  // You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
-	Ref *Root_Definitions_Shell `yaml:"shell,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1025,28 +1029,14 @@ func (node *Root_Definitions_Defaults_Properties_Run_Properties_Shell) Unmarshal
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Shell)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Defaults_Properties_Run_Properties_Working_Directory 
 type Root_Definitions_Defaults_Properties_Run_Properties_Working_Directory struct {
-
-  // Using the working-directory keyword, you can specify the working directory of where to run the command.
-	Ref *Root_Definitions_Working_Directory `yaml:"working_directory,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1055,23 +1045,12 @@ func (node *Root_Definitions_Defaults_Properties_Run_Properties_Working_Director
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Working_Directory)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Env 
 type Root_Definitions_Env struct {
 	Raw *yaml.Node
@@ -1082,11 +1061,12 @@ func (node *Root_Definitions_Env) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Environment The environment that the job references
 type Root_Definitions_Environment struct {
 
@@ -1103,7 +1083,7 @@ func (node *Root_Definitions_Environment) UnmarshalYAML(value *yaml.Node) error 
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "name":
 				i++
 				if i >= len(value.Content) {
@@ -1115,7 +1095,7 @@ func (node *Root_Definitions_Environment) UnmarshalYAML(value *yaml.Node) error 
 				if err != nil {
 					return err
 				}
-
+			
 			case "url":
 				i++
 				if i >= len(value.Content) {
@@ -1127,11 +1107,12 @@ func (node *Root_Definitions_Environment) UnmarshalYAML(value *yaml.Node) error 
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Environment_Properties_Name The name of the environment configured in the repo.
 type Root_Definitions_Environment_Properties_Name struct {
 
@@ -1145,7 +1126,7 @@ func (node *Root_Definitions_Environment_Properties_Name) UnmarshalYAML(value *y
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -1157,11 +1138,12 @@ func (node *Root_Definitions_Environment_Properties_Name) UnmarshalYAML(value *y
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Environment_Properties_Url A deployment URL
 type Root_Definitions_Environment_Properties_Url struct {
 
@@ -1175,7 +1157,7 @@ func (node *Root_Definitions_Environment_Properties_Url) UnmarshalYAML(value *ya
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -1187,11 +1169,12 @@ func (node *Root_Definitions_Environment_Properties_Url) UnmarshalYAML(value *ya
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Event 
 type Root_Definitions_Event struct {
 	Value *Root_Definitions_Event `yaml:"event,omitempty"`
@@ -1203,7 +1186,7 @@ func (node *Root_Definitions_Event) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -1215,11 +1198,12 @@ func (node *Root_Definitions_Event) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_EventObject 
 type Root_Definitions_EventObject struct {
 	Raw *yaml.Node
@@ -1230,11 +1214,12 @@ func (node *Root_Definitions_EventObject) UnmarshalYAML(value *yaml.Node) error 
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_ExpressionSyntax 
 type Root_Definitions_ExpressionSyntax struct {
 	Value *Root_Definitions_ExpressionSyntax `yaml:"expressionsyntax,omitempty"`
@@ -1246,7 +1231,7 @@ func (node *Root_Definitions_ExpressionSyntax) UnmarshalYAML(value *yaml.Node) e
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -1258,11 +1243,12 @@ func (node *Root_Definitions_ExpressionSyntax) UnmarshalYAML(value *yaml.Node) e
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Globs 
 type Root_Definitions_Globs struct {
 	Root_Definitions_Globs *[]Root_Definitions_Globs_Items_Root_Definitions_Globs `yaml:"globs,omitempty"`
@@ -1274,7 +1260,7 @@ func (node *Root_Definitions_Globs) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "root_definitions_globs":
 				i++
 				if i >= len(value.Content) {
@@ -1286,11 +1272,12 @@ func (node *Root_Definitions_Globs) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Globs_Items_Root_Definitions_Globs 
 type Root_Definitions_Globs_Items_Root_Definitions_Globs struct {
 	Value *Root_Definitions_Globs_Items_Root_Definitions_Globs `yaml:"globs,omitempty"`
@@ -1302,7 +1289,7 @@ func (node *Root_Definitions_Globs_Items_Root_Definitions_Globs) UnmarshalYAML(v
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -1314,11 +1301,12 @@ func (node *Root_Definitions_Globs_Items_Root_Definitions_Globs) UnmarshalYAML(v
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Machine 
 type Root_Definitions_Machine struct {
 	Value *Root_Definitions_Machine `yaml:"machine,omitempty"`
@@ -1330,7 +1318,7 @@ func (node *Root_Definitions_Machine) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -1342,11 +1330,12 @@ func (node *Root_Definitions_Machine) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Name 
 type Root_Definitions_Name struct {
 	Value *Root_Definitions_Name `yaml:"name,omitempty"`
@@ -1358,7 +1347,7 @@ func (node *Root_Definitions_Name) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -1370,18 +1359,18 @@ func (node *Root_Definitions_Name) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Path When using the push and pull_request events, you can configure a workflow to run when at least one file does not match paths-ignore or at least one modified file matches the configured paths. Path filters are not evaluated for pushes to tags.
 // The paths-ignore and paths keywords accept glob patterns that use the * and ** wildcard characters to match more than one path name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
 // You can exclude paths using two types of filters. You cannot use both of these filters for the same event in a workflow.
 // - paths-ignore - Use the paths-ignore filter when you only need to exclude path names.
 // - paths - Use the paths filter when you need to filter paths for positive matches and exclude paths.
 type Root_Definitions_Path struct {
-	Ref *Root_Definitions_Globs `yaml:"globs,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1390,23 +1379,12 @@ func (node *Root_Definitions_Path) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Globs)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Permissions You can modify the default permissions granted to the GITHUB_TOKEN, adding or removing access as required, so that you only allow the minimum required access.
 type Root_Definitions_Permissions struct {
 	Raw *yaml.Node
@@ -1417,11 +1395,12 @@ func (node *Root_Definitions_Permissions) UnmarshalYAML(value *yaml.Node) error 
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Permissions_Event 
 type Root_Definitions_Permissions_Event struct {
 	Actions *Root_Definitions_Permissions_Event_Properties_Actions `yaml:"actions,omitempty"`
@@ -1442,7 +1421,7 @@ func (node *Root_Definitions_Permissions_Event) UnmarshalYAML(value *yaml.Node) 
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "actions":
 				i++
 				if i >= len(value.Content) {
@@ -1454,7 +1433,7 @@ func (node *Root_Definitions_Permissions_Event) UnmarshalYAML(value *yaml.Node) 
 				if err != nil {
 					return err
 				}
-
+			
 			case "checks":
 				i++
 				if i >= len(value.Content) {
@@ -1466,7 +1445,7 @@ func (node *Root_Definitions_Permissions_Event) UnmarshalYAML(value *yaml.Node) 
 				if err != nil {
 					return err
 				}
-
+			
 			case "contents":
 				i++
 				if i >= len(value.Content) {
@@ -1478,7 +1457,7 @@ func (node *Root_Definitions_Permissions_Event) UnmarshalYAML(value *yaml.Node) 
 				if err != nil {
 					return err
 				}
-
+			
 			case "deployments":
 				i++
 				if i >= len(value.Content) {
@@ -1490,7 +1469,7 @@ func (node *Root_Definitions_Permissions_Event) UnmarshalYAML(value *yaml.Node) 
 				if err != nil {
 					return err
 				}
-
+			
 			case "issues":
 				i++
 				if i >= len(value.Content) {
@@ -1502,7 +1481,7 @@ func (node *Root_Definitions_Permissions_Event) UnmarshalYAML(value *yaml.Node) 
 				if err != nil {
 					return err
 				}
-
+			
 			case "packages":
 				i++
 				if i >= len(value.Content) {
@@ -1514,7 +1493,7 @@ func (node *Root_Definitions_Permissions_Event) UnmarshalYAML(value *yaml.Node) 
 				if err != nil {
 					return err
 				}
-
+			
 			case "pull_requests":
 				i++
 				if i >= len(value.Content) {
@@ -1526,7 +1505,7 @@ func (node *Root_Definitions_Permissions_Event) UnmarshalYAML(value *yaml.Node) 
 				if err != nil {
 					return err
 				}
-
+			
 			case "repository_projects":
 				i++
 				if i >= len(value.Content) {
@@ -1538,7 +1517,7 @@ func (node *Root_Definitions_Permissions_Event) UnmarshalYAML(value *yaml.Node) 
 				if err != nil {
 					return err
 				}
-
+			
 			case "security_events":
 				i++
 				if i >= len(value.Content) {
@@ -1550,7 +1529,7 @@ func (node *Root_Definitions_Permissions_Event) UnmarshalYAML(value *yaml.Node) 
 				if err != nil {
 					return err
 				}
-
+			
 			case "statuses":
 				i++
 				if i >= len(value.Content) {
@@ -1562,13 +1541,15 @@ func (node *Root_Definitions_Permissions_Event) UnmarshalYAML(value *yaml.Node) 
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Permissions_Event_Properties_Actions 
 type Root_Definitions_Permissions_Event_Properties_Actions struct {
+	Ref *Root_Definitions_Permissions_Level `yaml:"permissions_level,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1577,53 +1558,7 @@ func (node *Root_Definitions_Permissions_Event_Properties_Actions) UnmarshalYAML
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
-		}
-	}
-	return nil
-}
-// Root_Definitions_Permissions_Event_Properties_Checks 
-type Root_Definitions_Permissions_Event_Properties_Checks struct {
-	Raw *yaml.Node
-}
-
-func (node *Root_Definitions_Permissions_Event_Properties_Checks) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
-
-		}
-	}
-	return nil
-}
-// Root_Definitions_Permissions_Event_Properties_Contents 
-type Root_Definitions_Permissions_Event_Properties_Contents struct {
-	Raw *yaml.Node
-}
-
-func (node *Root_Definitions_Permissions_Event_Properties_Contents) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
-
-		}
-	}
-	return nil
-}
-// Root_Definitions_Permissions_Event_Properties_Deployments 
-type Root_Definitions_Permissions_Event_Properties_Deployments struct {
-	Ref *Root_Definitions_Permissions_Level `yaml:"permissions_level,omitempty"`
-	Raw *yaml.Node
-}
-
-func (node *Root_Definitions_Permissions_Event_Properties_Deployments) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
-
+			
 			case "ref":
 				i++
 				if i >= len(value.Content) {
@@ -1635,11 +1570,60 @@ func (node *Root_Definitions_Permissions_Event_Properties_Deployments) Unmarshal
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
+// Root_Definitions_Permissions_Event_Properties_Checks 
+type Root_Definitions_Permissions_Event_Properties_Checks struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Permissions_Event_Properties_Checks) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	for i := 0; i < len(value.Content); i++ {
+		nodeName := value.Content[i]
+		switch nodeName.Value {
+			
+		}
+	}
+	return nil
+}
+
+// Root_Definitions_Permissions_Event_Properties_Contents 
+type Root_Definitions_Permissions_Event_Properties_Contents struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Permissions_Event_Properties_Contents) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	for i := 0; i < len(value.Content); i++ {
+		nodeName := value.Content[i]
+		switch nodeName.Value {
+			
+		}
+	}
+	return nil
+}
+
+// Root_Definitions_Permissions_Event_Properties_Deployments 
+type Root_Definitions_Permissions_Event_Properties_Deployments struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Permissions_Event_Properties_Deployments) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	for i := 0; i < len(value.Content); i++ {
+		nodeName := value.Content[i]
+		switch nodeName.Value {
+			
+		}
+	}
+	return nil
+}
+
 // Root_Definitions_Permissions_Event_Properties_Issues 
 type Root_Definitions_Permissions_Event_Properties_Issues struct {
 	Raw *yaml.Node
@@ -1650,11 +1634,12 @@ func (node *Root_Definitions_Permissions_Event_Properties_Issues) UnmarshalYAML(
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Permissions_Event_Properties_Packages 
 type Root_Definitions_Permissions_Event_Properties_Packages struct {
 	Raw *yaml.Node
@@ -1665,11 +1650,12 @@ func (node *Root_Definitions_Permissions_Event_Properties_Packages) UnmarshalYAM
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Permissions_Event_Properties_Pull_Requests 
 type Root_Definitions_Permissions_Event_Properties_Pull_Requests struct {
 	Raw *yaml.Node
@@ -1680,11 +1666,12 @@ func (node *Root_Definitions_Permissions_Event_Properties_Pull_Requests) Unmarsh
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Permissions_Event_Properties_Repository_Projects 
 type Root_Definitions_Permissions_Event_Properties_Repository_Projects struct {
 	Raw *yaml.Node
@@ -1695,11 +1682,12 @@ func (node *Root_Definitions_Permissions_Event_Properties_Repository_Projects) U
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Permissions_Event_Properties_Security_Events 
 type Root_Definitions_Permissions_Event_Properties_Security_Events struct {
 	Raw *yaml.Node
@@ -1710,11 +1698,12 @@ func (node *Root_Definitions_Permissions_Event_Properties_Security_Events) Unmar
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Permissions_Event_Properties_Statuses 
 type Root_Definitions_Permissions_Event_Properties_Statuses struct {
 	Raw *yaml.Node
@@ -1725,11 +1714,12 @@ func (node *Root_Definitions_Permissions_Event_Properties_Statuses) UnmarshalYAM
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Permissions_Level 
 type Root_Definitions_Permissions_Level struct {
 	Value *Root_Definitions_Permissions_Level `yaml:"level,omitempty"`
@@ -1741,7 +1731,7 @@ func (node *Root_Definitions_Permissions_Level) UnmarshalYAML(value *yaml.Node) 
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -1753,11 +1743,12 @@ func (node *Root_Definitions_Permissions_Level) UnmarshalYAML(value *yaml.Node) 
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Ref 
 type Root_Definitions_Ref struct {
 	Branches *Root_Definitions_Ref_Properties_Branches `yaml:"branches,omitempty"`
@@ -1774,7 +1765,7 @@ func (node *Root_Definitions_Ref) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "branches":
 				i++
 				if i >= len(value.Content) {
@@ -1786,7 +1777,7 @@ func (node *Root_Definitions_Ref) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "branches_ignore":
 				i++
 				if i >= len(value.Content) {
@@ -1798,7 +1789,7 @@ func (node *Root_Definitions_Ref) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "paths":
 				i++
 				if i >= len(value.Content) {
@@ -1810,7 +1801,7 @@ func (node *Root_Definitions_Ref) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "paths_ignore":
 				i++
 				if i >= len(value.Content) {
@@ -1822,7 +1813,7 @@ func (node *Root_Definitions_Ref) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "tags":
 				i++
 				if i >= len(value.Content) {
@@ -1834,7 +1825,7 @@ func (node *Root_Definitions_Ref) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 			case "tags_ignore":
 				i++
 				if i >= len(value.Content) {
@@ -1846,11 +1837,12 @@ func (node *Root_Definitions_Ref) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Ref_Properties_Branches 
 type Root_Definitions_Ref_Properties_Branches struct {
 	Raw *yaml.Node
@@ -1861,13 +1853,25 @@ func (node *Root_Definitions_Ref_Properties_Branches) UnmarshalYAML(value *yaml.
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Ref_Properties_Branches_Ignore 
 type Root_Definitions_Ref_Properties_Branches_Ignore struct {
+
+  // When using the push and pull_request events, you can configure a workflow to run on specific branches or tags. If you only define only tags or only branches, the workflow won't run for events affecting the undefined Git ref.
+  // The branches, branches-ignore, tags, and tags-ignore keywords accept glob patterns that use the * and ** wildcard characters to match more than one branch or tag name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
+  // The patterns defined in branches and tags are evaluated against the Git ref's name. For example, defining the pattern mona/octocat in branches will match the refs/heads/mona/octocat Git ref. The pattern releases/** will match the refs/heads/releases/10 Git ref.
+  // You can use two types of filters to prevent a workflow from running on pushes and pull requests to tags and branches:
+  // - branches or branches-ignore - You cannot use both the branches and branches-ignore filters for the same event in a workflow. Use the branches filter when you need to filter branches for positive matches and exclude branches. Use the branches-ignore filter when you only need to exclude branch names.
+  // - tags or tags-ignore - You cannot use both the tags and tags-ignore filters for the same event in a workflow. Use the tags filter when you need to filter tags for positive matches and exclude tags. Use the tags-ignore filter when you only need to exclude tag names.
+  // You can exclude tags and branches using the ! character. The order that you define patterns matters.
+  // - A matching negative pattern (prefixed with !) after a positive match will exclude the Git ref.
+  // - A matching positive pattern after a negative match will include the Git ref again.
+	Ref *Root_Definitions_Branch `yaml:"branch,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1876,13 +1880,33 @@ func (node *Root_Definitions_Ref_Properties_Branches_Ignore) UnmarshalYAML(value
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Branch)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Ref_Properties_Paths 
 type Root_Definitions_Ref_Properties_Paths struct {
+
+  // When using the push and pull_request events, you can configure a workflow to run when at least one file does not match paths-ignore or at least one modified file matches the configured paths. Path filters are not evaluated for pushes to tags.
+  // The paths-ignore and paths keywords accept glob patterns that use the * and ** wildcard characters to match more than one path name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
+  // You can exclude paths using two types of filters. You cannot use both of these filters for the same event in a workflow.
+  // - paths-ignore - Use the paths-ignore filter when you only need to exclude path names.
+  // - paths - Use the paths filter when you need to filter paths for positive matches and exclude paths.
+	Ref *Root_Definitions_Path `yaml:"path,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1891,11 +1915,24 @@ func (node *Root_Definitions_Ref_Properties_Paths) UnmarshalYAML(value *yaml.Nod
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Path)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Ref_Properties_Paths_Ignore 
 type Root_Definitions_Ref_Properties_Paths_Ignore struct {
 	Raw *yaml.Node
@@ -1906,11 +1943,12 @@ func (node *Root_Definitions_Ref_Properties_Paths_Ignore) UnmarshalYAML(value *y
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Ref_Properties_Tags 
 type Root_Definitions_Ref_Properties_Tags struct {
 	Raw *yaml.Node
@@ -1921,11 +1959,12 @@ func (node *Root_Definitions_Ref_Properties_Tags) UnmarshalYAML(value *yaml.Node
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Ref_Properties_Tags_Ignore 
 type Root_Definitions_Ref_Properties_Tags_Ignore struct {
 	Raw *yaml.Node
@@ -1936,11 +1975,12 @@ func (node *Root_Definitions_Ref_Properties_Tags_Ignore) UnmarshalYAML(value *ya
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Shell You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
 type Root_Definitions_Shell struct {
 
@@ -1954,7 +1994,7 @@ func (node *Root_Definitions_Shell) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -1966,11 +2006,12 @@ func (node *Root_Definitions_Shell) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Types Selects the types of activity that will trigger a workflow run. Most GitHub events are triggered by more than one type of activity. For example, the event for the release resource is triggered when a release is published, unpublished, created, edited, deleted, or prereleased. The types keyword enables you to narrow down activity that causes the workflow to run. When only one activity type triggers a webhook event, the types keyword is unnecessary.
 // You can use an array of event types. For more information about each event and their activity types, see https://help.github.com/en/articles/events-that-trigger-workflows#webhook-events.
 type Root_Definitions_Types struct {
@@ -1982,11 +2023,12 @@ func (node *Root_Definitions_Types) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Definitions_Working_Directory Using the working-directory keyword, you can specify the working directory of where to run the command.
 type Root_Definitions_Working_Directory struct {
 
@@ -2000,7 +2042,7 @@ func (node *Root_Definitions_Working_Directory) UnmarshalYAML(value *yaml.Node) 
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -2012,11 +2054,12 @@ func (node *Root_Definitions_Working_Directory) UnmarshalYAML(value *yaml.Node) 
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Properties_Concurrency Concurrency ensures that only a single job or workflow using the same concurrency group will run at a time. A concurrency group can be any string or expression. The expression can use any context except for the secrets context. 
 // You can also specify concurrency at the workflow level. 
 // When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled. To also cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
@@ -2029,11 +2072,12 @@ func (node *Root_Properties_Concurrency) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Properties_Defaults A map of default settings that will apply to all jobs in the workflow.
 type Root_Properties_Defaults struct {
 	Raw *yaml.Node
@@ -2044,11 +2088,12 @@ func (node *Root_Properties_Defaults) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Properties_Env A map of environment variables that are available to all jobs and steps in the workflow.
 type Root_Properties_Env struct {
 	Raw *yaml.Node
@@ -2059,11 +2104,12 @@ func (node *Root_Properties_Env) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Properties_Jobs A workflow run is made up of one or more jobs. Jobs run in parallel by default. To run jobs sequentially, you can define dependencies on other jobs using the jobs.<job_id>.needs keyword.
 // Each job runs in a fresh instance of the virtual environment specified by runs-on.
 // You can run an unlimited number of jobs as long as you are within the workflow usage limits. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#usage-limits.
@@ -2076,11 +2122,12 @@ func (node *Root_Properties_Jobs) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Properties_Name The name of your workflow. GitHub displays the names of your workflows on your repository's actions page. If you omit this field, GitHub sets the name to the workflow's filename.
 type Root_Properties_Name struct {
 
@@ -2094,7 +2141,7 @@ func (node *Root_Properties_Name) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 			case "value":
 				i++
 				if i >= len(value.Content) {
@@ -2106,11 +2153,12 @@ func (node *Root_Properties_Name) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Properties_On The name of the GitHub event that triggers the workflow. You can provide a single event string, array of events, array of event types, or an event configuration map that schedules a workflow or restricts the execution of a workflow to specific files, tags, or branch changes. For a list of available events, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/events-that-trigger-workflows.
 type Root_Properties_On struct {
 	Raw *yaml.Node
@@ -2121,11 +2169,12 @@ func (node *Root_Properties_On) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil
 }
+
 // Root_Properties_Permissions 
 type Root_Properties_Permissions struct {
 	Raw *yaml.Node
@@ -2136,7 +2185,7 @@ func (node *Root_Properties_Permissions) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
+			
 		}
 	}
 	return nil

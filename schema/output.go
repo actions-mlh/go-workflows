@@ -81,34 +81,40 @@ func Output(w io.Writer, g *Generator, pkg string) {
 	}
 }
 
-func emitUnMarshalCode(w io.Writer, s Struct) {
-	fmt.Fprintf(w, `
-func (node *%s) UnmarshalYAML(value *yaml.Node) error {
+func emitUnMarshalCode(w io.Writer, s Struct) error {
+	templateText := `
+func (node *{{.Name}}) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-`, s.Name)
-	for _, field := range getOrderedFields(s.Fields) {
-		fmt.Fprintf(w, `
-			case "%s":
+			{{range .Fields | getOrderedFields}}
+			case "{{ToLower .Name}}":
 				i++
 				if i >= len(value.Content) {
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.%s = new(%s)
-				err := nodeValue.Decode(node.%s)
+				node.{{.Name}} = new({{.Type}})
+				err := nodeValue.Decode(node.{{.Name}})
 				if err != nil {
 					return err
 				}
-`, strings.ToLower(field.Name), field.Name, field.Type, field.Name)
-	}
-	fmt.Fprintf(w, `
+			{{end}}
 		}
 	}
 	return nil
-}`)
+}
+`
+	funcMap := template.FuncMap{
+		"ToLower": strings.ToLower,
+		"getOrderedFields": getOrderedFields,
+	}
+	t, err := template.New("unmarshal").Funcs(funcMap).Parse(templateText)
+	if err != nil {
+		return err
+	}
+	return t.Execute(w, s)
 }
 
 func outputNameAndDescriptionComment(name, description string, w io.Writer) {
