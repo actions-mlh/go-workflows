@@ -73,22 +73,11 @@ func Output(w io.Writer, g *Generator, pkg string) {
 				outputFieldDescriptionComment(f.Description, w)
 			}
 			fmt.Fprintf(w, "\t%s *%s `yaml:\"%s%s\"`\n", f.Name, f.Type, f.YAMLName, omitempty)
-
-			// emitRawYAMLNodeCode(codeBuf, f.Name, f.Type)
 		}
 		fmt.Fprintf(w, "\tRaw *yaml.Node\n")
 		fmt.Fprintln(w, "}")
 		emitUnMarshalCode(w, s)
 	}
-}
-
-func emitRawYAMLNodeCode(w io.Writer, fieldName string, fieldType string) {
-	fmt.Fprintf(w, "\n")
-	fmt.Fprintf(w, "type %s struct {\n", fieldName)
-	fmt.Fprintf(w, "\tRaw *yaml.Node\n")
-	fmt.Fprintf(w, "\tValue %s\n", fieldType)
-	fmt.Fprintln(w, "}")
-	fmt.Fprintf(w, "\n")
 }
 
 func emitUnMarshalCode(w io.Writer, s Struct) {
