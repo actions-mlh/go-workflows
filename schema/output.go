@@ -6,7 +6,6 @@ import (
 	"io"
 	"sort"
 	"strings"
-	"text/template"
 )
 
 func getOrderedFields(m map[string]Field) []Field {

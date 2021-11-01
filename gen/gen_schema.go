@@ -375,7 +375,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 }
 // Root_Definitions_Architecture 
 type Root_Definitions_Architecture struct {
-	Value *Root_Definitions_Architecture `yaml:"architecture,omitempty"`
+	Value *string `yaml:"architecture,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -391,7 +391,7 @@ func (node *Root_Definitions_Architecture) UnmarshalYAML(value *yaml.Node) error
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_Architecture)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -473,7 +473,7 @@ func (node *Root_Definitions_Concurrency) UnmarshalYAML(value *yaml.Node) error 
 type Root_Definitions_Concurrency_Properties_Cancel_In_Progress struct {
 
   // To cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
-	Value *Root_Definitions_Concurrency_Properties_Cancel_In_Progress `yaml:"progress,omitempty"`
+	Value *boolean `yaml:"progress,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -489,7 +489,7 @@ func (node *Root_Definitions_Concurrency_Properties_Cancel_In_Progress) Unmarsha
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_Concurrency_Properties_Cancel_In_Progress)
+				node.Value = new(boolean)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -503,7 +503,7 @@ func (node *Root_Definitions_Concurrency_Properties_Cancel_In_Progress) Unmarsha
 type Root_Definitions_Concurrency_Properties_Group struct {
 
   // When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled.
-	Value *Root_Definitions_Concurrency_Properties_Group `yaml:"group,omitempty"`
+	Value *string `yaml:"group,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -519,7 +519,7 @@ func (node *Root_Definitions_Concurrency_Properties_Group) UnmarshalYAML(value *
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_Concurrency_Properties_Group)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -694,7 +694,7 @@ func (node *Root_Definitions_Container_Properties_Credentials) UnmarshalYAML(val
 }
 // Root_Definitions_Container_Properties_Credentials_Properties_Password 
 type Root_Definitions_Container_Properties_Credentials_Properties_Password struct {
-	Value *Root_Definitions_Container_Properties_Credentials_Properties_Password `yaml:"password,omitempty"`
+	Value *string `yaml:"password,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -710,7 +710,7 @@ func (node *Root_Definitions_Container_Properties_Credentials_Properties_Passwor
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_Container_Properties_Credentials_Properties_Password)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -722,7 +722,7 @@ func (node *Root_Definitions_Container_Properties_Credentials_Properties_Passwor
 }
 // Root_Definitions_Container_Properties_Credentials_Properties_Username 
 type Root_Definitions_Container_Properties_Credentials_Properties_Username struct {
-	Value *Root_Definitions_Container_Properties_Credentials_Properties_Username `yaml:"username,omitempty"`
+	Value *string `yaml:"username,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -738,7 +738,7 @@ func (node *Root_Definitions_Container_Properties_Credentials_Properties_Usernam
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_Container_Properties_Credentials_Properties_Username)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -750,7 +750,6 @@ func (node *Root_Definitions_Container_Properties_Credentials_Properties_Usernam
 }
 // Root_Definitions_Container_Properties_Env Sets an array of environment variables in the container.
 type Root_Definitions_Container_Properties_Env struct {
-	Ref *Root_Definitions_Env `yaml:"env,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -760,18 +759,6 @@ func (node *Root_Definitions_Container_Properties_Env) UnmarshalYAML(value *yaml
 		nodeName := value.Content[i]
 		switch nodeName.Value {
 
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Env)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
-
 		}
 	}
 	return nil
@@ -780,7 +767,7 @@ func (node *Root_Definitions_Container_Properties_Env) UnmarshalYAML(value *yaml
 type Root_Definitions_Container_Properties_Image struct {
 
   // The Docker image to use as the container to run the action. The value can be the Docker Hub image name or a registry name.
-	Value *Root_Definitions_Container_Properties_Image `yaml:"image,omitempty"`
+	Value *string `yaml:"image,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -796,7 +783,7 @@ func (node *Root_Definitions_Container_Properties_Image) UnmarshalYAML(value *ya
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_Container_Properties_Image)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -810,7 +797,7 @@ func (node *Root_Definitions_Container_Properties_Image) UnmarshalYAML(value *ya
 type Root_Definitions_Container_Properties_Options struct {
 
   // Additional Docker container resource options. For a list of options, see https://docs.docker.com/engine/reference/commandline/create/#options.
-	Value *Root_Definitions_Container_Properties_Options `yaml:"options,omitempty"`
+	Value *string `yaml:"options,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -826,7 +813,7 @@ func (node *Root_Definitions_Container_Properties_Options) UnmarshalYAML(value *
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_Container_Properties_Options)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -917,7 +904,7 @@ func (node *Root_Definitions_Container_Properties_Volumes) UnmarshalYAML(value *
 }
 // Root_Definitions_Container_Properties_Volumes_Items_Root_Definitions_Container_Properties_Volumes 
 type Root_Definitions_Container_Properties_Volumes_Items_Root_Definitions_Container_Properties_Volumes struct {
-	Value *Root_Definitions_Container_Properties_Volumes_Items_Root_Definitions_Container_Properties_Volumes `yaml:"volumes,omitempty"`
+	Value *string `yaml:"volumes,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -933,7 +920,7 @@ func (node *Root_Definitions_Container_Properties_Volumes_Items_Root_Definitions
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_Container_Properties_Volumes_Items_Root_Definitions_Container_Properties_Volumes)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -1014,9 +1001,6 @@ func (node *Root_Definitions_Defaults_Properties_Run) UnmarshalYAML(value *yaml.
 }
 // Root_Definitions_Defaults_Properties_Run_Properties_Shell 
 type Root_Definitions_Defaults_Properties_Run_Properties_Shell struct {
-
-  // You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
-	Ref *Root_Definitions_Shell `yaml:"shell,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1026,27 +1010,12 @@ func (node *Root_Definitions_Defaults_Properties_Run_Properties_Shell) Unmarshal
 		nodeName := value.Content[i]
 		switch nodeName.Value {
 
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Shell)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
-
 		}
 	}
 	return nil
 }
 // Root_Definitions_Defaults_Properties_Run_Properties_Working_Directory 
 type Root_Definitions_Defaults_Properties_Run_Properties_Working_Directory struct {
-
-  // Using the working-directory keyword, you can specify the working directory of where to run the command.
-	Ref *Root_Definitions_Working_Directory `yaml:"working_directory,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1055,18 +1024,6 @@ func (node *Root_Definitions_Defaults_Properties_Run_Properties_Working_Director
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Working_Directory)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
 
 		}
 	}
@@ -1136,7 +1093,7 @@ func (node *Root_Definitions_Environment) UnmarshalYAML(value *yaml.Node) error 
 type Root_Definitions_Environment_Properties_Name struct {
 
   // The name of the environment configured in the repo.
-	Value *Root_Definitions_Environment_Properties_Name `yaml:"name,omitempty"`
+	Value *string `yaml:"name,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1152,7 +1109,7 @@ func (node *Root_Definitions_Environment_Properties_Name) UnmarshalYAML(value *y
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_Environment_Properties_Name)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -1166,7 +1123,7 @@ func (node *Root_Definitions_Environment_Properties_Name) UnmarshalYAML(value *y
 type Root_Definitions_Environment_Properties_Url struct {
 
   // A deployment URL
-	Value *Root_Definitions_Environment_Properties_Url `yaml:"url,omitempty"`
+	Value *string `yaml:"url,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1182,7 +1139,7 @@ func (node *Root_Definitions_Environment_Properties_Url) UnmarshalYAML(value *ya
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_Environment_Properties_Url)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -1194,7 +1151,7 @@ func (node *Root_Definitions_Environment_Properties_Url) UnmarshalYAML(value *ya
 }
 // Root_Definitions_Event 
 type Root_Definitions_Event struct {
-	Value *Root_Definitions_Event `yaml:"event,omitempty"`
+	Value *string `yaml:"event,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1210,7 +1167,7 @@ func (node *Root_Definitions_Event) UnmarshalYAML(value *yaml.Node) error {
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_Event)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -1237,7 +1194,7 @@ func (node *Root_Definitions_EventObject) UnmarshalYAML(value *yaml.Node) error 
 }
 // Root_Definitions_ExpressionSyntax 
 type Root_Definitions_ExpressionSyntax struct {
-	Value *Root_Definitions_ExpressionSyntax `yaml:"expressionsyntax,omitempty"`
+	Value *string `yaml:"expressionsyntax,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1253,7 +1210,7 @@ func (node *Root_Definitions_ExpressionSyntax) UnmarshalYAML(value *yaml.Node) e
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_ExpressionSyntax)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -1293,7 +1250,7 @@ func (node *Root_Definitions_Globs) UnmarshalYAML(value *yaml.Node) error {
 }
 // Root_Definitions_Globs_Items_Root_Definitions_Globs 
 type Root_Definitions_Globs_Items_Root_Definitions_Globs struct {
-	Value *Root_Definitions_Globs_Items_Root_Definitions_Globs `yaml:"globs,omitempty"`
+	Value *string `yaml:"globs,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1309,7 +1266,7 @@ func (node *Root_Definitions_Globs_Items_Root_Definitions_Globs) UnmarshalYAML(v
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_Globs_Items_Root_Definitions_Globs)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -1321,7 +1278,7 @@ func (node *Root_Definitions_Globs_Items_Root_Definitions_Globs) UnmarshalYAML(v
 }
 // Root_Definitions_Machine 
 type Root_Definitions_Machine struct {
-	Value *Root_Definitions_Machine `yaml:"machine,omitempty"`
+	Value *string `yaml:"machine,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1337,7 +1294,7 @@ func (node *Root_Definitions_Machine) UnmarshalYAML(value *yaml.Node) error {
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_Machine)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -1349,7 +1306,7 @@ func (node *Root_Definitions_Machine) UnmarshalYAML(value *yaml.Node) error {
 }
 // Root_Definitions_Name 
 type Root_Definitions_Name struct {
-	Value *Root_Definitions_Name `yaml:"name,omitempty"`
+	Value *string `yaml:"name,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1365,7 +1322,7 @@ func (node *Root_Definitions_Name) UnmarshalYAML(value *yaml.Node) error {
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_Name)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -1381,7 +1338,6 @@ func (node *Root_Definitions_Name) UnmarshalYAML(value *yaml.Node) error {
 // - paths-ignore - Use the paths-ignore filter when you only need to exclude path names.
 // - paths - Use the paths filter when you need to filter paths for positive matches and exclude paths.
 type Root_Definitions_Path struct {
-	Ref *Root_Definitions_Globs `yaml:"globs,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1390,18 +1346,6 @@ func (node *Root_Definitions_Path) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Globs)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
 
 		}
 	}
@@ -1614,7 +1558,6 @@ func (node *Root_Definitions_Permissions_Event_Properties_Contents) UnmarshalYAM
 }
 // Root_Definitions_Permissions_Event_Properties_Deployments 
 type Root_Definitions_Permissions_Event_Properties_Deployments struct {
-	Ref *Root_Definitions_Permissions_Level `yaml:"permissions_level,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1623,18 +1566,6 @@ func (node *Root_Definitions_Permissions_Event_Properties_Deployments) Unmarshal
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Permissions_Level)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
 
 		}
 	}
@@ -1717,6 +1648,7 @@ func (node *Root_Definitions_Permissions_Event_Properties_Security_Events) Unmar
 }
 // Root_Definitions_Permissions_Event_Properties_Statuses 
 type Root_Definitions_Permissions_Event_Properties_Statuses struct {
+	Ref *Root_Definitions_Permissions_Level `yaml:"permissions_level,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1726,13 +1658,25 @@ func (node *Root_Definitions_Permissions_Event_Properties_Statuses) UnmarshalYAM
 		nodeName := value.Content[i]
 		switch nodeName.Value {
 
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Permissions_Level)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
+
 		}
 	}
 	return nil
 }
 // Root_Definitions_Permissions_Level 
 type Root_Definitions_Permissions_Level struct {
-	Value *Root_Definitions_Permissions_Level `yaml:"level,omitempty"`
+	Value *string `yaml:"level,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1748,7 +1692,7 @@ func (node *Root_Definitions_Permissions_Level) UnmarshalYAML(value *yaml.Node) 
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_Permissions_Level)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -1853,6 +1797,17 @@ func (node *Root_Definitions_Ref) UnmarshalYAML(value *yaml.Node) error {
 }
 // Root_Definitions_Ref_Properties_Branches 
 type Root_Definitions_Ref_Properties_Branches struct {
+
+  // When using the push and pull_request events, you can configure a workflow to run on specific branches or tags. If you only define only tags or only branches, the workflow won't run for events affecting the undefined Git ref.
+  // The branches, branches-ignore, tags, and tags-ignore keywords accept glob patterns that use the * and ** wildcard characters to match more than one branch or tag name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
+  // The patterns defined in branches and tags are evaluated against the Git ref's name. For example, defining the pattern mona/octocat in branches will match the refs/heads/mona/octocat Git ref. The pattern releases/** will match the refs/heads/releases/10 Git ref.
+  // You can use two types of filters to prevent a workflow from running on pushes and pull requests to tags and branches:
+  // - branches or branches-ignore - You cannot use both the branches and branches-ignore filters for the same event in a workflow. Use the branches filter when you need to filter branches for positive matches and exclude branches. Use the branches-ignore filter when you only need to exclude branch names.
+  // - tags or tags-ignore - You cannot use both the tags and tags-ignore filters for the same event in a workflow. Use the tags filter when you need to filter tags for positive matches and exclude tags. Use the tags-ignore filter when you only need to exclude tag names.
+  // You can exclude tags and branches using the ! character. The order that you define patterns matters.
+  // - A matching negative pattern (prefixed with !) after a positive match will exclude the Git ref.
+  // - A matching positive pattern after a negative match will include the Git ref again.
+	Ref *Root_Definitions_Branch `yaml:"branch,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1861,6 +1816,18 @@ func (node *Root_Definitions_Ref_Properties_Branches) UnmarshalYAML(value *yaml.
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
+
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Branch)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
 
 		}
 	}
@@ -1898,6 +1865,13 @@ func (node *Root_Definitions_Ref_Properties_Paths) UnmarshalYAML(value *yaml.Nod
 }
 // Root_Definitions_Ref_Properties_Paths_Ignore 
 type Root_Definitions_Ref_Properties_Paths_Ignore struct {
+
+  // When using the push and pull_request events, you can configure a workflow to run when at least one file does not match paths-ignore or at least one modified file matches the configured paths. Path filters are not evaluated for pushes to tags.
+  // The paths-ignore and paths keywords accept glob patterns that use the * and ** wildcard characters to match more than one path name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
+  // You can exclude paths using two types of filters. You cannot use both of these filters for the same event in a workflow.
+  // - paths-ignore - Use the paths-ignore filter when you only need to exclude path names.
+  // - paths - Use the paths filter when you need to filter paths for positive matches and exclude paths.
+	Ref *Root_Definitions_Path `yaml:"path,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1906,6 +1880,18 @@ func (node *Root_Definitions_Ref_Properties_Paths_Ignore) UnmarshalYAML(value *y
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
+
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Path)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
 
 		}
 	}
@@ -1945,7 +1931,7 @@ func (node *Root_Definitions_Ref_Properties_Tags_Ignore) UnmarshalYAML(value *ya
 type Root_Definitions_Shell struct {
 
   // You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
-	Value *Root_Definitions_Shell `yaml:"shell,omitempty"`
+	Value *string `yaml:"shell,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1961,7 +1947,7 @@ func (node *Root_Definitions_Shell) UnmarshalYAML(value *yaml.Node) error {
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_Shell)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -1991,7 +1977,7 @@ func (node *Root_Definitions_Types) UnmarshalYAML(value *yaml.Node) error {
 type Root_Definitions_Working_Directory struct {
 
   // Using the working-directory keyword, you can specify the working directory of where to run the command.
-	Value *Root_Definitions_Working_Directory `yaml:"directory,omitempty"`
+	Value *string `yaml:"directory,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -2007,7 +1993,7 @@ func (node *Root_Definitions_Working_Directory) UnmarshalYAML(value *yaml.Node) 
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Definitions_Working_Directory)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -2085,7 +2071,7 @@ func (node *Root_Properties_Jobs) UnmarshalYAML(value *yaml.Node) error {
 type Root_Properties_Name struct {
 
   // The name of your workflow. GitHub displays the names of your workflows on your repository's actions page. If you omit this field, GitHub sets the name to the workflow's filename.
-	Value *Root_Properties_Name `yaml:"name,omitempty"`
+	Value *string `yaml:"name,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -2101,7 +2087,7 @@ func (node *Root_Properties_Name) UnmarshalYAML(value *yaml.Node) error {
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(Root_Properties_Name)
+				node.Value = new(string)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
