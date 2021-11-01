@@ -6,7 +6,7 @@ import (
 	// "reflect"
 	"strings"
 	"gopkg.in/yaml.v3"
-	"regexp"
+	// "regexp"
 )
 
 func checkRequiredKeys(raw *yaml.Node, sink *ProblemSink, keys []*yaml.Node, requiredKeys map[string]bool) error {
@@ -71,83 +71,83 @@ func LintWorkflow(sink *ProblemSink, target *gen_mock.WorkflowNode) error {
 	return nil
 }
 
-func lintWorkflowName(sink *ProblemSink, target *gen_mock.WorkflowNameNode, raw *yaml.Node) error {
-	nameNode := target
+// func lintWorkflowName(sink *ProblemSink, target *gen_mock.WorkflowNameNode, raw *yaml.Node) error {
+// 	nameNode := target
 
-	if nameNode != nil {
-		if nameNode.Raw == nil {
-			sink.Record(raw, "name cannot be null")
-		}
-	}
+// 	if nameNode != nil {
+// 		if nameNode.Raw == nil {
+// 			sink.Record(raw, "name cannot be null")
+// 		}
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
-func lintWorkflowJobs(sink *ProblemSink, target *gen_mock.WorkflowJobsNode, raw *yaml.Node) error {
-	jobsNode := target
+// func lintWorkflowJobs(sink *ProblemSink, target *gen_mock.WorkflowJobsNode, raw *yaml.Node) error {
+// 	jobsNode := target
 
-	if jobsNode != nil {
-		if jobsNode.Raw == nil {
-			sink.Record(raw, "jobs cannot be null")
-		}
+// 	if jobsNode != nil {
+// 		if jobsNode.Raw == nil {
+// 			sink.Record(raw, "jobs cannot be null")
+// 		}
 
-		jobIDArray := []string{}
-		validateJobID := func(jobValueID string, jobRaw *yaml.Node) error {
-			firstLetter := jobValueID[0:1]
-			for _, runeVal := range firstLetter {
-				if (runeVal < 'a' || runeVal > 'z') && (runeVal < 'A' || runeVal > 'Z') && (runeVal != '_') {
-					sink.Record(jobRaw, "job ID's must start with a letter or \"_\"")
-				}
-			}
+// 		jobIDArray := []string{}
+// 		validateJobID := func(jobValueID string, jobRaw *yaml.Node) error {
+// 			firstLetter := jobValueID[0:1]
+// 			for _, runeVal := range firstLetter {
+// 				if (runeVal < 'a' || runeVal > 'z') && (runeVal < 'A' || runeVal > 'Z') && (runeVal != '_') {
+// 					sink.Record(jobRaw, "job ID's must start with a letter or \"_\"")
+// 				}
+// 			}
 
-			remainingString := jobValueID[1:]
-			alphabetValidation := regexp.MustCompile(`^[A-Za-z]+$`).MatchString
-			if !alphabetValidation(remainingString) {
-				sink.Record(jobRaw, "job ID's must contain only alphanumeric characters \"-\", or \"_\"")
-			}
-			return nil
-		}
+// 			remainingString := jobValueID[1:]
+// 			alphabetValidation := regexp.MustCompile(`^[A-Za-z]+$`).MatchString
+// 			if !alphabetValidation(remainingString) {
+// 				sink.Record(jobRaw, "job ID's must contain only alphanumeric characters \"-\", or \"_\"")
+// 			}
+// 			return nil
+// 		}
 
-		validateCircularNeeds := func(needsNode *gen_mock.JobsPatternPropertiesNeedsNode, jobValueID string) {
-			raw := needsNode.Raw
-			sequence := *needsNode.OneOf.SequenceNode
+// 		validateCircularNeeds := func(needsNode *gen_mock.JobsPatternPropertiesNeedsNode, jobValueID string) {
+// 			raw := needsNode.Raw
+// 			sequence := *needsNode.OneOf.SequenceNode
 
-			for _, sequenceID := range sequence {
-				contains := false
-				for _, jobID := range jobIDArray {
-					if jobID == sequenceID {
-						contains = true
-					}
-				}
-				if !contains {
-					sink.Record(raw, "job %s does not exist", sequenceID)
-				}
-				contains = false
-			}
+// 			for _, sequenceID := range sequence {
+// 				contains := false
+// 				for _, jobID := range jobIDArray {
+// 					if jobID == sequenceID {
+// 						contains = true
+// 					}
+// 				}
+// 				if !contains {
+// 					sink.Record(raw, "job %s does not exist", sequenceID)
+// 				}
+// 				contains = false
+// 			}
 
-			for _, sequenceID := range sequence {
-				if sequenceID == jobValueID {
-					sink.Record(raw, "cannot contain itself within its job needs")
-				}
-			}
-		}
+// 			for _, sequenceID := range sequence {
+// 				if sequenceID == jobValueID {
+// 					sink.Record(raw, "cannot contain itself within its job needs")
+// 				}
+// 			}
+// 		}
 
-		for _, jobValue := range jobsNode.Value { 
-			jobIDArray = append(jobIDArray, jobValue.ID)
-		}
+// 		for _, jobValue := range jobsNode.Value { 
+// 			jobIDArray = append(jobIDArray, jobValue.ID)
+// 		}
 
 
-		for _, jobValue := range jobsNode.Value {
-			validateJobID(jobValue.ID, jobValue.PatternProperties.Raw)
-		} 
+// 		for _, jobValue := range jobsNode.Value {
+// 			validateJobID(jobValue.ID, jobValue.PatternProperties.Raw)
+// 		} 
 
-		for _, jobValue := range jobsNode.Value {
-			validateCircularNeeds(jobValue.PatternProperties.Value.Needs , jobValue.ID)
-		} 
-	}
+// 		for _, jobValue := range jobsNode.Value {
+// 			validateCircularNeeds(jobValue.PatternProperties.Value.Needs , jobValue.ID)
+// 		} 
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 
 

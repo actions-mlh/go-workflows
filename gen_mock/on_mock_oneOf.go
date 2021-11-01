@@ -15,7 +15,7 @@ import (
 
 type WorkflowNode struct {
 	Raw   *yaml.Node
-	Value *WorkflowValue // OneOf or Value or Scalar(string, int, bool, etc)
+	Value []*WorkflowValue // OneOf or Value or Scalar(string, int, bool, etc)
 }
 
 // when creating unmarshalYaml function, we check if required exists
@@ -41,67 +41,39 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 			}
 			// if "type" or oneOf -> array of "type", Does not exist
 			// might be OneOf or Value -> so we just use Raw == nil check
-			if event.Name.Raw == nil {
-				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
-			}
+			
 		case "on":
 			event.On = new(WorkflowOnNode)
 			err := valueEntry.Decode(event.On)
 			if err != nil {
 				return err
 			}
-			if event.On.Raw == nil {
-				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
-			}
+			
 		case "defaults":
 			event.Defaults = new(WorkflowDefaultsNode)
 			err := valueEntry.Decode(event.Defaults)
 			if err != nil {
 				return err
 			}
-			if event.Defaults.Raw == nil {
-				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
-			}
+		
 		case "concurrency":
 			event.Concurrency = new(WorkflowConcurrencyNode)
 			err := valueEntry.Decode(event.Concurrency)
 			if err != nil {
 				return err
 			}
-			if event.Concurrency.Raw == nil {
-				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
-			}
+		
 		case "jobs":
 			event.Jobs = new(WorkflowJobsNode)
 			err := valueEntry.Decode(event.Jobs)
 			if err != nil {
 				return err
 			}
-			if event.Jobs.Raw == nil {
-				return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
-			}
 		default:
 			return fmt.Errorf("%d:%d  error  Expected: name, on, defaults, concurrency", node.Raw.Line, node.Raw.Column)
 		}
 	}
-	node.Value = event
-
-	// ----------------------------------------------------------------------------------
-	// generated after our oneOf and properties check
-	// check if child.Struct.Required field exists
-	err := func(value WorkflowValue) error {
-		if value.On == nil {
-			return fmt.Errorf("%d:%d   error   Required keys: \"on\" \"jobs\"", node.Raw.Line, node.Raw.Column)
-		}
-		return nil
-	}(*node.Value)
-
-	if err != nil {
-		return err
-	}
-
 	return nil
-	// ----------------------------------------------------------------------------------
 }
 
 type WorkflowValue struct { // created at parent level -> code buffer
