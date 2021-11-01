@@ -750,6 +750,7 @@ func (node *Root_Definitions_Container_Properties_Credentials_Properties_Usernam
 }
 // Root_Definitions_Container_Properties_Env Sets an array of environment variables in the container.
 type Root_Definitions_Container_Properties_Env struct {
+	Ref *Root_Definitions_Env `yaml:"env,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -758,6 +759,18 @@ func (node *Root_Definitions_Container_Properties_Env) UnmarshalYAML(value *yaml
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
+
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Env)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
 
 		}
 	}
@@ -1513,6 +1526,7 @@ func (node *Root_Definitions_Permissions_Event) UnmarshalYAML(value *yaml.Node) 
 }
 // Root_Definitions_Permissions_Event_Properties_Actions 
 type Root_Definitions_Permissions_Event_Properties_Actions struct {
+	Ref *Root_Definitions_Permissions_Level `yaml:"permissions_level,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1521,6 +1535,18 @@ func (node *Root_Definitions_Permissions_Event_Properties_Actions) UnmarshalYAML
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
+
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Permissions_Level)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
 
 		}
 	}
@@ -1648,7 +1674,6 @@ func (node *Root_Definitions_Permissions_Event_Properties_Security_Events) Unmar
 }
 // Root_Definitions_Permissions_Event_Properties_Statuses 
 type Root_Definitions_Permissions_Event_Properties_Statuses struct {
-	Ref *Root_Definitions_Permissions_Level `yaml:"permissions_level,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1657,18 +1682,6 @@ func (node *Root_Definitions_Permissions_Event_Properties_Statuses) UnmarshalYAM
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Permissions_Level)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
 
 		}
 	}
@@ -1797,17 +1810,6 @@ func (node *Root_Definitions_Ref) UnmarshalYAML(value *yaml.Node) error {
 }
 // Root_Definitions_Ref_Properties_Branches 
 type Root_Definitions_Ref_Properties_Branches struct {
-
-  // When using the push and pull_request events, you can configure a workflow to run on specific branches or tags. If you only define only tags or only branches, the workflow won't run for events affecting the undefined Git ref.
-  // The branches, branches-ignore, tags, and tags-ignore keywords accept glob patterns that use the * and ** wildcard characters to match more than one branch or tag name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
-  // The patterns defined in branches and tags are evaluated against the Git ref's name. For example, defining the pattern mona/octocat in branches will match the refs/heads/mona/octocat Git ref. The pattern releases/** will match the refs/heads/releases/10 Git ref.
-  // You can use two types of filters to prevent a workflow from running on pushes and pull requests to tags and branches:
-  // - branches or branches-ignore - You cannot use both the branches and branches-ignore filters for the same event in a workflow. Use the branches filter when you need to filter branches for positive matches and exclude branches. Use the branches-ignore filter when you only need to exclude branch names.
-  // - tags or tags-ignore - You cannot use both the tags and tags-ignore filters for the same event in a workflow. Use the tags filter when you need to filter tags for positive matches and exclude tags. Use the tags-ignore filter when you only need to exclude tag names.
-  // You can exclude tags and branches using the ! character. The order that you define patterns matters.
-  // - A matching negative pattern (prefixed with !) after a positive match will exclude the Git ref.
-  // - A matching positive pattern after a negative match will include the Git ref again.
-	Ref *Root_Definitions_Branch `yaml:"branch,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1816,18 +1818,6 @@ func (node *Root_Definitions_Ref_Properties_Branches) UnmarshalYAML(value *yaml.
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Branch)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
 
 		}
 	}
@@ -1850,21 +1840,6 @@ func (node *Root_Definitions_Ref_Properties_Branches_Ignore) UnmarshalYAML(value
 }
 // Root_Definitions_Ref_Properties_Paths 
 type Root_Definitions_Ref_Properties_Paths struct {
-	Raw *yaml.Node
-}
-
-func (node *Root_Definitions_Ref_Properties_Paths) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
-
-		}
-	}
-	return nil
-}
-// Root_Definitions_Ref_Properties_Paths_Ignore 
-type Root_Definitions_Ref_Properties_Paths_Ignore struct {
 
   // When using the push and pull_request events, you can configure a workflow to run when at least one file does not match paths-ignore or at least one modified file matches the configured paths. Path filters are not evaluated for pushes to tags.
   // The paths-ignore and paths keywords accept glob patterns that use the * and ** wildcard characters to match more than one path name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
@@ -1875,7 +1850,7 @@ type Root_Definitions_Ref_Properties_Paths_Ignore struct {
 	Raw *yaml.Node
 }
 
-func (node *Root_Definitions_Ref_Properties_Paths_Ignore) UnmarshalYAML(value *yaml.Node) error {
+func (node *Root_Definitions_Ref_Properties_Paths) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
@@ -1897,8 +1872,34 @@ func (node *Root_Definitions_Ref_Properties_Paths_Ignore) UnmarshalYAML(value *y
 	}
 	return nil
 }
+// Root_Definitions_Ref_Properties_Paths_Ignore 
+type Root_Definitions_Ref_Properties_Paths_Ignore struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Ref_Properties_Paths_Ignore) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	for i := 0; i < len(value.Content); i++ {
+		nodeName := value.Content[i]
+		switch nodeName.Value {
+
+		}
+	}
+	return nil
+}
 // Root_Definitions_Ref_Properties_Tags 
 type Root_Definitions_Ref_Properties_Tags struct {
+
+  // When using the push and pull_request events, you can configure a workflow to run on specific branches or tags. If you only define only tags or only branches, the workflow won't run for events affecting the undefined Git ref.
+  // The branches, branches-ignore, tags, and tags-ignore keywords accept glob patterns that use the * and ** wildcard characters to match more than one branch or tag name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
+  // The patterns defined in branches and tags are evaluated against the Git ref's name. For example, defining the pattern mona/octocat in branches will match the refs/heads/mona/octocat Git ref. The pattern releases/** will match the refs/heads/releases/10 Git ref.
+  // You can use two types of filters to prevent a workflow from running on pushes and pull requests to tags and branches:
+  // - branches or branches-ignore - You cannot use both the branches and branches-ignore filters for the same event in a workflow. Use the branches filter when you need to filter branches for positive matches and exclude branches. Use the branches-ignore filter when you only need to exclude branch names.
+  // - tags or tags-ignore - You cannot use both the tags and tags-ignore filters for the same event in a workflow. Use the tags filter when you need to filter tags for positive matches and exclude tags. Use the tags-ignore filter when you only need to exclude tag names.
+  // You can exclude tags and branches using the ! character. The order that you define patterns matters.
+  // - A matching negative pattern (prefixed with !) after a positive match will exclude the Git ref.
+  // - A matching positive pattern after a negative match will include the Git ref again.
+	Ref *Root_Definitions_Branch `yaml:"branch,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1907,6 +1908,18 @@ func (node *Root_Definitions_Ref_Properties_Tags) UnmarshalYAML(value *yaml.Node
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
+
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Branch)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
 
 		}
 	}
