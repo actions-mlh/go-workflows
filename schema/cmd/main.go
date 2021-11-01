@@ -7,13 +7,18 @@ import (
 	"fmt"
 	"io"
 	"os"
+	// "github.com/davecgh/go-spew/spew"
 
 	"c2c-actions-mlh-workflow-parser/schema"
 )
 
+//go:generate make -C ../
+//go:generate ../schema-generate -i ../json/github-workflow.json -o ../../gen/gen_schema.go
+//go:generate rm ..//schema-generate
+
 var (
 	o                     = flag.String("o", "", "The output file for the schema.")
-	p                     = flag.String("p", "main", "The package that the structs are created in.")
+	p                     = flag.String("p", "gen", "The package that the structs are created in.")
 	i                     = flag.String("i", "", "A single file path (used for backwards compatibility).")
 	schemaKeyRequiredFlag = flag.Bool("schemaKeyRequired", false, "Allow input files with no $schema key.")
 )
@@ -46,6 +51,7 @@ func main() {
 
 	g := generate.New(schemas...)
 
+	// spew.Dump(g)
 	err = g.CreateTypes()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Failure generating structs: ", err)
@@ -62,6 +68,5 @@ func main() {
 			return
 		}
 	}
-
 	generate.Output(w, g, *p)
 }
