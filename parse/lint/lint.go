@@ -2,74 +2,82 @@ package lint
 
 import (
 	"c2c-actions-mlh-workflow-parser/gen_mock"
-	"fmt"
-	"reflect"
+	// "fmt"
+	// "reflect"
 	"strings"
 	"gopkg.in/yaml.v3"
+	"regexp"
 )
 
-// issues:
-// 1) Check for duplicate keys in ?
-
-func checkRequiredKeys(raw *yaml.Node, sink *ProblemSink, keys []interface{}, required map[string]bool) error {
-	counter := len(required)
-
+func checkRequiredKeys(raw *yaml.Node, sink *ProblemSink, keys []*yaml.Node, requiredKeys map[string]bool) error {
 	for _, key := range keys {
-		str := fmt.Sprintf("%v", key)
-		_, ok := required[str]
-
-		if ok {
-			counter--
-			required[str] = true
+		if _, contains := requiredKeys[key.Value]; contains {
+			requiredKeys[key.Value] = true
 		}
 	}
 
-	requiredKeys := []string{}
-	if counter != 0 {
-		for k, v := range required {
-			if !v {
-				requiredKeys = append(requiredKeys, strings.ToLower(k))
-			}
+	required := []string{}
+	for k, v := range requiredKeys {
+		if !v{
+			required = append(required, k)
 		}
-		sink.Record(raw, "Required Keys: %s", strings.Join(requiredKeys, ","))
 	}
+
+	if len(required) != 0 {
+		sink.Record(raw, "Required Keys: %s", strings.Join(required, ","))
+	}
+
 
 	return nil
 }
 
-func LintWorkflow(sink *ProblemSink, target *gen_mock.WorkflowNode) error { // (sink *ProblemSink, workflow *gen_mock.WorkflowNode) error {
-	workflow := target.Value
+func checkDuplicateKeys(raw *yaml.Node, sink *ProblemSink, nodeKeys []*yaml.Node ) error {
+	nonDuplicateKeys := make(map[string]int) 
 
-	// ---------------------------------------------------------------------------
-	reflectedStructKeys := reflect.ValueOf(*workflow).Type()
-	reflectedStructValues := reflect.ValueOf(*workflow)
-	var keys []interface{}
-	for i := 0; i < reflectedStructKeys.NumField(); i++ {
-		if !reflect.ValueOf(reflectedStructValues.Field(i).Interface()).IsNil() {
-			keys = append(keys, reflectedStructKeys.Field(i).Name)
+	for _, key := range nodeKeys {
+		if _, contains := nonDuplicateKeys[key.Value]; !contains {
+			nonDuplicateKeys[key.Value] = 1
+		} else {
+			nonDuplicateKeys[key.Value]++
+			sink.Record(key, "Duplicate Keys: %s", key.Value)
 		}
 	}
-	// ---------------------------------------------------------------------------
+	return nil
+}
 
-	if err := checkRequiredKeys(target.Raw, sink, keys, map[string]bool{"On": false, "Jobs": false}); err != nil {
+func LintWorkflow(sink *ProblemSink, target *gen_mock.WorkflowNode) error {
+	workflowKeyNodes := []*yaml.Node{}
+
+	for i := 0; i < len(target.Raw.Content); i+=2 {
+		workflowKeyNodes = append(workflowKeyNodes, target.Raw.Content[i])
+	}
+
+	if err := checkDuplicateKeys(target.Raw, sink, workflowKeyNodes); err != nil {
 		return err
 	}
 
-	if err := lintWorkflowName(sink, workflow.Name, target.Raw); err != nil {
+	requiredKeys := map[string]bool{"on": false, "jobs": false}
+	if err := checkRequiredKeys(target.Raw, sink, workflowKeyNodes, requiredKeys); err != nil {
 		return err
 	}
 
-	if err := lintWorkflowJobs(sink, workflow.Jobs, target.Raw); err != nil {
-		return err
-	}
+	// if err := lintWorkflowName(sink, workflow.Name, target.Raw); err != nil {
+	// 	return err
+	// }
+
+	// if err := lintWorkflowJobs(sink, workflow.Jobs, target.Raw); err != nil {
+	// 	return err
+	// }
 	return nil
 }
 
 func lintWorkflowName(sink *ProblemSink, target *gen_mock.WorkflowNameNode, raw *yaml.Node) error {
 	nameNode := target
 
-	if nameNode.Raw == nil {
-		sink.Record(raw, "name cannot be null")
+	if nameNode != nil {
+		if nameNode.Raw == nil {
+			sink.Record(raw, "name cannot be null")
+		}
 	}
 
 	return nil
@@ -83,21 +91,64 @@ func lintWorkflowJobs(sink *ProblemSink, target *gen_mock.WorkflowJobsNode, raw 
 			sink.Record(raw, "jobs cannot be null")
 		}
 
-		// jobIDArray := []string{}
-		validateJobID := func(jobValueID string) error {
+		jobIDArray := []string{}
+		validateJobID := func(jobValueID string, jobRaw *yaml.Node) error {
+			firstLetter := jobValueID[0:1]
+			for _, runeVal := range firstLetter {
+				if (runeVal < 'a' || runeVal > 'z') && (runeVal < 'A' || runeVal > 'Z') && (runeVal != '_') {
+					sink.Record(jobRaw, "job ID's must start with a letter or \"_\"")
+				}
+			}
+
+			remainingString := jobValueID[1:]
+			alphabetValidation := regexp.MustCompile(`^[A-Za-z]+$`).MatchString
+			if !alphabetValidation(remainingString) {
+				sink.Record(jobRaw, "job ID's must contain only alphanumeric characters \"-\", or \"_\"")
+			}
 			return nil
 		}
-		// fmt.Printf("%+v\n", jobsNode.Raw.Content[2])
-		for _, jobValue := range jobsNode.Value {
-			validateJobID(jobValue.ID)
 
-			fmt.Printf("%+v\n", *jobValue.PatternProperties.Value.Needs.OneOf.SequenceNode)
+		validateCircularNeeds := func(needsNode *gen_mock.JobsPatternPropertiesNeedsNode, jobValueID string) {
+			raw := needsNode.Raw
+			sequence := *needsNode.OneOf.SequenceNode
+
+			for _, sequenceID := range sequence {
+				contains := false
+				for _, jobID := range jobIDArray {
+					if jobID == sequenceID {
+						contains = true
+					}
+				}
+				if !contains {
+					sink.Record(raw, "job %s does not exist", sequenceID)
+				}
+				contains = false
+			}
+
+			for _, sequenceID := range sequence {
+				if sequenceID == jobValueID {
+					sink.Record(raw, "cannot contain itself within its job needs")
+				}
+			}
+		}
+
+		for _, jobValue := range jobsNode.Value { 
+			jobIDArray = append(jobIDArray, jobValue.ID)
+		}
+
+
+		for _, jobValue := range jobsNode.Value {
+			validateJobID(jobValue.ID, jobValue.PatternProperties.Raw)
 		} 
-		// create tests for each yaml test that displays errors
+
+		for _, jobValue := range jobsNode.Value {
+			validateCircularNeeds(jobValue.PatternProperties.Value.Needs , jobValue.ID)
+		} 
 	}
 
 	return nil
 }
+
 
 
 

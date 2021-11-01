@@ -2,7 +2,6 @@ package gen_mock
 
 import (
 	"fmt"
-
 	"gopkg.in/yaml.v3"
 )
 
@@ -16,12 +15,14 @@ import (
 
 type WorkflowNode struct {
 	Raw   *yaml.Node
-	Value *WorkflowValue // OneOf or Value or Scalar(string, int, bool, etc)
+	Value []interface{} // OneOf or Value or Scalar(string, int, bool, etc)
+	
 }
 
 // when creating unmarshalYaml function, we check if required exists
 func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
+	// keys := []string{}
 	event := new(WorkflowValue)
 
 	for i := 0; i < len(value.Content); i += 2 {
@@ -35,36 +36,39 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 			if err != nil {
 				return err
 			}
+			node.Value = append(node.Value, event.Name)
 		case "on":
 			event.On = new(WorkflowOnNode)
 			err := valueEntry.Decode(event.On)
 			if err != nil {
 				return err
 			}
+			node.Value = append(node.Value, event.On)
 		case "defaults":
 			event.Defaults = new(WorkflowDefaultsNode)
 			err := valueEntry.Decode(event.Defaults)
 			if err != nil {
 				return err
 			}
+			node.Value = append(node.Value, event.Defaults)
 		case "concurrency":
 			event.Concurrency = new(WorkflowConcurrencyNode)
 			err := valueEntry.Decode(event.Concurrency)
 			if err != nil {
 				return err
 			}
+			node.Value = append(node.Value, event.Concurrency)
 		case "jobs":
 			event.Jobs = new(WorkflowJobsNode)
 			err := valueEntry.Decode(event.Jobs)
 			if err != nil {
 				return err
 			}
+			node.Value = append(node.Value, event.Jobs)
 		default:
-			return fmt.Errorf("%d:%d  error  Expected: name, on, defaults, concurrency", node.Raw.Line, node.Raw.Column)
+			return fmt.Errorf("%d:%d  error  Expected: name, on, defaults, concurrency, jobs", node.Raw.Line, node.Raw.Column)
 		}
 	}
-	node.Value = event
-
 	return nil
 }
 

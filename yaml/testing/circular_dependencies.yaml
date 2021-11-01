@@ -1,0 +1,17 @@
+name: Hank
+
+on: 
+  check_run:
+    types: [requested]
+  check_suite:
+    
+jobs:
+  jobOne:
+    name: jobby
+    needs: [jobTwo]
+  jobTwo:
+    name: joker
+    needs: [jobOne]
+  jobThree:
+    name: sam
+    needs: [jobOne]
