@@ -94,6 +94,9 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 			schema.Type = "object"
 		}
 	}
+	if schema.Type == "boolean" {
+		schema.Type = "bool"
+	}
 	
 	strct := Struct{
 		ID:          schema.ID(),

@@ -477,7 +477,7 @@ func (node *Root_Definitions_Concurrency) UnmarshalYAML(value *yaml.Node) error 
 type Root_Definitions_Concurrency_Properties_Cancel_In_Progress struct {
 
   // To cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
-	Value *boolean `yaml:"progress,omitempty"`
+	Value *bool `yaml:"progress,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -493,7 +493,7 @@ func (node *Root_Definitions_Concurrency_Properties_Cancel_In_Progress) Unmarsha
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Value = new(boolean)
+				node.Value = new(bool)
 				err := nodeValue.Decode(node.Value)
 				if err != nil {
 					return err
@@ -761,6 +761,7 @@ func (node *Root_Definitions_Container_Properties_Credentials_Properties_Usernam
 
 // Root_Definitions_Container_Properties_Env Sets an array of environment variables in the container.
 type Root_Definitions_Container_Properties_Env struct {
+	Ref *Root_Definitions_Env `yaml:"env,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -769,6 +770,18 @@ func (node *Root_Definitions_Container_Properties_Env) UnmarshalYAML(value *yaml
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
+			
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Env)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
 			
 		}
 	}
@@ -1021,6 +1034,9 @@ func (node *Root_Definitions_Defaults_Properties_Run) UnmarshalYAML(value *yaml.
 
 // Root_Definitions_Defaults_Properties_Run_Properties_Shell 
 type Root_Definitions_Defaults_Properties_Run_Properties_Shell struct {
+
+  // You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
+	Ref *Root_Definitions_Shell `yaml:"shell,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1029,6 +1045,18 @@ func (node *Root_Definitions_Defaults_Properties_Run_Properties_Shell) Unmarshal
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
+			
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Shell)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
 			
 		}
 	}
@@ -1578,6 +1606,7 @@ func (node *Root_Definitions_Permissions_Event_Properties_Actions) UnmarshalYAML
 
 // Root_Definitions_Permissions_Event_Properties_Checks 
 type Root_Definitions_Permissions_Event_Properties_Checks struct {
+	Ref *Root_Definitions_Permissions_Level `yaml:"permissions_level,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1586,6 +1615,18 @@ func (node *Root_Definitions_Permissions_Event_Properties_Checks) UnmarshalYAML(
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
+			
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Permissions_Level)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
 			
 		}
 	}
@@ -1658,7 +1699,6 @@ func (node *Root_Definitions_Permissions_Event_Properties_Packages) UnmarshalYAM
 
 // Root_Definitions_Permissions_Event_Properties_Pull_Requests 
 type Root_Definitions_Permissions_Event_Properties_Pull_Requests struct {
-	Ref *Root_Definitions_Permissions_Level `yaml:"permissions_level,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1667,18 +1707,6 @@ func (node *Root_Definitions_Permissions_Event_Properties_Pull_Requests) Unmarsh
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-			
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Permissions_Level)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
 			
 		}
 	}
