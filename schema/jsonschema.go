@@ -8,6 +8,7 @@ import (
 
 // AdditionalProperties handles additional properties present in the JSON schema.
 type AdditionalProperties Schema
+type Items Schema
 
 // Schema represents JSON schema.
 type Schema struct {
@@ -26,7 +27,7 @@ type Schema struct {
 
 	// TypeValue is the schema instance type.
 	// http://json-schema.org/draft-07/json-schema-validation.html#rfc.section.6.1.1
-	TypeValue interface{} `json:"type"`
+	Type string `json:"type"`
 
 	// Definitions are inline re-usable schemas.
 	// http://json-schema.org/draft-07/json-schema-validation.html#rfc.section.9
@@ -36,6 +37,8 @@ type Schema struct {
 	// http://json-schema.org/draft-07/json-schema-validation.html#rfc.section.6.5
 	Properties map[string]*Schema
 	Required   []string
+
+	PatternProperties map[string]*Schema
 
 	// "additionalProperties": {...}
 	AdditionalProperties *AdditionalProperties
@@ -61,7 +64,8 @@ type Schema struct {
 
 	// Items represents the types that are permitted in the array.
 	// http://json-schema.org/draft-07/json-schema-validation.html#rfc.section.6.4
-	Items *Schema
+	Items *Items
+	ItemsArray []*Schema
 
 	// NameCount is the number of times the instance name was encountered across the schema.
 	NameCount int `json:"-" `
@@ -83,7 +87,7 @@ type Schema struct {
 func (ap *AdditionalProperties) UnmarshalJSON(data []byte) error {
 	var b bool
 	if err := json.Unmarshal(data, &b); err == nil {
-		*ap = (AdditionalProperties)(Schema{AdditionalPropertiesBool: &b})
+		*ap = AdditionalProperties(Schema{AdditionalPropertiesBool: &b})
 		return nil
 	}
 
@@ -111,6 +115,21 @@ func (ap *AdditionalProperties) UnmarshalJSON(data []byte) error {
 	return err
 }
 
+func (items *Items) UnmarshalJSON(data []byte) error {
+	var arr []*Schema
+	if err := json.Unmarshal(data, &arr); err == nil {
+		*items = (Items)(Schema{ItemsArray: arr})
+		return nil
+	}
+
+	s := Schema{}
+	err := json.Unmarshal(data, &s)
+	if err == nil {
+		*items = Items(s)
+	}
+	return err
+}
+
 // ID returns the schema URI id.
 func (schema *Schema) ID() string {
 	// prefer "$id" over "id"
@@ -118,56 +137,6 @@ func (schema *Schema) ID() string {
 		return schema.ID04
 	}
 	return schema.ID06
-}
-
-// Type returns the type which is permitted or an empty string if the type field is missing.
-// The 'type' field in JSON schema also allows for a single string value or an array of strings.
-// Examples:
-//   "a" => "a", false
-//   [] => "", false
-//   ["a"] => "a", false
-//   ["a", "b"] => "a", true
-func (schema *Schema) Type() (firstOrDefault string, multiple bool) {
-	// We've got a single value, e.g. { "type": "object" }
-	if ts, ok := schema.TypeValue.(string); ok {
-		firstOrDefault = ts
-		multiple = false
-		return
-	}
-
-	// We could have multiple types in the type value, e.g. { "type": [ "object", "array" ] }
-	if a, ok := schema.TypeValue.([]interface{}); ok {
-		multiple = len(a) > 1
-		for _, n := range a {
-			if s, ok := n.(string); ok {
-				firstOrDefault = s
-				return
-			}
-		}
-	}
-
-	return "", multiple
-}
-
-// MultiType returns "type" as an array
-func (schema *Schema) MultiType() ([]string, bool) {
-	// We've got a single value, e.g. { "type": "object" }
-	if ts, ok := schema.TypeValue.(string); ok {
-		return []string{ts}, false
-	}
-
-	// We could have multiple types in the type value, e.g. { "type": [ "object", "array" ] }
-	if a, ok := schema.TypeValue.([]interface{}); ok {
-		rv := []string{}
-		for _, n := range a {
-			if s, ok := n.(string); ok {
-				rv = append(rv, s)
-			}
-		}
-		return rv, len(rv) > 1
-	}
-
-	return nil, false
 }
 
 // GetRoot returns the root schema.
@@ -244,7 +213,7 @@ func (schema *Schema) updatePathElements() {
 
 	if schema.Items != nil {
 		schema.Items.PathElement = "items"
-		schema.Items.updatePathElements()
+		(*Schema)(schema.Items).updatePathElements()
 	}
 }
 
@@ -266,7 +235,7 @@ func (schema *Schema) updateParentLinks() {
 	}
 	if schema.Items != nil {
 		schema.Items.Parent = schema
-		schema.Items.updateParentLinks()
+		// schema.Items.updateParentLinks()
 	}
 }
 
@@ -292,23 +261,23 @@ func (schema *Schema) ensureSchemaKeyword() error {
 			return err
 		}
 	}
-	if schema.Items != nil {
-		if err := check("items", schema.Items); err != nil {
-			return err
-		}
-	}
+	// if schema.Items != nil {
+	// 	if err := check("items", schema.Items); err != nil {
+	// 		return err
+	// 	}
+	// }
 	return nil
 }
 
 // FixMissingTypeValue is backwards compatible, guessing the users intention when they didn't specify a type.
 func (schema *Schema) FixMissingTypeValue() {
-	if schema.TypeValue == nil {
+	if schema.Type == "" {
 		if schema.Reference == "" && len(schema.Properties) > 0 {
-			schema.TypeValue = "object"
+			schema.Type = "object"
 			return
 		}
 		if schema.Items != nil {
-			schema.TypeValue = "array"
+			schema.Type = "array"
 			return
 		}
 	}

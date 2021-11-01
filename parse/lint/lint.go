@@ -2,7 +2,7 @@ package lint
 
 import (
 	// "strings"
-	"c2c-actions-mlh-workflow-parser/gen_mock"
+	"c2c-actions-mlh-workflow-parser/gen"
 	"fmt"
 )
 
@@ -12,12 +12,12 @@ import (
 // 		fmt.Println(s.Index(i))
 // }
 
-func LintWorkflow(sink *ProblemSink, target *gen_mock.WorkflowNode) error {
+func LintWorkflow(sink *ProblemSink, target *gen.Root) error {
 	workflow := target
 	// fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode)
 	// fmt.Printf("%+v\n", *&workflow.Value.Concurrency.OneOf.MappingNode.CancelInProgress.Value)
 	fmt.Println("------------------------------")
-	fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode)
+	fmt.Printf("%+v\n", workflow.On.Raw)
 
 	// fmt.Printf("%+v\n", *workflow.Value.On.OneOf.MappingNode.CheckRun.OneOf.MappingNode.Types.Value)
 
