@@ -87,39 +87,3 @@ func (node *{{.Name}}) UnmarshalYAML(value *yaml.Node) error {
 	}
 	return t.Execute(w, g.Structs)
 }
-
-func emitUnMarshalCode(w io.Writer, s Struct) error {
-	templateText := `
-func (node *{{.Name}}) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
-			{{range .Fields | getOrderedFields}}
-			case "{{ToLower .Name}}":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.{{.Name}} = new({{.Type}})
-				err := nodeValue.Decode(node.{{.Name}})
-				if err != nil {
-					return err
-				}
-			{{end}}
-		}
-	}
-	return nil
-}
-`
-	funcMap := template.FuncMap{
-		"ToLower": strings.ToLower,
-		"getOrderedFields": getOrderedFields,
-	}
-	t, err := template.New("unmarshal").Funcs(funcMap).Parse(templateText)
-	if err != nil {
-		return err
-	}
-	return t.Execute(w, s)
-}

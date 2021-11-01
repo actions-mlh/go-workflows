@@ -413,6 +413,7 @@ func (node *Root_Definitions_Architecture) UnmarshalYAML(value *yaml.Node) error
 // - A matching negative pattern (prefixed with !) after a positive match will exclude the Git ref.
 // - A matching positive pattern after a negative match will include the Git ref again.
 type Root_Definitions_Branch struct {
+	Ref *Root_Definitions_Globs `yaml:"globs,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -421,6 +422,18 @@ func (node *Root_Definitions_Branch) UnmarshalYAML(value *yaml.Node) error {
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
+			
+			case "ref":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Ref = new(Root_Definitions_Globs)
+				err := nodeValue.Decode(node.Ref)
+				if err != nil {
+					return err
+				}
 			
 		}
 	}
@@ -1034,29 +1047,13 @@ func (node *Root_Definitions_Defaults_Properties_Run) UnmarshalYAML(value *yaml.
 
 // Root_Definitions_Defaults_Properties_Run_Properties_Shell 
 type Root_Definitions_Defaults_Properties_Run_Properties_Shell struct {
+
+  // You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
+	Ref *Root_Definitions_Shell `yaml:"shell,omitempty"`
 	Raw *yaml.Node
 }
 
 func (node *Root_Definitions_Defaults_Properties_Run_Properties_Shell) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
-			
-		}
-	}
-	return nil
-}
-
-// Root_Definitions_Defaults_Properties_Run_Properties_Working_Directory 
-type Root_Definitions_Defaults_Properties_Run_Properties_Working_Directory struct {
-
-  // Using the working-directory keyword, you can specify the working directory of where to run the command.
-	Ref *Root_Definitions_Working_Directory `yaml:"working_directory,omitempty"`
-	Raw *yaml.Node
-}
-
-func (node *Root_Definitions_Defaults_Properties_Run_Properties_Working_Directory) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
@@ -1068,11 +1065,27 @@ func (node *Root_Definitions_Defaults_Properties_Run_Properties_Working_Director
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Working_Directory)
+				node.Ref = new(Root_Definitions_Shell)
 				err := nodeValue.Decode(node.Ref)
 				if err != nil {
 					return err
 				}
+			
+		}
+	}
+	return nil
+}
+
+// Root_Definitions_Defaults_Properties_Run_Properties_Working_Directory 
+type Root_Definitions_Defaults_Properties_Run_Properties_Working_Directory struct {
+	Raw *yaml.Node
+}
+
+func (node *Root_Definitions_Defaults_Properties_Run_Properties_Working_Directory) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	for i := 0; i < len(value.Content); i++ {
+		nodeName := value.Content[i]
+		switch nodeName.Value {
 			
 		}
 	}
@@ -1625,7 +1638,6 @@ func (node *Root_Definitions_Permissions_Event_Properties_Contents) UnmarshalYAM
 
 // Root_Definitions_Permissions_Event_Properties_Deployments 
 type Root_Definitions_Permissions_Event_Properties_Deployments struct {
-	Ref *Root_Definitions_Permissions_Level `yaml:"permissions_level,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1634,18 +1646,6 @@ func (node *Root_Definitions_Permissions_Event_Properties_Deployments) Unmarshal
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-			
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Permissions_Level)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
 			
 		}
 	}
@@ -1921,13 +1921,6 @@ func (node *Root_Definitions_Ref_Properties_Paths) UnmarshalYAML(value *yaml.Nod
 
 // Root_Definitions_Ref_Properties_Paths_Ignore 
 type Root_Definitions_Ref_Properties_Paths_Ignore struct {
-
-  // When using the push and pull_request events, you can configure a workflow to run when at least one file does not match paths-ignore or at least one modified file matches the configured paths. Path filters are not evaluated for pushes to tags.
-  // The paths-ignore and paths keywords accept glob patterns that use the * and ** wildcard characters to match more than one path name. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet.
-  // You can exclude paths using two types of filters. You cannot use both of these filters for the same event in a workflow.
-  // - paths-ignore - Use the paths-ignore filter when you only need to exclude path names.
-  // - paths - Use the paths filter when you need to filter paths for positive matches and exclude paths.
-	Ref *Root_Definitions_Path `yaml:"path,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -1936,18 +1929,6 @@ func (node *Root_Definitions_Ref_Properties_Paths_Ignore) UnmarshalYAML(value *y
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
-			
-			case "ref":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Ref = new(Root_Definitions_Path)
-				err := nodeValue.Decode(node.Ref)
-				if err != nil {
-					return err
-				}
 			
 		}
 	}
