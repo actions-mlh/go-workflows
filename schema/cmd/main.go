@@ -65,8 +65,12 @@ func main() {
 
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error opening output file: ", err)
-			return
+			os.Exit(1)
 		}
 	}
-	generate.Output(w, g, *p)
+	err = generate.Output(w, g, *p)
+	if err != nil {
+		fmt.Println(os.Stderr, "Error generating output: ", err)
+		os.Exit(1)
+	}
 }
