@@ -94,6 +94,9 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 			schema.Type = "object"
 		}
 	}
+	if schema.Type == "boolean" {
+		schema.Type = "bool"
+	}
 	
 	strct := Struct{
 		ID:          schema.ID(),
@@ -121,6 +124,7 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 		}
 		strct.Fields[f.Name] = f
 	}
+	
 	// definitions
 	for key, subSchema := range schema.Definitions {
 		fieldName := getGolangName(key)
@@ -144,6 +148,7 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 	}
 	// cache the object name in case any sub-schemas recursively reference it
 	schema.GeneratedType = "*" + name
+	
 	for propKey, prop := range schema.Properties {
 		fieldName := getGolangName(propKey)
 		// calculate sub-schema name here, may not actually be used depending on type of schema!
@@ -164,6 +169,7 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 		}
 		strct.Fields[f.Name] = f
 	}
+	
 	if schema.Items != nil {
 		// subType: fallback name in case this array contains inline object without a title
 		subName := g.getSchemaName(name, (*Schema)(schema.Items))
@@ -219,7 +225,6 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 			strct.Fields[f.Name] = f
 		}
 	}
-	
 	g.Structs[name] = strct
 	return name, nil
 }
