@@ -93,54 +93,13 @@ func (g *Generator) processSchema(name string, schema *Schema) (*Struct, error) 
 		strct.AdditionalType = schema.Type
 	}
 	
-	/*
-	// this code only supports top-level definitions ---
-	// nested definitions in a schema will overwrite previous ones.
-	if len(schema.Definitions) > 0 {
-		err := g.processDefinitions(schema.Definitions)
-		if err != nil {
-			return "", err
-		}
-	}
-	*/
-
 	if len(schema.Properties) > 0 {
 		err := g.processProperties(schema, strct, schema.Properties)
 		if err != nil {
 			return nil, err
 		}
 	}
-	/*
-	if schema.Reference != "" {
-		refSchema, err := g.resolver.GetSchemaByReference(schema)		
-		if err != nil {
-			return nil, errors.New("processReference: reference \"" + schema.Reference + "\" not found at \"" + g.resolver.GetPath(schema) + "\"")
-		}
-		refSchemaName := g.getSchemaName("", refSchema)
-		newStruct, err := g.processSchema("_Definitions_" + refSchemaName, refSchema)
-		if err != nil {
-			return nil, err
-		}
-		fmt.Println(newStruct)
-		if newStruct.AdditionalType != "" {
-			fmt.Println(newStruct.AdditionalType)
-		} else {
-			f := Field{
-				Name:        newStruct.Name,
-				YAMLName:    newStruct.Name,
-				Required:    contains(schema.Required, newStruct.Name),
-				Description: newStruct.Description,
-			}
-			f.Type = newStruct.Name
-			if f.Required {
-				strct.GenerateCode = true
-			}
-			strct.Fields[f.Name] = f
-			g.Structs[newStruct.Name] = *newStruct
-		}
-	}
-	*/
-	
+
 	/*
 	if schema.Items != nil {
 		// subType: fallback name in case this array contains inline object without a title
@@ -176,45 +135,47 @@ func (g *Generator) processSchema(name string, schema *Schema) (*Struct, error) 
 func (g *Generator) processProperties(schema *Schema, strct Struct, properties map[string]*Schema) error {
 
 	for propKey, prop := range properties {
-		f := Field{
-			Name:        getGolangName(propKey),
-			YAMLName:    propKey,
-			Required:    contains(schema.Required, propKey),
-			Description: prop.Description,
-		}
-		if f.Required {
-			strct.GenerateCode = true
-		}
-		fieldName := getGolangName(propKey)
-		// calculate sub-schema name here, may not actually be used depending on type of schema!
-		var newStruct *Struct
-		var err error
-		if prop.Reference != "" {
-			refSchema, err := g.resolver.GetSchemaByReference(prop)
-			if err != nil {
-				return errors.New("processReference: reference \"" + schema.Reference + "\" not found at \"" + g.resolver.GetPath(schema) + "\"")
-			}
-			fmt.Printf("%+v\n", refSchema)
-			newStruct, err = g.processSchema(strct.Name + "_" + fieldName, refSchema)
-		} else {
-			newStruct, err = g.processSchema(strct.Name + "_" + fieldName, prop)
-		}
+		f, err := g.processField(schema, strct, prop, propKey)
 		if err != nil {
 			return err
 		}
-		if newStruct.AdditionalType != "" {
-			f.Type = newStruct.AdditionalType
-		} else {
-			g.Structs[newStruct.Name] = *newStruct
-			f.Type = newStruct.Name
-		}
-		
+		strct.Fields[f.Name] = *f
 		if f.Required {
 			strct.GenerateCode = true
 		}
-		strct.Fields[f.Name] = f
 	}
 	return nil
+}
+
+func (g *Generator) processField(schema *Schema, strct Struct, subSchema *Schema, fieldName string) (*Field, error) {
+	f := Field{
+		Name:        getGolangName(fieldName),
+		YAMLName:    fieldName,
+		Required:    contains(schema.Required, fieldName),
+		Description: subSchema.Description,
+	}
+	// calculate sub-schema name here, may not actually be used depending on type of schema!
+	var newStruct *Struct
+	var err error
+	if subSchema.Reference != "" {
+		refSchema, err := g.resolver.GetSchemaByReference(subSchema)
+		if err != nil {
+			return nil, errors.New("processField: reference \"" + schema.Reference + "\" not found at \"" + g.resolver.GetPath(schema) + "\"")
+		}
+		newStruct, err = g.processSchema(strct.Name + "_" + f.Name, refSchema)
+	} else {
+		newStruct, err = g.processSchema(strct.Name + "_" + f.Name, subSchema)
+	}
+	if err != nil {
+		return nil, err
+	}
+	if newStruct.AdditionalType != "" {
+		f.Type = newStruct.AdditionalType
+	} else {
+		g.Structs[newStruct.Name] = *newStruct
+		f.Type = newStruct.Name
+	}
+	return &f, nil
 }
 
 // util --------------------------------
