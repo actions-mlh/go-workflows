@@ -146,8 +146,9 @@ func (node *Root_Concurrency) UnmarshalYAML(value *yaml.Node) error {
 	return nil
 }
 
-// Root_Defaults A map of default settings that will apply to all jobs in the workflow.
+// Root_Defaults 
 type Root_Defaults struct {
+	Run *Root_Defaults_Run `yaml:"run,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -157,19 +158,31 @@ func (node *Root_Defaults) UnmarshalYAML(value *yaml.Node) error {
 		nodeName := value.Content[i]
 		switch nodeName.Value {
 			
+			case "run":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Run = new(Root_Defaults_Run)
+				err := nodeValue.Decode(node.Run)
+				if err != nil {
+					return err
+				}
+			
 		}
 	}
 	return nil
 }
 
-// Root_Definitions_Defaults_Run 
-type Root_Definitions_Defaults_Run struct {
-	Shell *Root_Definitions_Defaults_Run_Shell `yaml:"shell,omitempty"`
-	Working_Directory *Root_Definitions_Defaults_Run_Working_Directory `yaml:"working-directory,omitempty"`
+// Root_Defaults_Run 
+type Root_Defaults_Run struct {
+	Shell *string `yaml:"shell,omitempty"`
+	Working_Directory *string `yaml:"working-directory,omitempty"`
 	Raw *yaml.Node
 }
 
-func (node *Root_Definitions_Defaults_Run) UnmarshalYAML(value *yaml.Node) error {
+func (node *Root_Defaults_Run) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]
@@ -181,7 +194,7 @@ func (node *Root_Definitions_Defaults_Run) UnmarshalYAML(value *yaml.Node) error
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Shell = new(Root_Definitions_Defaults_Run_Shell)
+				node.Shell = new(string)
 				err := nodeValue.Decode(node.Shell)
 				if err != nil {
 					return err
@@ -193,7 +206,7 @@ func (node *Root_Definitions_Defaults_Run) UnmarshalYAML(value *yaml.Node) error
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Working_Directory = new(Root_Definitions_Defaults_Run_Working_Directory)
+				node.Working_Directory = new(string)
 				err := nodeValue.Decode(node.Working_Directory)
 				if err != nil {
 					return err
@@ -204,39 +217,7 @@ func (node *Root_Definitions_Defaults_Run) UnmarshalYAML(value *yaml.Node) error
 	return nil
 }
 
-// Root_Definitions_Defaults_Run_Shell 
-type Root_Definitions_Defaults_Run_Shell struct {
-	Raw *yaml.Node
-}
-
-func (node *Root_Definitions_Defaults_Run_Shell) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
-			
-		}
-	}
-	return nil
-}
-
-// Root_Definitions_Defaults_Run_Working_Directory 
-type Root_Definitions_Defaults_Run_Working_Directory struct {
-	Raw *yaml.Node
-}
-
-func (node *Root_Definitions_Defaults_Run_Working_Directory) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
-			
-		}
-	}
-	return nil
-}
-
-// Root_Env A map of environment variables that are available to all jobs and steps in the workflow.
+// Root_Env 
 type Root_Env struct {
 	Raw *yaml.Node
 }
@@ -286,7 +267,7 @@ func (node *Root_On) UnmarshalYAML(value *yaml.Node) error {
 	return nil
 }
 
-// Root_Permissions 
+// Root_Permissions You can modify the default permissions granted to the GITHUB_TOKEN, adding or removing access as required, so that you only allow the minimum required access.
 type Root_Permissions struct {
 	Raw *yaml.Node
 }
