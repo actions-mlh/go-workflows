@@ -172,7 +172,6 @@ func (g *Generator) processSchema(name string, schema *Schema) (*Struct, error) 
 	}
 	*/
 	// TODO: add anyof, allof, oneof, patternProperties
-	g.Structs[name] = strct
 	return &strct, nil
 }
 
@@ -202,6 +201,7 @@ func (g *Generator) processDefinitions(definitions map[string]*Schema) error {
 			defStruct.GenerateCode = true
 		}
 		defStruct.Fields[f.Name] = f
+		g.Structs[strct.Name] = *strct
 	}
 	g.Structs["Definitions"] = defStruct
 	return nil
