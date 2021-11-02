@@ -57,7 +57,7 @@ func New(schemas ...*Schema) *Generator {
 }
 
 // CreateTypes creates types from the JSON schemas, keyed by the golang name.
-func (g *Generator) CreateTypes() (err error) {
+func (g *Generator) CreateTypes() error {
 	if err := g.resolver.Init(); err != nil {
 		return err
 	}
@@ -69,7 +69,7 @@ func (g *Generator) CreateTypes() (err error) {
 			return err
 		}
 	}
-	return
+	return nil
 }
 
 // returns the type refered to by schema after resolving all dependencies
