@@ -2,64 +2,63 @@ package lint
 
 import (
 	"c2c-actions-mlh-workflow-parser/gen_mock"
-	// "fmt"
-	// "reflect"
-	"strings"
+	"c2c-actions-mlh-workflow-parser/parse/lint/util"
+	"c2c-actions-mlh-workflow-parser/parse/sink"
 	"gopkg.in/yaml.v3"
-	// "regexp"
+	"reflect"
+	"strings"
+	"fmt"
 )
 
-func checkRequiredKeys(raw *yaml.Node, sink *ProblemSink, keys []*yaml.Node, requiredKeys map[string]bool) error {
-	for _, key := range keys {
-		if _, contains := requiredKeys[key.Value]; contains {
-			requiredKeys[key.Value] = true
-		}
-	}
-
-	required := []string{}
-	for k, v := range requiredKeys {
-		if !v{
-			required = append(required, k)
-		}
-	}
-
-	if len(required) != 0 {
-		sink.Record(raw, "Required Keys: %s", strings.Join(required, ","))
-	}
-
-
-	return nil
-}
-
-func checkDuplicateKeys(raw *yaml.Node, sink *ProblemSink, nodeKeys []*yaml.Node ) error {
-	nonDuplicateKeys := make(map[string]int) 
-
-	for _, key := range nodeKeys {
-		if _, contains := nonDuplicateKeys[key.Value]; !contains {
-			nonDuplicateKeys[key.Value] = 1
-		} else {
-			nonDuplicateKeys[key.Value]++
-			sink.Record(key, "Duplicate Keys: %s", key.Value)
-		}
-	}
-	return nil
-}
-
-func LintWorkflow(sink *ProblemSink, target *gen_mock.WorkflowNode) error {
+func LintWorkflowRoot(sink *sink.ProblemSink, target *gen_mock.WorkflowNode) error {
 	workflowKeyNodes := []*yaml.Node{}
+	workflowValueNodes := []*yaml.Node{}
 
-	for i := 0; i < len(target.Raw.Content); i+=2 {
+	for i := 0; i < len(target.Raw.Content); i += 2 {
 		workflowKeyNodes = append(workflowKeyNodes, target.Raw.Content[i])
-	}
-
-	if err := checkDuplicateKeys(target.Raw, sink, workflowKeyNodes); err != nil {
-		return err
+		workflowValueNodes = append(workflowValueNodes, target.Raw.Content[i+1])
 	}
 
 	requiredKeys := map[string]bool{"on": false, "jobs": false}
-	if err := checkRequiredKeys(target.Raw, sink, workflowKeyNodes, requiredKeys); err != nil {
+	if err := util.CheckRequiredKeys(target.Raw, sink, workflowKeyNodes, requiredKeys); err != nil {
 		return err
 	}
+
+	if err := util.CheckNullPointer(sink, workflowKeyNodes, workflowValueNodes); err != nil {
+		return err
+	}
+
+	if len(workflowKeyNodes) != len(target.Value) {
+		if err := util.CheckDuplicateKeys(sink, workflowKeyNodes); err != nil {
+			return err
+		}
+
+		expectedKeys := []string{}
+		reflectedStruct := reflect.ValueOf(*target.Value[0])
+		typeOfStruct := reflectedStruct.Type()
+		for i := 0; i < reflectedStruct.NumField(); i++ {
+			expectedKeys = append(expectedKeys, strings.ToLower(typeOfStruct.Field(i).Name))
+		}
+
+		if err := util.CheckUnexpectedKeys(sink, expectedKeys, workflowKeyNodes); err != nil {
+			return err
+		}
+	}
+
+	// -------TESTING---------
+	for i := 0; i < len(target.Value); i += 1 {
+		fmt.Printf("%+v\n", target.Value[i].On)
+
+		// fmt.Printf("%+v\n", workflowKeyNodes[i])
+		// fmt.Printf("%+v\n", workflowValueNodes[i])
+	}
+
+	// for i := 0; i < len(target.Value); i += 1 {
+	// 	fmt.Printf("%+v\n", target.Value[i])
+	// }
+	// -------TESTING---------
+	
+
 
 	// if err := lintWorkflowName(sink, workflow.Name, target.Raw); err != nil {
 	// 	return err
@@ -132,25 +131,21 @@ func LintWorkflow(sink *ProblemSink, target *gen_mock.WorkflowNode) error {
 // 			}
 // 		}
 
-// 		for _, jobValue := range jobsNode.Value { 
+// 		for _, jobValue := range jobsNode.Value {
 // 			jobIDArray = append(jobIDArray, jobValue.ID)
 // 		}
 
-
 // 		for _, jobValue := range jobsNode.Value {
 // 			validateJobID(jobValue.ID, jobValue.PatternProperties.Raw)
-// 		} 
+// 		}
 
 // 		for _, jobValue := range jobsNode.Value {
 // 			validateCircularNeeds(jobValue.PatternProperties.Value.Needs , jobValue.ID)
-// 		} 
+// 		}
 // 	}
 
 // 	return nil
 // }
-
-
-
 
 // func (node WorkflowNode) Lint(sink *lint.ProblemSink) error {
 // 	if len(node.Raw.Content)%2 != 0 {
@@ -195,7 +190,6 @@ func LintWorkflow(sink *ProblemSink, target *gen_mock.WorkflowNode) error {
 // 	}
 // 	return nil
 // }
-
 
 // func lintWorkflowName(sink *ProblemSink, target mock_gen_schema.NameRaw) error {
 // 	name := target.Value

@@ -1,4 +1,4 @@
-package lint
+package sink
 
 import (
 	"fmt"

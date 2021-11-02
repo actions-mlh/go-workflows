@@ -2,6 +2,7 @@ package gen_mock
 
 import (
 	"fmt"
+
 	"gopkg.in/yaml.v3"
 )
 
@@ -18,17 +19,15 @@ type WorkflowNode struct {
 	Value []*WorkflowValue // OneOf or Value or Scalar(string, int, bool, etc)
 }
 
-// when creating unmarshalYaml function, we check if required exists
 func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
 	if len(value.Content)%2 != 0 {
-		// Uneven set of key value pairs (this shouldn't happen)
 		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
 	}
-	event := new(WorkflowValue)
 
 	for i := 0; i < len(value.Content); i += 2 {
+		event := new(WorkflowValue)
 		keyEntry := value.Content[i]
 		valueEntry := value.Content[i+1]
 		eventKey := keyEntry.Value
@@ -39,46 +38,42 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 			if err != nil {
 				return err
 			}
-			// if "type" or oneOf -> array of "type", Does not exist
-			// might be OneOf or Value -> so we just use Raw == nil check
-			
+			node.Value = append(node.Value, event)
+
 		case "on":
 			event.On = new(WorkflowOnNode)
 			err := valueEntry.Decode(event.On)
 			if err != nil {
 				return err
 			}
-			
+			node.Value = append(node.Value, event)
 		case "defaults":
 			event.Defaults = new(WorkflowDefaultsNode)
 			err := valueEntry.Decode(event.Defaults)
 			if err != nil {
 				return err
 			}
-		
+			node.Value = append(node.Value, event)
 		case "concurrency":
 			event.Concurrency = new(WorkflowConcurrencyNode)
 			err := valueEntry.Decode(event.Concurrency)
 			if err != nil {
 				return err
 			}
-		
+			node.Value = append(node.Value, event)
 		case "jobs":
 			event.Jobs = new(WorkflowJobsNode)
 			err := valueEntry.Decode(event.Jobs)
 			if err != nil {
 				return err
 			}
-		default:
-			return fmt.Errorf("%d:%d  error  Expected: name, on, defaults, concurrency", node.Raw.Line, node.Raw.Column)
+			node.Value = append(node.Value, event)
 		}
 	}
 	return nil
 }
 
-type WorkflowValue struct { // created at parent level -> code buffer
-
-	// appended to buffer once at child level
+type WorkflowValue struct {
 	Name *WorkflowNameNode `yaml:"name"`
 	On   *WorkflowOnNode   `yaml:"on"`
 	// Env  WorkflowEnvNode  `yaml:"env"`
@@ -107,7 +102,7 @@ type WorkflowOnNode struct {
 type WorkflowOnOneOfKind struct {
 	ScalarNode   *OnEventConstants // decide whether to reuse Constants ?
 	SequenceNode *[]OnEventConstants
-	MappingNode  *WorkFlowOnValue
+	MappingNode  []*WorkFlowOnValue
 }
 
 func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
@@ -123,17 +118,14 @@ func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
 		}
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.SequenceNode:
-		// will handle if key exists in linter for now, unless we decide to change
 		return value.Decode(&node.OneOf.SequenceNode)
 	case yaml.MappingNode:
 		value := node.Raw
-
 		if len(value.Content)%2 != 0 {
-			// Uneven set of key value pairs (this shouldn't happen)
 			return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
 		}
-		event := new(WorkFlowOnValue)
 		for i := 0; i < len(value.Content); i += 2 {
+			event := new(WorkFlowOnValue)
 			keyEntry := value.Content[i]
 			valueEntry := value.Content[i+1]
 			eventKey := keyEntry.Value
@@ -144,33 +136,25 @@ func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-				// might be OneOf or Value -> so we just use Raw == nil check
-				// if event.CheckRun.Raw == nil {
-				// 	return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
-				// }
+				node.OneOf.MappingNode = append(node.OneOf.MappingNode, event)
 			case "check_suite":
 				event.CheckSuite = new(OnCheckSuiteNode)
 				err := valueEntry.Decode(event.CheckSuite)
 				if err != nil {
 					return err
 				}
+				node.OneOf.MappingNode = append(node.OneOf.MappingNode, event)
 			case "create":
 				event.Create = new(OnCreateNode)
 				err := valueEntry.Decode(event.Create)
 				if err != nil {
 					return err
 				}
-			default:
-				return fmt.Errorf("%d:%d  error  Expected one of: check_run, check_suite, create", node.Raw.Line, node.Raw.Column)
+				node.OneOf.MappingNode = append(node.OneOf.MappingNode, event)
 			}
 		}
-		node.OneOf.MappingNode = event
-		return nil
-	default:
-		return fmt.Errorf("%d:%d  error  Expected one of: string, array, map type", node.Raw.Line, node.Raw.Column)
 	}
-
-	// --- no required array field
+	return nil
 }
 
 type OnEventConstants string
@@ -200,9 +184,6 @@ type OnCheckRunOneOf struct {
 	MappingNode *OnCheckRunValue
 }
 
-// func (node *OnCheckRunNode) lint(sink *ProblemSink) {
-
-// }
 func (node *OnCheckRunNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
@@ -602,7 +583,6 @@ func (node *JobsPatternPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 			// 	return err
 			// }
 		case "needs":
-			
 
 		case "uses":
 
@@ -632,7 +612,6 @@ type ReusableWorkflowCallJobValue struct {
 
 type ReusableWorkflowCallJobNameNode struct {
 	Raw *yaml.Node
-	
 }
 
 type ReusableWorkflowCallJobNeedsNode struct {
@@ -642,11 +621,6 @@ type ReusableWorkflowCallJobNeedsNode struct {
 type ReusableWorkflowCallJobUsesNode struct {
 	Raw *yaml.Node
 }
-
-
-
-
-
 
 // type JobsNormalJobValue struct {
 // 	Name        *NormalJobNameNode        `yaml:"name"`
@@ -666,7 +640,7 @@ type ReusableWorkflowCallJobUsesNode struct {
 // 	OneOf *WorkflowJobsOneOf
 // }
 
-// two types of oneOf check -> 
+// two types of oneOf check ->
 // 1) if "type" exists on same key level as "oneOf" -> oneOf refers to the Node
 // 2) else: it refers to the Kind
 // type WorkflowJobsOneOf struct {
@@ -677,5 +651,4 @@ type ReusableWorkflowCallJobUsesNode struct {
 // func (node *WorkflowJobsNode) UnmarshalYAML(value *yaml.Node) error {
 // 	node.Raw = value
 
-	
 // }
