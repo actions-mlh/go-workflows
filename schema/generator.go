@@ -13,7 +13,6 @@ type Generator struct {
 	schemas  []*Schema
 	resolver *RefResolver
 	Structs  map[string]Struct
-	Aliases  map[string]Field
 	// cache for reference types; k=url v=type
 	refs      map[string]string
 	anonCount int
@@ -53,7 +52,6 @@ func New(schemas ...*Schema) *Generator {
 		schemas:  schemas,
 		resolver: NewRefResolver(schemas),
 		Structs:  make(map[string]Struct),
-		Aliases:  make(map[string]Field),
 		refs:     make(map[string]string),
 	}
 }
@@ -66,20 +64,9 @@ func (g *Generator) CreateTypes() (err error) {
 	// extract the types
 	for _, schema := range g.schemas {
 		name := g.getSchemaName("", schema)
-		rootType, err := g.processSchema(name, schema)
+		_, err := g.processSchema(name, schema)
 		if err != nil {
 			return err
-		}
-		// ugh: if it was anything but a struct the type will not be the name...
-		if rootType != "*"+name {
-			a := Field{
-				Name:        name,
-				YAMLName:    "",
-				Type:        rootType,
-				Required:    false,
-				Description: schema.Description,
-			}
-			g.Aliases[a.Name] = a
 		}
 	}
 	return
