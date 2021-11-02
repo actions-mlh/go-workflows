@@ -162,35 +162,6 @@ func (node *Root_Defaults) UnmarshalYAML(value *yaml.Node) error {
 	return nil
 }
 
-// Root_Definitions_Defaults 
-type Root_Definitions_Defaults struct {
-	Run *Root_Definitions_Defaults_Run `yaml:"run,omitempty"`
-	Raw *yaml.Node
-}
-
-func (node *Root_Definitions_Defaults) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
-			
-			case "run":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Run = new(Root_Definitions_Defaults_Run)
-				err := nodeValue.Decode(node.Run)
-				if err != nil {
-					return err
-				}
-			
-		}
-	}
-	return nil
-}
-
 // Root_Definitions_Defaults_Run 
 type Root_Definitions_Defaults_Run struct {
 	Shell *Root_Definitions_Defaults_Run_Shell `yaml:"shell,omitempty"`
@@ -255,70 +226,6 @@ type Root_Definitions_Defaults_Run_Working_Directory struct {
 }
 
 func (node *Root_Definitions_Defaults_Run_Working_Directory) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
-			
-		}
-	}
-	return nil
-}
-
-// Root_Definitions_Env 
-type Root_Definitions_Env struct {
-	Raw *yaml.Node
-}
-
-func (node *Root_Definitions_Env) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
-			
-		}
-	}
-	return nil
-}
-
-// Root_Definitions_Permissions You can modify the default permissions granted to the GITHUB_TOKEN, adding or removing access as required, so that you only allow the minimum required access.
-type Root_Definitions_Permissions struct {
-	Raw *yaml.Node
-}
-
-func (node *Root_Definitions_Permissions) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
-			
-		}
-	}
-	return nil
-}
-
-// Root_Definitions_Shell You can override the default shell settings in the runner's operating system using the shell keyword. You can use built-in shell keywords, or you can define a custom set of shell options.
-type Root_Definitions_Shell struct {
-	Raw *yaml.Node
-}
-
-func (node *Root_Definitions_Shell) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
-			
-		}
-	}
-	return nil
-}
-
-// Root_Definitions_Working_Directory Using the working-directory keyword, you can specify the working directory of where to run the command.
-type Root_Definitions_Working_Directory struct {
-	Raw *yaml.Node
-}
-
-func (node *Root_Definitions_Working_Directory) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]

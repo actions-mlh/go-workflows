@@ -63,8 +63,12 @@ func (g *Generator) CreateTypes() error {
 	}
 	// extract the types
 
-	_, err := g.processSchema("Root", g.schemas[0])
-	return err
+	strct, err := g.processSchema("Root", g.schemas[0])
+	if err != nil {
+		return err
+	}
+	g.Structs[strct.Name] = *strct
+	return nil
 }
 
 // returns the type refered to by schema after resolving all dependencies
@@ -171,8 +175,8 @@ func (g *Generator) processSchema(name string, schema *Schema) (*Struct, error) 
 		strct.Fields[f.Name] = f
 	}
 	*/
+	
 	// TODO: add anyof, allof, oneof, patternProperties
-	g.Structs[name] = strct
 	return &strct, nil
 }
 
@@ -191,6 +195,7 @@ func (g *Generator) processDefinitions(definitions map[string]*Schema) error {
 		if err != nil {
 			return err
 		}
+		g.Structs[strct.Name] = *strct
 		f := Field{
 			Name:        fieldName,
 			YAMLName:    key,
@@ -233,6 +238,7 @@ func (g *Generator) processProperties(schema *Schema, strct Struct, properties m
 			if err != nil {
 				return err
 			}
+			g.Structs[newStrct.Name] = *newStrct
 			f.Type = newStrct.Name
 		}
 		if f.Required {
