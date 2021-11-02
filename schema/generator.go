@@ -62,18 +62,13 @@ func (g *Generator) CreateTypes() error {
 		return err
 	}
 	// extract the types
-	for _, schema := range g.schemas {
-		name := g.getSchemaName("", schema)
-		_, err := g.processSchema(name, schema)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+
+	_, err := g.processSchema("Root", g.schemas[0])
+	return err
 }
 
 // returns the type refered to by schema after resolving all dependencies
-func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
+func (g *Generator) processSchema(name string, schema *Schema) (*Struct, error) {
 	if schema.Type == "" {
 		if schema.Items != nil {
 			schema.Type = "array"
@@ -107,32 +102,33 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 	if len(schema.Properties) > 0 {
 		err := g.processProperties(schema, strct, schema.Properties)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 	}
 
 	if schema.Reference != "" {
 		schemaPath := g.resolver.GetPath(schema)
 		if schema.Reference == "" {
-			return "", errors.New("processReference empty reference: " + schemaPath)
+			return nil, errors.New("processReference empty reference: " + schemaPath)
 		}
 		refSchema, err := g.resolver.GetSchemaByReference(schema)
 		if err != nil {
-			return "", errors.New("processReference: reference \"" + schema.Reference + "\" not found at \"" + schemaPath + "\"")
+			return nil, errors.New("processReference: reference \"" + schema.Reference + "\" not found at \"" + schemaPath + "\"")
 		}
 		// fmt.Printf("%v: %+v\n", schemaPath, refSchema)
 		refSchemaName := g.getSchemaName("", refSchema)
-		typeName, err := g.processSchema("Root_Definitions_" + refSchemaName, refSchema)
+		newStruct, err := g.processSchema("Root_Definitions_" + refSchemaName, refSchema)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
-		fmt.Printf("%+v\n", g.Structs[typeName])
+		fmt.Printf("%+v\n", newStruct)
+		/*
 		if false { // if refSchema.GeneratedType == "" {
 			// reference is not resolved yet. Do that now.
 			refSchemaName := g.getSchemaName("", refSchema)
 			typeName, err := g.processSchema("Root_Definitions_" + refSchemaName, refSchema)
 			if err != nil {
-				return "", err
+				return nil, err
 			}
 			f := Field{
 				Name: "Ref",
@@ -146,8 +142,9 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 			}
 			strct.Fields[f.Name] = f
 		}
+		*/
 	}
-	
+	/*
 	if schema.Items != nil {
 		// subType: fallback name in case this array contains inline object without a title
 		subName := g.getSchemaName(name, (*Schema)(schema.Items))
@@ -155,11 +152,11 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 		yamlName := strings.ToLower(s[len(s)-1])
 		subTyp, err := g.processSchema(name + "_Items_" + subName, (*Schema)(schema.Items))
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		finalType, err := getPrimitiveTypeName("array", subTyp, true)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		f := Field{
 			Name:        subName,
@@ -173,10 +170,10 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 		}
 		strct.Fields[f.Name] = f
 	}
-
+	*/
 	// TODO: add anyof, allof, oneof, patternProperties
 	g.Structs[name] = strct
-	return name, nil
+	return &strct, nil
 }
 
 func (g *Generator) processDefinitions(definitions map[string]*Schema) error {
@@ -190,14 +187,14 @@ func (g *Generator) processDefinitions(definitions map[string]*Schema) error {
 		fieldName := getGolangName(key)
 		// calculate sub-schema name here, may not actually be used depending on type of schema!
 		subSchemaName := g.getSchemaName(fieldName, schema)
-		fieldType, err := g.processSchema("Definitions_" + subSchemaName, schema)
+		strct, err := g.processSchema("Definitions_" + subSchemaName, schema)
 		if err != nil {
 			return err
 		}
 		f := Field{
 			Name:        fieldName,
 			YAMLName:    key,
-			Type:        fieldType,
+			Type:        strct.Name,
 			Required:    contains(schema.Required, key),
 			Description: schema.Description,
 		}
@@ -232,11 +229,11 @@ func (g *Generator) processProperties(schema *Schema, strct Struct, properties m
 		} else {
 			fieldName := getGolangName(propKey)
 			// calculate sub-schema name here, may not actually be used depending on type of schema!
-			fieldType, err := g.processSchema(strct.Name + "_" + fieldName, prop)
+			newStrct, err := g.processSchema(strct.Name + "_" + fieldName, prop)
 			if err != nil {
 				return err
 			}
-			f.Type = fieldType
+			f.Type = newStrct.Name
 		}
 		if f.Required {
 			strct.GenerateCode = true
