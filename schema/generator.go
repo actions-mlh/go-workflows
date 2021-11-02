@@ -13,7 +13,6 @@ type Generator struct {
 	schemas  []*Schema
 	resolver *RefResolver
 	Structs  map[string]Struct
-	Aliases  map[string]Field
 	// cache for reference types; k=url v=type
 	refs      map[string]string
 	anonCount int
@@ -53,40 +52,27 @@ func New(schemas ...*Schema) *Generator {
 		schemas:  schemas,
 		resolver: NewRefResolver(schemas),
 		Structs:  make(map[string]Struct),
-		Aliases:  make(map[string]Field),
 		refs:     make(map[string]string),
 	}
 }
 
 // CreateTypes creates types from the JSON schemas, keyed by the golang name.
-func (g *Generator) CreateTypes() (err error) {
+func (g *Generator) CreateTypes() error {
 	if err := g.resolver.Init(); err != nil {
 		return err
 	}
 	// extract the types
-	for _, schema := range g.schemas {
-		name := g.getSchemaName("", schema)
-		rootType, err := g.processSchema(name, schema)
-		if err != nil {
-			return err
-		}
-		// ugh: if it was anything but a struct the type will not be the name...
-		if rootType != "*"+name {
-			a := Field{
-				Name:        name,
-				YAMLName:    "",
-				Type:        rootType,
-				Required:    false,
-				Description: schema.Description,
-			}
-			g.Aliases[a.Name] = a
-		}
+
+	strct, err := g.processSchema("Root", g.schemas[0])
+	if err != nil {
+		return err
 	}
-	return
+	g.Structs[strct.Name] = *strct
+	return nil
 }
 
 // returns the type refered to by schema after resolving all dependencies
-func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
+func (g *Generator) processSchema(name string, schema *Schema) (*Struct, error) {
 	if schema.Type == "" {
 		if schema.Items != nil {
 			schema.Type = "array"
@@ -94,9 +80,8 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 			schema.Type = "object"
 		}
 	}
-	if schema.Type == "boolean" {
-		schema.Type = "bool"
-	}
+	// cache the object name in case any sub-schemas recursively reference it
+	schema.GeneratedType = "*" + name
 	
 	strct := Struct{
 		ID:          schema.ID(),
@@ -104,72 +89,18 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 		Description: schema.Description,
 		Fields:      make(map[string]Field, len(schema.Properties)),
 	}
-
 	if schema.Type != "array" && schema.Type != "object" {
-		// typeName, err := getPrimitiveTypeName(schema.Type, "", false)
-		// if err != nil {
-		// 	return "", err
-		// }
-		s := strings.Split(name, "_")
-		yamlName := strings.ToLower(s[len(s)-1])
-		f := Field{
-			Name:        "Value",
-			YAMLName:    yamlName,
-			Type:        schema.Type,
-			Required:    contains(schema.Required, "Value"),
-			Description: schema.Description,
-		}
-		if f.Required {
-			strct.GenerateCode = true
-		}
-		strct.Fields[f.Name] = f
+		strct.AdditionalType = schema.Type
 	}
 	
-	// definitions
-	for key, subSchema := range schema.Definitions {
-		fieldName := getGolangName(key)
-		// calculate sub-schema name here, may not actually be used depending on type of schema!
-		subSchemaName := g.getSchemaName(fieldName, subSchema)
-		fieldType, err := g.processSchema(name + "_Definitions_" + subSchemaName, subSchema)
+	if len(schema.Properties) > 0 {
+		err := g.processProperties(schema, strct, schema.Properties)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
-		f := Field{
-			Name:        fieldName,
-			YAMLName:    key,
-			Type:        fieldType,
-			Required:    contains(schema.Required, key),
-			Description: subSchema.Description,
-		}
-		if f.Required {
-			strct.GenerateCode = true
-		}
-		strct.Fields[f.Name] = f
 	}
-	// cache the object name in case any sub-schemas recursively reference it
-	schema.GeneratedType = "*" + name
-	
-	for propKey, prop := range schema.Properties {
-		fieldName := getGolangName(propKey)
-		// calculate sub-schema name here, may not actually be used depending on type of schema!
-		subSchemaName := g.getSchemaName(fieldName, prop)
-		fieldType, err := g.processSchema(name + "_Properties_" + subSchemaName, prop)
-		if err != nil {
-			return "", err
-		}
-		f := Field{
-			Name:        fieldName,
-			YAMLName:    propKey,
-			Type:        fieldType,
-			Required:    contains(schema.Required, propKey),
-			Description: prop.Description,
-		}
-		if f.Required {
-			strct.GenerateCode = true
-		}
-		strct.Fields[f.Name] = f
-	}
-	
+
+	/*
 	if schema.Items != nil {
 		// subType: fallback name in case this array contains inline object without a title
 		subName := g.getSchemaName(name, (*Schema)(schema.Items))
@@ -177,11 +108,11 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 		yamlName := strings.ToLower(s[len(s)-1])
 		subTyp, err := g.processSchema(name + "_Items_" + subName, (*Schema)(schema.Items))
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		finalType, err := getPrimitiveTypeName("array", subTyp, true)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		f := Field{
 			Name:        subName,
@@ -195,38 +126,56 @@ func (g *Generator) processSchema(name string, schema *Schema) (string, error) {
 		}
 		strct.Fields[f.Name] = f
 	}
+	*/
+	
+	// TODO: add anyof, allof, oneof, patternProperties
+	return &strct, nil
+}
 
-	if schema.Reference != "" {
-		schemaPath := g.resolver.GetPath(schema)
-		if schema.Reference == "" {
-			return "", errors.New("processReference empty reference: " + schemaPath)
-		}
-		refSchema, err := g.resolver.GetSchemaByReference(schema)
+func (g *Generator) processProperties(schema *Schema, strct Struct, properties map[string]*Schema) error {
+
+	for propKey, prop := range properties {
+		f, err := g.processField(schema, strct, prop, propKey)
 		if err != nil {
-			return "", errors.New("processReference: reference \"" + schema.Reference + "\" not found at \"" + schemaPath + "\"")
+			return err
 		}
-		if refSchema.GeneratedType == "" {
-			// reference is not resolved yet. Do that now.
-			refSchemaName := g.getSchemaName("", refSchema)
-			typeName, err := g.processSchema("Root_Definitions_" + refSchemaName, refSchema)
-			if err != nil {
-				return "", err
-			}
-			f := Field{
-				Name: "Ref",
-				YAMLName: strings.ToLower(refSchemaName), // change to something appropriate when you know what it is
-				Type: typeName,
-				Required: contains(schema.Required, refSchemaName),
-				Description: refSchema.Description,
-			}
-			if f.Required {
-				strct.GenerateCode = true
-			}
-			strct.Fields[f.Name] = f
+		strct.Fields[f.Name] = *f
+		if f.Required {
+			strct.GenerateCode = true
 		}
 	}
-	g.Structs[name] = strct
-	return name, nil
+	return nil
+}
+
+func (g *Generator) processField(schema *Schema, strct Struct, subSchema *Schema, fieldName string) (*Field, error) {
+	f := Field{
+		Name:        getGolangName(fieldName),
+		YAMLName:    fieldName,
+		Required:    contains(schema.Required, fieldName),
+		Description: subSchema.Description,
+	}
+	// calculate sub-schema name here, may not actually be used depending on type of schema!
+	var newStruct *Struct
+	var err error
+	if subSchema.Reference != "" {
+		refSchema, err := g.resolver.GetSchemaByReference(subSchema)
+		if err != nil {
+			return nil, errors.New("processField: reference \"" + schema.Reference + "\" not found at \"" + g.resolver.GetPath(schema) + "\"")
+		}
+		newStruct, err = g.processSchema(strct.Name + "_" + f.Name, refSchema)
+	} else {
+		newStruct, err = g.processSchema(strct.Name + "_" + f.Name, subSchema)
+	}
+	if err != nil {
+		return nil, err
+	}
+	if newStruct.AdditionalType != "" {
+		f.Type = newStruct.AdditionalType
+	} else {
+		g.Structs[newStruct.Name] = *newStruct
+		f.Type = newStruct.Name
+	}
+	return &f, nil
 }
 
 // util --------------------------------
@@ -340,3 +289,36 @@ func capitaliseFirstLetter(s string) string {
 	suffix := s[1:]
 	return strings.ToUpper(prefix) + suffix
 }
+/*
+func (g *Generator) processDefinitions(definitions map[string]*Schema) error {
+	defStruct := Struct{
+		ID: "#/definitions",
+		Name: "Definitions",
+		Description: "",
+		Fields: make(map[string]Field, len(definitions)),
+	}
+	for key, schema := range definitions {
+		fieldName := getGolangName(key)
+		// calculate sub-schema name here, may not actually be used depending on type of schema!
+		subSchemaName := g.getSchemaName(fieldName, schema)
+		strct, err := g.processSchema("Definitions_" + subSchemaName, schema)
+		if err != nil {
+			return err
+		}
+		g.Structs[strct.Name] = *strct
+		f := Field{
+			Name:        fieldName,
+			YAMLName:    key,
+			Type:        strct.Name,
+			Required:    contains(schema.Required, key),
+			Description: schema.Description,
+		}
+		if f.Required {
+			defStruct.GenerateCode = true
+		}
+		defStruct.Fields[f.Name] = f
+	}
+	g.Structs["Definitions"] = defStruct
+	return nil
+}
+*/
