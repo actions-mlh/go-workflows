@@ -29,7 +29,9 @@ type Struct struct {
 	Fields      map[string]Field
 
 	GenerateCode   bool
-	AdditionalType string
+	Type string
+	// The original schema from which this struct was built
+	Schema *Schema
 }
 
 // Field defines the data required to generate a field in Go.
@@ -73,12 +75,6 @@ func (g *Generator) CreateTypes() error {
 
 // returns the type refered to by schema after resolving all dependencies
 func (g *Generator) processSchema(name string, schema *Schema) (*Struct, error) {
-	strct := Struct{
-		ID:          schema.ID(),
-		Name:        name,
-		Description: schema.Description,
-		Fields:      make(map[string]Field, len(schema.Properties)),
-	}
 	if schema.Type == "" {
 		if schema.Items != nil {
 			schema.Type = "array"
@@ -86,9 +82,15 @@ func (g *Generator) processSchema(name string, schema *Schema) (*Struct, error) 
 			schema.Type = "object"
 		}
 	}
-	if schema.Type != "array" && schema.Type != "object" {
-		strct.AdditionalType = schema.Type
+	strct := Struct{
+		ID:          schema.ID(),
+		Name:        name,
+		Description: schema.Description,
+		Fields:      make(map[string]Field, len(schema.Properties)),
+		Type: schema.Type,
+		Schema: schema,
 	}
+
 	// cache the object name in case any sub-schemas recursively reference it
 	schema.GeneratedType = "*" + name
 
@@ -131,8 +133,8 @@ func (g *Generator) processField(schema *Schema, strct Struct, subSchema *Schema
 	if err != nil {
 		return nil, err
 	}
-	if newStruct.AdditionalType != "" {
-		f.Type = newStruct.AdditionalType
+	if newStruct.Type != "array" && newStruct.Type != "object" {
+		f.Type = newStruct.Type
 	} else if subSchema.OneOf != nil || subSchema.AllOf != nil || subSchema.AnyOf != nil {
 		f.Type = "interface{}"
 	} else {
