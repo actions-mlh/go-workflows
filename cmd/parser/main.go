@@ -5,10 +5,9 @@ import (
 	"log"
 	"os"
 	"gopkg.in/yaml.v3"
-	"c2c-actions-mlh-workflow-parser/parse/lint"
-	"c2c-actions-mlh-workflow-parser/parse/sink"
-	"c2c-actions-mlh-workflow-parser/gen_mock"
-	// "c2c-actions-mlh-workflow-parser/gen"
+	"c2c-actions-mlh-workflow-parser/lint"
+	"c2c-actions-mlh-workflow-parser/sink"
+	"c2c-actions-mlh-workflow-parser/workflow"
 )
 
 func main() {
@@ -31,7 +30,7 @@ func realMain(inputFilename string) error {
 	defer input.Close()
 
 	sink := &sink.ProblemSink{Filename: inputFilename, Output: os.Stdout}
-	node := new(gen_mock.WorkflowNode)
+	node := new(workflow.WorkflowNode)
 	
 	if err := yaml.NewDecoder(input).Decode(&node); err != nil {
 		return err
