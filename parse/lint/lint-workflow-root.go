@@ -1,57 +1,65 @@
 package lint
 
 import (
-	// "c2c-actions-mlh-workflow-parser/gen"
-	"c2c-actions-mlh-workflow-parser/gen_mock"
-	"c2c-actions-mlh-workflow-parser/parse/lint/util"
+	"c2c-actions-mlh-workflow-parser/gen"
+	// "c2c-actions-mlh-workflow-parser/gen_mock"
+	// "c2c-actions-mlh-workflow-parser/parse/lint/util"
 	"c2c-actions-mlh-workflow-parser/parse/sink"
-	"gopkg.in/yaml.v3"
-	"reflect"
-	"strings"
+	// "gopkg.in/yaml.v3"
+	// "reflect"
+	// "strings"
 	"fmt"
 )
+
+func LintWorkflowRoot(sink *sink.ProblemSink, target *gen.Root) error {
+	// fmt.Printf("%+v\n", (*target.On).(map[string]interface{}))
+
+	fmt.Println("---------------Testing--------------")
+	fmt.Printf("%+v\n", *target)
+
+	return nil
+}
 
 // issues
 // 1) Is Kind a marshal error? -> Decided to only add support for kind of scalar type (!!bool, !!float, !!int, !!str, ...)
 
-func LintWorkflowRoot(sink *sink.ProblemSink, target *gen_mock.WorkflowNode) error {
-	// fmt.Printf("%+v\n", (*target.On).(map[string]interface{}))
+// func LintWorkflowRoot(sink *sink.ProblemSink, target *gen_mock.WorkflowNode) error {
 
-	workflowKeyNodes := []*yaml.Node{}
-	workflowValueNodes := []*yaml.Node{}
+	// workflowKeyNodes := []*yaml.Node{}
+	// workflowValueNodes := []*yaml.Node{}
 
-	for i := 0; i < len(target.Raw.Content); i += 2 {
-		workflowKeyNodes = append(workflowKeyNodes, target.Raw.Content[i])
-		workflowValueNodes = append(workflowValueNodes, target.Raw.Content[i+1])
-	}
+	// for i := 0; i < len(target.Raw.Content); i += 2 {
+	// 	workflowKeyNodes = append(workflowKeyNodes, target.Raw.Content[i])
+	// 	workflowValueNodes = append(workflowValueNodes, target.Raw.Content[i+1])
+	// }
 
-	requiredKeys := map[string]bool{"on": false, "jobs": false}
-	if err := util.CheckRequiredKeys(target.Raw, sink, workflowKeyNodes, requiredKeys); err != nil {
-		return err
-	}
+	// requiredKeys := map[string]bool{"on": false, "jobs": false}
+	// if err := util.CheckRequiredKeys(target.Raw, sink, workflowKeyNodes, requiredKeys); err != nil {
+	// 	return err
+	// }
 
-	if err := util.CheckNullPointer(sink, workflowKeyNodes, workflowValueNodes); err != nil {
-		return err
-	}
+	// if err := util.CheckNullPointer(sink, workflowKeyNodes, workflowValueNodes); err != nil {
+	// 	return err
+	// }
 
-	if err := util.CheckDuplicateKeys(sink, workflowKeyNodes); err != nil {
-		return err
-	}
+	// if err := util.CheckDuplicateKeys(sink, workflowKeyNodes); err != nil {
+	// 	return err
+	// }
 
-	expectedKeys := []string{}
-	reflectedStruct := reflect.ValueOf(*target.Value)
-	typeOfStruct := reflectedStruct.Type()
-	for i := 0; i < reflectedStruct.NumField(); i++ {
-		expectedKeys = append(expectedKeys, strings.ToLower(typeOfStruct.Field(i).Name))
-	}
+	// expectedKeys := []string{}
+	// reflectedStruct := reflect.ValueOf(*target.Value)
+	// typeOfStruct := reflectedStruct.Type()
+	// for i := 0; i < reflectedStruct.NumField(); i++ {
+	// 	expectedKeys = append(expectedKeys, strings.ToLower(typeOfStruct.Field(i).Name))
+	// }
 
-	if err := util.CheckUnexpectedKeys(sink, expectedKeys, workflowKeyNodes); err != nil {
-		return err
-	}
+	// if err := util.CheckUnexpectedKeys(sink, expectedKeys, workflowKeyNodes); err != nil {
+	// 	return err
+	// }
 
 
-	fmt.Println("-------TESTING--------")
-	fmt.Printf("%+v\n", target.Value)
+	// fmt.Println("-------TESTING--------")
+	// fmt.Printf("%+v\n", target.Value)
 
 	// for i := 0; i < len(workflowValueNodes); i += 1 {
 	// 	// fmt.Printf("%+v\n", target.Value[i])
@@ -71,8 +79,8 @@ func LintWorkflowRoot(sink *sink.ProblemSink, target *gen_mock.WorkflowNode) err
 	// if err := lintWorkflowJobs(sink, workflow.Jobs, target.Raw); err != nil {
 	// 	return err
 	// }
-	return nil
-}
+	// return nil
+// }
 
 // func lintWorkflowName(sink *ProblemSink, target *gen_mock.WorkflowNameNode, raw *yaml.Node) error {
 // 	nameNode := target
