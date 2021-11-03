@@ -177,8 +177,8 @@ func (node *Root_Defaults) UnmarshalYAML(value *yaml.Node) error {
 
 // Root_Defaults_Run 
 type Root_Defaults_Run struct {
-	Shell *string `yaml:"shell,omitempty"`
 	Working_Directory *string `yaml:"working-directory,omitempty"`
+	Shell *string `yaml:"shell,omitempty"`
 	Raw *yaml.Node
 }
 

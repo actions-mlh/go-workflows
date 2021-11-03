@@ -80,6 +80,9 @@ func (g *Generator) processSchema(name string, schema *Schema) (*Struct, error) 
 			schema.Type = "object"
 		}
 	}
+	if schema.Type != "array" && schema.Type != "object" {
+		strct.AdditionalType = schema.Type
+	}
 	// cache the object name in case any sub-schemas recursively reference it
 	schema.GeneratedType = "*" + name
 	
@@ -89,62 +92,22 @@ func (g *Generator) processSchema(name string, schema *Schema) (*Struct, error) 
 		Description: schema.Description,
 		Fields:      make(map[string]Field, len(schema.Properties)),
 	}
-	if schema.Type != "array" && schema.Type != "object" {
-		strct.AdditionalType = schema.Type
-	}
 	
 	if len(schema.Properties) > 0 {
-		err := g.processProperties(schema, strct, schema.Properties)
-		if err != nil {
-			return nil, err
+		for propKey, prop := range schema.Properties {
+			f, err := g.processField(schema, strct, prop, propKey)
+			if err != nil {
+				return nil, err
+			}
+			strct.Fields[f.Name] = *f
+			if f.Required {
+				strct.GenerateCode = true
+			}
 		}
 	}
 
-	/*
-	if schema.Items != nil {
-		// subType: fallback name in case this array contains inline object without a title
-		subName := g.getSchemaName(name, (*Schema)(schema.Items))
-		s := strings.Split(subName, "_")
-		yamlName := strings.ToLower(s[len(s)-1])
-		subTyp, err := g.processSchema(name + "_Items_" + subName, (*Schema)(schema.Items))
-		if err != nil {
-			return nil, err
-		}
-		finalType, err := getPrimitiveTypeName("array", subTyp, true)
-		if err != nil {
-			return nil, err
-		}
-		f := Field{
-			Name:        subName,
-			YAMLName:    yamlName,
-			Type:        finalType,
-			Required:    contains(schema.Required, subName),
-			Description: schema.Description,
-		}
-		if f.Required {
-			strct.GenerateCode = true
-		}
-		strct.Fields[f.Name] = f
-	}
-	*/
-	
 	// TODO: add anyof, allof, oneof, patternProperties
 	return &strct, nil
-}
-
-func (g *Generator) processProperties(schema *Schema, strct Struct, properties map[string]*Schema) error {
-
-	for propKey, prop := range properties {
-		f, err := g.processField(schema, strct, prop, propKey)
-		if err != nil {
-			return err
-		}
-		strct.Fields[f.Name] = *f
-		if f.Required {
-			strct.GenerateCode = true
-		}
-	}
-	return nil
 }
 
 func (g *Generator) processField(schema *Schema, strct Struct, subSchema *Schema, fieldName string) (*Field, error) {
