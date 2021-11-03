@@ -17,7 +17,7 @@ type Root struct {
 	Defaults *Root_Defaults `yaml:"defaults,omitempty"`
 
   // A map of environment variables that are available to all jobs and steps in the workflow.
-	Env *Root_Env `yaml:"env,omitempty"`
+	Env *interface{} `yaml:"env,omitempty"`
 
   // A workflow run is made up of one or more jobs. Jobs run in parallel by default. To run jobs sequentially, you can define dependencies on other jobs using the jobs.<job_id>.needs keyword.
   // Each job runs in a fresh instance of the virtual environment specified by runs-on.
@@ -69,7 +69,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Env = new(Root_Env)
+				node.Env = new(interface{})
 				err := nodeValue.Decode(node.Env)
 				if err != nil {
 					return err
@@ -193,22 +193,6 @@ func (node *Root_Defaults_Run) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-			
-		}
-	}
-	return nil
-}
-
-// Root_Env 
-type Root_Env struct {
-	Raw *yaml.Node
-}
-
-func (node *Root_Env) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
 			
 		}
 	}

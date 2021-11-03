@@ -27,8 +27,6 @@ type Struct struct {
 	// Description of the struct
 	Description string
 	Fields      map[string]Field
-
-	GenerateCode   bool
 	Type string
 	// The original schema from which this struct was built
 	Schema *Schema
@@ -94,52 +92,67 @@ func (g *Generator) processSchema(name string, schema *Schema) (*Struct, error) 
 	// cache the object name in case any sub-schemas recursively reference it
 	schema.GeneratedType = "*" + name
 
+	// handle additional properties
+	if schema.AdditionalProperties != nil &&
+		(schema.AdditionalProperties.AdditionalPropertiesBool == nil ||
+			*schema.AdditionalProperties.AdditionalPropertiesBool){
+		schema.Type = schema.AdditionalProperties.Type
+		schema.Reference = schema.AdditionalProperties.Reference
+		schema.OneOf = schema.AdditionalProperties.OneOf
+		schema.AnyOf = schema.AdditionalProperties.AnyOf
+		schema.AllOf = schema.AdditionalProperties.AllOf
+	}
+
 	// process properties
 	if len(schema.Properties) > 0 {
-		for propKey, prop := range schema.Properties {
-			f, err := g.processField(schema, strct, prop, propKey)
-			if err != nil {
-				return nil, err
-			}
-			strct.Fields[f.Name] = *f
-			if f.Required {
-				strct.GenerateCode = true
-			}
+		err := g.processProperties(schema, strct, schema.Properties)
+		if err != nil {
+			return nil, err
 		}
 	}
 
-	// TODO: add anyof, allof, oneof, patternProperties
+	// TODO: add patternProperties
 	return &strct, nil
 }
 
-func (g *Generator) processField(schema *Schema, strct Struct, subSchema *Schema, fieldName string) (*Field, error) {
+func (g *Generator) processProperties(schema *Schema, strct Struct, properties map[string]*Schema) error {
+	for propKey, prop := range properties {
+		f, err := g.processField(propKey, prop, strct.Name)
+		if err != nil {
+			return err
+		}
+		f.Required = contains(schema.Required, propKey)
+		strct.Fields[f.Name] = *f
+	}
+	return nil
+}
+
+func (g *Generator) processField(fieldName string, fieldSchema *Schema, parentName string) (*Field, error) {
 	f := Field{
 		Name:        getGolangName(fieldName),
 		YAMLName:    fieldName,
-		Required:    contains(schema.Required, fieldName),
-		Description: subSchema.Description,
+		Description: fieldSchema.Description,
 	}
-	// calculate sub-schema name here, may not actually be used depending on type of schema!
 	var newStruct *Struct
 	var err error
-	if subSchema.Reference != "" {
-		refSchema, err := g.resolver.GetSchemaByReference(subSchema)
+	if fieldSchema.Reference != "" {
+		refSchema, err := g.resolver.GetSchemaByReference(fieldSchema)
 		if err != nil {
-			return nil, errors.New("processField: reference \"" + schema.Reference + "\" not found at \"" + g.resolver.GetPath(schema) + "\"")
+			return nil, errors.New("processField: reference \"" + fieldSchema.Reference + "\" not found at \"" + g.resolver.GetPath(fieldSchema) + "\"")
 		}
-		subSchema = refSchema
+		fieldSchema = refSchema
 	}
-	newStruct, err = g.processSchema(strct.Name + "_" + f.Name, subSchema)
+	newStruct, err = g.processSchema(parentName + "_" + f.Name, fieldSchema)
 	if err != nil {
 		return nil, err
 	}
 	if newStruct.Type != "array" && newStruct.Type != "object" {
 		f.Type = newStruct.Type
-	} else if subSchema.OneOf != nil || subSchema.AllOf != nil || subSchema.AnyOf != nil {
+	} else if fieldSchema.OneOf != nil || fieldSchema.AllOf != nil || fieldSchema.AnyOf != nil {
 		f.Type = "interface{}"
 	} else {
-		g.Structs[newStruct.Name] = *newStruct
 		f.Type = newStruct.Name
+		g.Structs[newStruct.Name] = *newStruct
 	}
 	return &f, nil
 }

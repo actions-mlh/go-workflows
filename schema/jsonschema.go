@@ -46,9 +46,9 @@ type Schema struct {
 	// "additionalProperties": false
 	AdditionalPropertiesBool *bool `json:"-"`
 
+	OneOf []*Schema
 	AnyOf []*Schema
 	AllOf []*Schema
-	OneOf []*Schema
 
 	// Default can be used to supply a default JSON value associated with a particular schema.
 	// http://json-schema.org/draft-07/json-schema-validation.html#rfc.section.10.2
