@@ -1,6 +1,7 @@
 package lint
 
 import (
+	// "c2c-actions-mlh-workflow-parser/gen"
 	"c2c-actions-mlh-workflow-parser/gen_mock"
 	"c2c-actions-mlh-workflow-parser/parse/lint/util"
 	"c2c-actions-mlh-workflow-parser/parse/sink"
@@ -14,6 +15,8 @@ import (
 // 1) Is Kind a marshal error? -> Decided to only add support for kind of scalar type (!!bool, !!float, !!int, !!str, ...)
 
 func LintWorkflowRoot(sink *sink.ProblemSink, target *gen_mock.WorkflowNode) error {
+	// fmt.Printf("%+v\n", (*target.On).(map[string]interface{}))
+
 	workflowKeyNodes := []*yaml.Node{}
 	workflowValueNodes := []*yaml.Node{}
 
@@ -31,59 +34,35 @@ func LintWorkflowRoot(sink *sink.ProblemSink, target *gen_mock.WorkflowNode) err
 		return err
 	}
 
-	if len(workflowKeyNodes) != len(target.Value) {
-		if err := util.CheckDuplicateKeys(sink, workflowKeyNodes); err != nil {
-			return err
-		}
-
-		expectedKeys := []string{}
-		reflectedStruct := reflect.ValueOf(*target.Value[0])
-		typeOfStruct := reflectedStruct.Type()
-		for i := 0; i < reflectedStruct.NumField(); i++ {
-			expectedKeys = append(expectedKeys, strings.ToLower(typeOfStruct.Field(i).Name))
-		}
-
-		if err := util.CheckUnexpectedKeys(sink, expectedKeys, workflowKeyNodes); err != nil {
-			return err
-		}
+	if err := util.CheckDuplicateKeys(sink, workflowKeyNodes); err != nil {
+		return err
 	}
 
-	workflowValues := make(map[string]int)
-	for _, value := range target.Value {
-		reflectedValues := reflect.ValueOf(*value)
-		typeOfValue := reflectedValues.Type()
-		for i := 0; i< reflectedValues.NumField(); i++ {
-			key := typeOfValue.Field(i).Name
-			fieldVal := reflectedValues.Field(i)
-
-			if _, contains := workflowValues[key]; !contains && !fieldVal.IsNil() {
-				workflowValues[key] = 0
-
-				switch key {
-				case "Name":
-					if len(value.Name.ScalarTypes) != 0 {
-						util.CheckUnexpectedScalarTypes(sink, value.Name.Raw, value.Name.ScalarTypes)
-					}
-				case "On":
-					if len(value.On.ScalarTypes) != 0 {
-						util.CheckUnexpectedScalarTypes(sink, value.On.Raw, value.On.ScalarTypes)
-					}
-				case "Jobs":
-					if len(value.Jobs.ScalarTypes) != 0 {
-						util.CheckUnexpectedScalarTypes(sink, value.Jobs.Raw, value.Jobs.ScalarTypes)
-					}
-				} 
-			}
-		}
+	expectedKeys := []string{}
+	reflectedStruct := reflect.ValueOf(*target.Value)
+	typeOfStruct := reflectedStruct.Type()
+	for i := 0; i < reflectedStruct.NumField(); i++ {
+		expectedKeys = append(expectedKeys, strings.ToLower(typeOfStruct.Field(i).Name))
 	}
+
+	if err := util.CheckUnexpectedKeys(sink, expectedKeys, workflowKeyNodes); err != nil {
+		return err
+	}
+
 
 	fmt.Println("-------TESTING--------")
-	for i := 0; i < len(workflowValueNodes); i += 1 {
-		// fmt.Printf("%+v\n", target.Value[i])
-		// fmt.Printf("%+v\n", workflowKeyNodes[i])
-		// fmt.Printf("%+v\n", workflowValueNodes[i])
-	}
+	fmt.Printf("%+v\n", target.Value)
 
+	// for i := 0; i < len(workflowValueNodes); i += 1 {
+	// 	// fmt.Printf("%+v\n", target.Value[i])
+	// 	fmt.Printf("%+v\n", workflowKeyNodes[i])
+	// 	fmt.Printf("%+v\n", workflowValueNodes[i])
+	// }
+
+	// fmt.Printf("%+v\n", target.Value[0].Name)
+	// for _, value := range target.Value {
+	// 	fmt.Printf("%+v\n", value.Name)	
+	// }
 
 	// if err := lintWorkflowName(sink, workflow.Name, target.Raw); err != nil {
 	// 	return err

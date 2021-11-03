@@ -2,7 +2,7 @@ package gen_mock
 
 import (
 	"fmt"
-
+	"strings"
 	"gopkg.in/yaml.v3"
 )
 
@@ -16,18 +16,17 @@ import (
 
 type WorkflowNode struct {
 	Raw   *yaml.Node
-	Value []*WorkflowValue // OneOf or Value or Scalar(string, int, bool, etc)
+	Value *WorkflowValue // OneOf or Value or Scalar(string, int, bool, etc)
 }
 
 func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-
 	if len(value.Content)%2 != 0 {
 		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
 	}
 
+	event := new(WorkflowValue)
 	for i := 0; i < len(value.Content); i += 2 {
-		event := new(WorkflowValue)
 		keyEntry := value.Content[i]
 		valueEntry := value.Content[i+1]
 		eventKey := keyEntry.Value
@@ -38,38 +37,33 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 			if err != nil {
 				return err
 			}
-			node.Value = append(node.Value, event)
-
 		case "on":
 			event.On = new(WorkflowOnNode)
 			err := valueEntry.Decode(event.On)
 			if err != nil {
 				return err
 			}
-			node.Value = append(node.Value, event)
 		case "defaults":
 			event.Defaults = new(WorkflowDefaultsNode)
 			err := valueEntry.Decode(event.Defaults)
 			if err != nil {
 				return err
 			}
-			node.Value = append(node.Value, event)
 		case "concurrency":
 			event.Concurrency = new(WorkflowConcurrencyNode)
 			err := valueEntry.Decode(event.Concurrency)
 			if err != nil {
 				return err
 			}
-			node.Value = append(node.Value, event)
 		case "jobs":
 			event.Jobs = new(WorkflowJobsNode)
 			err := valueEntry.Decode(event.Jobs)
 			if err != nil {
 				return err
 			}
-			node.Value = append(node.Value, event)
 		}
 	}
+	node.Value = event
 	return nil
 }
 
@@ -85,19 +79,16 @@ type WorkflowValue struct {
 type WorkflowNameNode struct {
 	Raw   *yaml.Node
 	Value string
-	ScalarTypes []string // !!bool, !!str, !!float, !!int
 }
 
 func (node *WorkflowNameNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	node.ScalarTypes = append(node.ScalarTypes, "!!str")
 	return value.Decode(&node.Value)
 }
 
 type WorkflowOnNode struct {
 	Raw   *yaml.Node
 	OneOf WorkflowOnOneOfKind // Parent + Child + OneOf + (Type or Kind)
-	ScalarTypes []string
 }
 
 type WorkflowOnOneOfKind struct {
@@ -106,23 +97,28 @@ type WorkflowOnOneOfKind struct {
 	MappingNode  []*WorkFlowOnValue
 }
 
-// ONLY IF TYPE: is alone , else IF TYPE: is accompanied with Either properties, enum, items, 
-// ScalarNode   *OnEventConstants -> *OnEventTypes
-//  !!bool, !!int, !!str, !!float
-
 func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
 	switch node.Raw.Kind {
 	case yaml.ScalarNode:
-		node.ScalarTypes = append(node.ScalarTypes, "!!str")
+		scalarTypes := []string{"!!str"}
+		contains := false
+		for _, scalarType := range scalarTypes {
+			if node.Raw.Tag == scalarType {
+				contains = true
+			}
+		}
+		if !contains {
+			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ","))
+		}
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.SequenceNode:
 		return value.Decode(&node.OneOf.SequenceNode)
 	case yaml.MappingNode:
 		value := node.Raw
 		if len(value.Content)%2 != 0 {
-			return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+			return fmt.Errorf("%d:%d  error  expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
 		}
 		for i := 0; i < len(value.Content); i += 2 {
 			event := new(WorkFlowOnValue)
@@ -460,7 +456,6 @@ func (node *ConcurrencyCancelInProgressNode) UnmarshalYAML(value *yaml.Node) err
 type WorkflowJobsNode struct {
 	Raw   *yaml.Node
 	Value []*WorkflowJobsPatternProperties
-	ScalarTypes []string
 }
 
 type WorkflowJobsPatternProperties struct {
@@ -472,7 +467,6 @@ func (node *WorkflowJobsNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
 	if len(value.Content)%2 != 0 {
-		// Uneven set of key value pairs (this shouldn't happen)
 		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
 	}
 	for i := 0; i < len(value.Content); i += 2 {
