@@ -1,8 +1,0 @@
-name: Hank
-
-on: 
-  check_run:
-  create:
-
-jobs: name 
-  

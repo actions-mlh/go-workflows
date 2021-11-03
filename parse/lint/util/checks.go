@@ -75,6 +75,17 @@ func CheckUnexpectedKeys(sink *sink.ProblemSink, expectedKeys []string, nodeKeys
 	return nil
 }
 
-// func CheckUnexpectedTypes() error {
+func CheckUnexpectedScalarTypes(sink *sink.ProblemSink, raw *yaml.Node, scalarTypes []string) error {
+	contains := false
+	for _, scalarType := range scalarTypes {
+		if scalarType == raw.Tag {
+			contains = true
+		}
+	}
 
-// }
+	if !contains {
+		sink.Record(raw, "unexpected scalar type: %s, expected scalar types: %s", raw.Tag, strings.Join(scalarTypes, ","))
+	}
+
+	return nil
+}
