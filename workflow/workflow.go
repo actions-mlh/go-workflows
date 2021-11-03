@@ -1,4 +1,4 @@
-package gen_mock
+package workflow
 
 import (
 	"fmt"

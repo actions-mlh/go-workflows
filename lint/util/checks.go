@@ -3,7 +3,7 @@ package util
 import (
 	"strings"
 	"gopkg.in/yaml.v3"
-	"c2c-actions-mlh-workflow-parser/parse/sink"
+	"c2c-actions-mlh-workflow-parser/sink"
 	// "fmt"
 )
 
