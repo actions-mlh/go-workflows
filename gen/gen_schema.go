@@ -7,26 +7,20 @@ import (
 
 // Root 
 type Root struct {
-
   // Concurrency ensures that only a single job or workflow using the same concurrency group will run at a time. A concurrency group can be any string or expression. The expression can use any context except for the secrets context. 
   // You can also specify concurrency at the workflow level. 
   // When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled. To also cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
 	Concurrency *interface{} `yaml:"concurrency,omitempty"`
-
   // A map of default settings that will apply to all jobs in the workflow.
 	Defaults *Root_Defaults `yaml:"defaults,omitempty"`
-
   // A map of environment variables that are available to all jobs and steps in the workflow.
 	Env *interface{} `yaml:"env,omitempty"`
-
   // A workflow run is made up of one or more jobs. Jobs run in parallel by default. To run jobs sequentially, you can define dependencies on other jobs using the jobs.<job_id>.needs keyword.
   // Each job runs in a fresh instance of the virtual environment specified by runs-on.
   // You can run an unlimited number of jobs as long as you are within the workflow usage limits. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#usage-limits.
 	Jobs *Root_Jobs `yaml:"jobs"`
-
   // The name of your workflow. GitHub displays the names of your workflows on your repository's actions page. If you omit this field, GitHub sets the name to the workflow's filename.
 	Name *string `yaml:"name,omitempty"`
-
   // The name of the GitHub event that triggers the workflow. You can provide a single event string, array of events, array of event types, or an event configuration map that schedules a workflow or restricts the execution of a workflow to specific files, tags, or branch changes. For a list of available events, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/events-that-trigger-workflows.
 	On *interface{} `yaml:"on"`
 	Permissions *interface{} `yaml:"permissions,omitempty"`
