@@ -110,8 +110,6 @@ func (g *Generator) processSchema(name string, schema *Schema) (*Struct, error) 
 			return nil, err
 		}
 	}
-
-	// TODO: add patternProperties
 	return &strct, nil
 }
 
@@ -150,6 +148,8 @@ func (g *Generator) processField(fieldName string, fieldSchema *Schema, parentNa
 		f.Type = newStruct.Type
 	} else if fieldSchema.OneOf != nil || fieldSchema.AllOf != nil || fieldSchema.AnyOf != nil {
 		f.Type = "interface{}"
+	} else if fieldSchema.PatternProperties != nil {
+		f.Type = "map[string]*interface{}"
 	} else {
 		f.Type = newStruct.Name
 		g.Structs[newStruct.Name] = *newStruct

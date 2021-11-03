@@ -18,7 +18,7 @@ type Root struct {
   // A workflow run is made up of one or more jobs. Jobs run in parallel by default. To run jobs sequentially, you can define dependencies on other jobs using the jobs.<job_id>.needs keyword.
   // Each job runs in a fresh instance of the virtual environment specified by runs-on.
   // You can run an unlimited number of jobs as long as you are within the workflow usage limits. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#usage-limits.
-	Jobs *Root_Jobs `yaml:"jobs"`
+	Jobs *map[string]*interface{} `yaml:"jobs"`
   // The name of your workflow. GitHub displays the names of your workflows on your repository's actions page. If you omit this field, GitHub sets the name to the workflow's filename.
 	Name *string `yaml:"name,omitempty"`
   // The name of the GitHub event that triggers the workflow. You can provide a single event string, array of events, array of event types, or an event configuration map that schedules a workflow or restricts the execution of a workflow to specific files, tags, or branch changes. For a list of available events, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/events-that-trigger-workflows.
@@ -75,7 +75,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Jobs = new(Root_Jobs)
+				node.Jobs = new(map[string]*interface{})
 				err := nodeValue.Decode(node.Jobs)
 				if err != nil {
 					return err
@@ -187,24 +187,6 @@ func (node *Root_Defaults_Run) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-			
-		}
-	}
-	return nil
-}
-
-// Root_Jobs A workflow run is made up of one or more jobs. Jobs run in parallel by default. To run jobs sequentially, you can define dependencies on other jobs using the jobs.<job_id>.needs keyword.
-// Each job runs in a fresh instance of the virtual environment specified by runs-on.
-// You can run an unlimited number of jobs as long as you are within the workflow usage limits. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#usage-limits.
-type Root_Jobs struct {
-	Raw *yaml.Node
-}
-
-func (node *Root_Jobs) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
 			
 		}
 	}
