@@ -1,0 +1,18 @@
+name: Hank
+
+on: 
+  check_run:
+    types: [requested]
+  check_suite:
+    
+jobs:
+  ajobby:
+    name: jobby
+    needs: [_jokerj]
+  _jokerj:
+    name: joker
+    needs: [_sammysam]
+  _sammysam:
+    name: jam
+    needs: [_jokerj]
+  

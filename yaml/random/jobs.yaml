@@ -7,10 +7,9 @@ on:
     
 jobs:
   job_1:
-    name:
-    needs:
-    uses: 
-  # job_2:
-  #   name:
-  #   needs:
+    name: jobby
+    needs: [job_1, h]
+  job_2:
+    name: joker
+    needs: [job_2]
   
