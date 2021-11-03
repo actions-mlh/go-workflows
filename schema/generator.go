@@ -73,6 +73,12 @@ func (g *Generator) CreateTypes() error {
 
 // returns the type refered to by schema after resolving all dependencies
 func (g *Generator) processSchema(name string, schema *Schema) (*Struct, error) {
+	strct := Struct{
+		ID:          schema.ID(),
+		Name:        name,
+		Description: schema.Description,
+		Fields:      make(map[string]Field, len(schema.Properties)),
+	}
 	if schema.Type == "" {
 		if schema.Items != nil {
 			schema.Type = "array"
@@ -85,14 +91,8 @@ func (g *Generator) processSchema(name string, schema *Schema) (*Struct, error) 
 	}
 	// cache the object name in case any sub-schemas recursively reference it
 	schema.GeneratedType = "*" + name
-	
-	strct := Struct{
-		ID:          schema.ID(),
-		Name:        name,
-		Description: schema.Description,
-		Fields:      make(map[string]Field, len(schema.Properties)),
-	}
-	
+
+	// process properties
 	if len(schema.Properties) > 0 {
 		for propKey, prop := range schema.Properties {
 			f, err := g.processField(schema, strct, prop, propKey)
@@ -125,15 +125,16 @@ func (g *Generator) processField(schema *Schema, strct Struct, subSchema *Schema
 		if err != nil {
 			return nil, errors.New("processField: reference \"" + schema.Reference + "\" not found at \"" + g.resolver.GetPath(schema) + "\"")
 		}
-		newStruct, err = g.processSchema(strct.Name + "_" + f.Name, refSchema)
-	} else {
-		newStruct, err = g.processSchema(strct.Name + "_" + f.Name, subSchema)
+		subSchema = refSchema
 	}
+	newStruct, err = g.processSchema(strct.Name + "_" + f.Name, subSchema)
 	if err != nil {
 		return nil, err
 	}
 	if newStruct.AdditionalType != "" {
 		f.Type = newStruct.AdditionalType
+	} else if subSchema.OneOf != nil || subSchema.AllOf != nil || subSchema.AnyOf != nil {
+		f.Type = "interface{}"
 	} else {
 		g.Structs[newStruct.Name] = *newStruct
 		f.Type = newStruct.Name

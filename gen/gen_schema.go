@@ -11,7 +11,7 @@ type Root struct {
   // Concurrency ensures that only a single job or workflow using the same concurrency group will run at a time. A concurrency group can be any string or expression. The expression can use any context except for the secrets context. 
   // You can also specify concurrency at the workflow level. 
   // When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled. To also cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
-	Concurrency *Root_Concurrency `yaml:"concurrency,omitempty"`
+	Concurrency *interface{} `yaml:"concurrency,omitempty"`
 
   // A map of default settings that will apply to all jobs in the workflow.
 	Defaults *Root_Defaults `yaml:"defaults,omitempty"`
@@ -24,12 +24,12 @@ type Root struct {
   // You can run an unlimited number of jobs as long as you are within the workflow usage limits. For more information, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#usage-limits.
 	Jobs *Root_Jobs `yaml:"jobs"`
 
-  // The name of the GitHub event that triggers the workflow. You can provide a single event string, array of events, array of event types, or an event configuration map that schedules a workflow or restricts the execution of a workflow to specific files, tags, or branch changes. For a list of available events, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/events-that-trigger-workflows.
-	On *Root_On `yaml:"on"`
-	Permissions *Root_Permissions `yaml:"permissions,omitempty"`
-
   // The name of your workflow. GitHub displays the names of your workflows on your repository's actions page. If you omit this field, GitHub sets the name to the workflow's filename.
 	Name *string `yaml:"name,omitempty"`
+
+  // The name of the GitHub event that triggers the workflow. You can provide a single event string, array of events, array of event types, or an event configuration map that schedules a workflow or restricts the execution of a workflow to specific files, tags, or branch changes. For a list of available events, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/events-that-trigger-workflows.
+	On *interface{} `yaml:"on"`
+	Permissions *interface{} `yaml:"permissions,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -45,7 +45,7 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 					return fmt.Errorf("value.Content mismatch")
 				}
 				nodeValue := value.Content[i]
-				node.Concurrency = new(Root_Concurrency)
+				node.Concurrency = new(interface{})
 				err := nodeValue.Decode(node.Concurrency)
 				if err != nil {
 					return err
@@ -87,30 +87,6 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 					return err
 				}
 			
-			case "on":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.On = new(Root_On)
-				err := nodeValue.Decode(node.On)
-				if err != nil {
-					return err
-				}
-			
-			case "permissions":
-				i++
-				if i >= len(value.Content) {
-					return fmt.Errorf("value.Content mismatch")
-				}
-				nodeValue := value.Content[i]
-				node.Permissions = new(Root_Permissions)
-				err := nodeValue.Decode(node.Permissions)
-				if err != nil {
-					return err
-				}
-			
 			case "name":
 				i++
 				if i >= len(value.Content) {
@@ -123,23 +99,29 @@ func (node *Root) UnmarshalYAML(value *yaml.Node) error {
 					return err
 				}
 			
-		}
-	}
-	return nil
-}
-
-// Root_Concurrency Concurrency ensures that only a single job or workflow using the same concurrency group will run at a time. A concurrency group can be any string or expression. The expression can use any context except for the secrets context. 
-// You can also specify concurrency at the workflow level. 
-// When a concurrent job or workflow is queued, if another job or workflow using the same concurrency group in the repository is in progress, the queued job or workflow will be pending. Any previously pending job or workflow in the concurrency group will be canceled. To also cancel any currently running job or workflow in the same concurrency group, specify cancel-in-progress: true.
-type Root_Concurrency struct {
-	Raw *yaml.Node
-}
-
-func (node *Root_Concurrency) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
+			case "on":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.On = new(interface{})
+				err := nodeValue.Decode(node.On)
+				if err != nil {
+					return err
+				}
+			
+			case "permissions":
+				i++
+				if i >= len(value.Content) {
+					return fmt.Errorf("value.Content mismatch")
+				}
+				nodeValue := value.Content[i]
+				node.Permissions = new(interface{})
+				err := nodeValue.Decode(node.Permissions)
+				if err != nil {
+					return err
+				}
 			
 		}
 	}
@@ -177,8 +159,8 @@ func (node *Root_Defaults) UnmarshalYAML(value *yaml.Node) error {
 
 // Root_Defaults_Run 
 type Root_Defaults_Run struct {
-	Working_Directory *string `yaml:"working-directory,omitempty"`
 	Shell *string `yaml:"shell,omitempty"`
+	Working_Directory *string `yaml:"working-directory,omitempty"`
 	Raw *yaml.Node
 }
 
@@ -241,38 +223,6 @@ type Root_Jobs struct {
 }
 
 func (node *Root_Jobs) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
-			
-		}
-	}
-	return nil
-}
-
-// Root_On The name of the GitHub event that triggers the workflow. You can provide a single event string, array of events, array of event types, or an event configuration map that schedules a workflow or restricts the execution of a workflow to specific files, tags, or branch changes. For a list of available events, see https://help.github.com/en/github/automating-your-workflow-with-github-actions/events-that-trigger-workflows.
-type Root_On struct {
-	Raw *yaml.Node
-}
-
-func (node *Root_On) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	for i := 0; i < len(value.Content); i++ {
-		nodeName := value.Content[i]
-		switch nodeName.Value {
-			
-		}
-	}
-	return nil
-}
-
-// Root_Permissions You can modify the default permissions granted to the GITHUB_TOKEN, adding or removing access as required, so that you only allow the minimum required access.
-type Root_Permissions struct {
-	Raw *yaml.Node
-}
-
-func (node *Root_Permissions) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	for i := 0; i < len(value.Content); i++ {
 		nodeName := value.Content[i]

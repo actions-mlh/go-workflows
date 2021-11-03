@@ -15,7 +15,7 @@ func getOrderedFields(m map[string]Field) []Field {
 		idx++
 	}
 	sort.Slice(fields, func (i, j int) bool {
-			return fields[i].Type < fields[j].Type
+			return fields[i].Name < fields[j].Name
 		})
 	return fields
 }
