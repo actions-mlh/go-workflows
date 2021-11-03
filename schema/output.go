@@ -15,7 +15,7 @@ func getOrderedFields(m map[string]Field) []Field {
 		idx++
 	}
 	sort.Slice(fields, func (i, j int) bool {
-			return fields[i].Type < fields[j].Type
+			return fields[i].Name < fields[j].Name
 		})
 	return fields
 }
@@ -44,10 +44,13 @@ import (
 {{range . | getOrderedStructs}}
 // {{.Name}} {{Replace .Description "\n" "\n// " -1}}
 type {{.Name}} struct {
-{{range .Fields | getOrderedFields}}{{if .Description}}
+{{-  range .Fields | getOrderedFields}}
+{{-    if .Description}}
   // {{Replace .Description "\n" "\n  // " -1}}
-{{end}}	{{.Name}} *{{.Type}} `+"`"+`yaml:"{{.YAMLName}}{{if not .Required}},omitempty{{end}}"`+"`"+`
-{{end}}	Raw *yaml.Node
+{{-    end}}
+	{{.Name}} *{{.Type}} `+"`"+`yaml:"{{.YAMLName}}{{if not .Required}},omitempty{{end}}"`+"`"+`
+{{-  end}}
+	Raw *yaml.Node
 }
 
 func (node *{{.Name}}) UnmarshalYAML(value *yaml.Node) error {

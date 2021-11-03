@@ -27,9 +27,9 @@ type Struct struct {
 	// Description of the struct
 	Description string
 	Fields      map[string]Field
-
-	GenerateCode   bool
-	AdditionalType string
+	Type string
+	// The original schema from which this struct was built
+	Schema *Schema
 }
 
 // Field defines the data required to generate a field in Go.
@@ -80,100 +80,79 @@ func (g *Generator) processSchema(name string, schema *Schema) (*Struct, error) 
 			schema.Type = "object"
 		}
 	}
-	// cache the object name in case any sub-schemas recursively reference it
-	schema.GeneratedType = "*" + name
-	
 	strct := Struct{
 		ID:          schema.ID(),
 		Name:        name,
 		Description: schema.Description,
 		Fields:      make(map[string]Field, len(schema.Properties)),
+		Type: schema.Type,
+		Schema: schema,
 	}
-	if schema.Type != "array" && schema.Type != "object" {
-		strct.AdditionalType = schema.Type
+
+	// cache the object name in case any sub-schemas recursively reference it
+	schema.GeneratedType = "*" + name
+
+	// handle additional properties
+	if schema.AdditionalProperties != nil &&
+		(schema.AdditionalProperties.AdditionalPropertiesBool == nil ||
+			*schema.AdditionalProperties.AdditionalPropertiesBool){
+		schema.Type = schema.AdditionalProperties.Type
+		schema.Reference = schema.AdditionalProperties.Reference
+		schema.OneOf = schema.AdditionalProperties.OneOf
+		schema.AnyOf = schema.AdditionalProperties.AnyOf
+		schema.AllOf = schema.AdditionalProperties.AllOf
 	}
-	
+
+	// process properties
 	if len(schema.Properties) > 0 {
 		err := g.processProperties(schema, strct, schema.Properties)
 		if err != nil {
 			return nil, err
 		}
 	}
-
-	/*
-	if schema.Items != nil {
-		// subType: fallback name in case this array contains inline object without a title
-		subName := g.getSchemaName(name, (*Schema)(schema.Items))
-		s := strings.Split(subName, "_")
-		yamlName := strings.ToLower(s[len(s)-1])
-		subTyp, err := g.processSchema(name + "_Items_" + subName, (*Schema)(schema.Items))
-		if err != nil {
-			return nil, err
-		}
-		finalType, err := getPrimitiveTypeName("array", subTyp, true)
-		if err != nil {
-			return nil, err
-		}
-		f := Field{
-			Name:        subName,
-			YAMLName:    yamlName,
-			Type:        finalType,
-			Required:    contains(schema.Required, subName),
-			Description: schema.Description,
-		}
-		if f.Required {
-			strct.GenerateCode = true
-		}
-		strct.Fields[f.Name] = f
-	}
-	*/
-	
-	// TODO: add anyof, allof, oneof, patternProperties
 	return &strct, nil
 }
 
 func (g *Generator) processProperties(schema *Schema, strct Struct, properties map[string]*Schema) error {
-
 	for propKey, prop := range properties {
-		f, err := g.processField(schema, strct, prop, propKey)
+		f, err := g.processField(propKey, prop, strct.Name)
 		if err != nil {
 			return err
 		}
+		f.Required = contains(schema.Required, propKey)
 		strct.Fields[f.Name] = *f
-		if f.Required {
-			strct.GenerateCode = true
-		}
 	}
 	return nil
 }
 
-func (g *Generator) processField(schema *Schema, strct Struct, subSchema *Schema, fieldName string) (*Field, error) {
+func (g *Generator) processField(fieldName string, fieldSchema *Schema, parentName string) (*Field, error) {
 	f := Field{
 		Name:        getGolangName(fieldName),
 		YAMLName:    fieldName,
-		Required:    contains(schema.Required, fieldName),
-		Description: subSchema.Description,
+		Description: fieldSchema.Description,
 	}
-	// calculate sub-schema name here, may not actually be used depending on type of schema!
 	var newStruct *Struct
 	var err error
-	if subSchema.Reference != "" {
-		refSchema, err := g.resolver.GetSchemaByReference(subSchema)
+	if fieldSchema.Reference != "" {
+		refSchema, err := g.resolver.GetSchemaByReference(fieldSchema)
 		if err != nil {
-			return nil, errors.New("processField: reference \"" + schema.Reference + "\" not found at \"" + g.resolver.GetPath(schema) + "\"")
+			return nil, errors.New("processField: reference \"" + fieldSchema.Reference + "\" not found at \"" + g.resolver.GetPath(fieldSchema) + "\"")
 		}
-		newStruct, err = g.processSchema(strct.Name + "_" + f.Name, refSchema)
-	} else {
-		newStruct, err = g.processSchema(strct.Name + "_" + f.Name, subSchema)
+		fieldSchema = refSchema
 	}
+	newStruct, err = g.processSchema(parentName + "_" + f.Name, fieldSchema)
 	if err != nil {
 		return nil, err
 	}
-	if newStruct.AdditionalType != "" {
-		f.Type = newStruct.AdditionalType
+	if newStruct.Type != "array" && newStruct.Type != "object" {
+		f.Type = newStruct.Type
+	} else if fieldSchema.OneOf != nil || fieldSchema.AllOf != nil || fieldSchema.AnyOf != nil {
+		f.Type = "interface{}"
+	} else if fieldSchema.PatternProperties != nil {
+		f.Type = "map[string]*interface{}"
 	} else {
-		g.Structs[newStruct.Name] = *newStruct
 		f.Type = newStruct.Name
+		g.Structs[newStruct.Name] = *newStruct
 	}
 	return &f, nil
 }
