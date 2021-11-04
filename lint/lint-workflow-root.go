@@ -1,56 +1,54 @@
 package lint
 
 import (
-	// "c2c-actions-mlh-workflow-parser/workflow"
-	// "c2c-actions-mlh-workflow-parser/lint/util"
-	// "c2c-actions-mlh-workflow-parser/sink"
-	// "gopkg.in/yaml.v3"
-	// "reflect"
-	// "strings"
-	// "fmt"
+	"c2c-actions-mlh-workflow-parser/workflow"
+	"c2c-actions-mlh-workflow-parser/lint/util"
+	"c2c-actions-mlh-workflow-parser/sink"
+	"gopkg.in/yaml.v3"
+	"reflect"
+	"strings"
+	"fmt"
 )
 
 // issues
 // 1) Is Kind a marshal error? -> Decided to only add support for kind of scalar type (!!bool, !!float, !!int, !!str, ...)
 
-// func LintWorkflowRoot(sink *sink.ProblemSink, target *workflow.WorkflowNode) error {
-	// fmt.Printf("%+v\n", (*target.On).(map[string]interface{}))
+func LintWorkflowRoot(sink *sink.ProblemSink, target *workflow.WorkflowNode) error {
+	workflowKeyNodes := []*yaml.Node{}
+	workflowValueNodes := []*yaml.Node{}
 
-	// workflowKeyNodes := []*yaml.Node{}
-	// workflowValueNodes := []*yaml.Node{}
+	for i := 0; i < len(target.Raw.Content); i += 2 {
+		workflowKeyNodes = append(workflowKeyNodes, target.Raw.Content[i])
+		workflowValueNodes = append(workflowValueNodes, target.Raw.Content[i+1])
+	}
 
-	// for i := 0; i < len(target.Raw.Content); i += 2 {
-	// 	workflowKeyNodes = append(workflowKeyNodes, target.Raw.Content[i])
-	// 	workflowValueNodes = append(workflowValueNodes, target.Raw.Content[i+1])
-	// }
+	requiredKeys := map[string]bool{"on": false, "jobs": false}
+	if err := util.CheckRequiredKeys(target.Raw, sink, workflowKeyNodes, requiredKeys); err != nil {
+		return err
+	}
 
-	// requiredKeys := map[string]bool{"on": false, "jobs": false}
-	// if err := util.CheckRequiredKeys(target.Raw, sink, workflowKeyNodes, requiredKeys); err != nil {
-	// 	return err
-	// }
+	if err := util.CheckNullPointer(sink, workflowKeyNodes, workflowValueNodes); err != nil {
+		return err
+	}
 
-	// if err := util.CheckNullPointer(sink, workflowKeyNodes, workflowValueNodes); err != nil {
-	// 	return err
-	// }
+	if err := util.CheckDuplicateKeys(sink, workflowKeyNodes); err != nil {
+		return err
+	}
 
-	// if err := util.CheckDuplicateKeys(sink, workflowKeyNodes); err != nil {
-	// 	return err
-	// }
+	expectedKeys := []string{}
+	reflectedStruct := reflect.ValueOf(*target.Value)
+	typeOfStruct := reflectedStruct.Type()
+	for i := 0; i < reflectedStruct.NumField(); i++ {
+		expectedKeys = append(expectedKeys, strings.ToLower(typeOfStruct.Field(i).Name))
+	}
 
-	// expectedKeys := []string{}
-	// reflectedStruct := reflect.ValueOf(*target.Value)
-	// typeOfStruct := reflectedStruct.Type()
-	// for i := 0; i < reflectedStruct.NumField(); i++ {
-	// 	expectedKeys = append(expectedKeys, strings.ToLower(typeOfStruct.Field(i).Name))
-	// }
-
-	// if err := util.CheckUnexpectedKeys(sink, expectedKeys, workflowKeyNodes); err != nil {
-	// 	return err
-	// }
+	if err := util.CheckUnexpectedKeys(sink, expectedKeys, workflowKeyNodes); err != nil {
+		return err
+	}
 
 
-	// fmt.Println("-------TESTING--------")
-	// fmt.Printf("%+v\n", target.Value)
+	fmt.Println("-------TESTING--------")
+	fmt.Printf("%+v\n", target.Value.Jobs.Value[0])
 
 	// for i := 0; i < len(workflowValueNodes); i += 1 {
 	// 	// fmt.Printf("%+v\n", target.Value[i])
@@ -70,8 +68,8 @@ import (
 	// if err := lintWorkflowJobs(sink, workflow.Jobs, target.Raw); err != nil {
 	// 	return err
 	// }
-	// return nil
-// }
+	return nil
+}
 
 // func lintWorkflowName(sink *ProblemSink, target *gen_mock.WorkflowNameNode, raw *yaml.Node) error {
 // 	nameNode := target

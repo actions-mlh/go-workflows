@@ -1,6 +1,6 @@
-package lint
+package test
 
-import (
+// import (
 	// "c2c-actions-mlh-workflow-parser/gen"
 	// "c2c-actions-mlh-workflow-parser/lint/util"
 	// "c2c-actions-mlh-workflow-parser/sink"
@@ -8,7 +8,7 @@ import (
 	// "reflect"
 	// "strings"
 	// "fmt"
-)
+// )
 
 // issues
 // 1) Is Kind a marshal error? -> Decided to only add support for kind of scalar type (!!bool, !!float, !!int, !!str, ...)
