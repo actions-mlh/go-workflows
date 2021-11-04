@@ -47,8 +47,9 @@ func LintWorkflowRoot(sink *sink.ProblemSink, target *workflow.WorkflowNode) err
 	}
 
 
-	fmt.Println("-------TESTING--------")
-	fmt.Printf("%+v\n", target.Value.Jobs.Value[0])
+	// fmt.Println("-------TESTING--------")
+	// fmt.Printf("%+v\n", target.Value.Jobs)
+	// fmt.Printf("%+v\n", target.Value.Jobs.Value[0])
 
 	// for i := 0; i < len(workflowValueNodes); i += 1 {
 	// 	// fmt.Printf("%+v\n", target.Value[i])

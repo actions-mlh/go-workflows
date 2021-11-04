@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"c2c-actions-mlh-workflow-parser/lint"
 	"c2c-actions-mlh-workflow-parser/sink"
@@ -12,8 +13,7 @@ import (
 )
 
 func TestParse(t *testing.T) {
-	root := "../yaml/"
-
+	root := "../yaml/clean/"
 	filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -40,7 +40,9 @@ func TestParse(t *testing.T) {
 		if err := lint.LintWorkflowRoot(sink, node); err != nil {
 			return err
 		}
-		sink.Render()
+		if len(sink.Problems) > 0 {
+			t.Errorf("error(s) found in file %s:\n%s", path, strings.Join(sink.Problems, "\n"))
+		}
 
 		return nil
 	})
