@@ -1,7 +1,7 @@
 package lint
 
 import (
-	// "c2c-actions-mlh-workflow-parser/workflow"
+	// "c2c-actions-mlh-workflow-parser/gen"
 	// "c2c-actions-mlh-workflow-parser/lint/util"
 	// "c2c-actions-mlh-workflow-parser/sink"
 	// "gopkg.in/yaml.v3"
@@ -13,8 +13,7 @@ import (
 // issues
 // 1) Is Kind a marshal error? -> Decided to only add support for kind of scalar type (!!bool, !!float, !!int, !!str, ...)
 
-// func LintWorkflowRoot(sink *sink.ProblemSink, target *workflow.WorkflowNode) error {
-	// fmt.Printf("%+v\n", (*target.On).(map[string]interface{}))
+// func LintWorkflowRoot(sink *sink.ProblemSink, target *gen_mock.WorkflowNode) error {
 
 	// workflowKeyNodes := []*yaml.Node{}
 	// workflowValueNodes := []*yaml.Node{}
