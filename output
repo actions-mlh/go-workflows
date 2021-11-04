@@ -1,0 +1,62 @@
+OUTPUT FROM `go run cmd/parser/main.go -i yaml/clean/starter-workflows-main/automation/greetings.yml`
+
+-
+
+greeting
+panic: interface conversion: interface {} is nil, not workflow.ReusableWorkflowCallJobValue [recovered]
+	panic: interface conversion: interface {} is nil, not workflow.ReusableWorkflowCallJobValue [recovered]
+	panic: interface conversion: interface {} is nil, not workflow.ReusableWorkflowCallJobValue [recovered]
+	panic: interface conversion: interface {} is nil, not workflow.ReusableWorkflowCallJobValue
+
+goroutine 1 [running]:
+gopkg.in/yaml%2ev3.handleErr(0xc000093e18)
+	/home/autumn/go/pkg/mod/gopkg.in/yaml.v3@v3.0.0-20210107192922-496545a6307b/yaml.go:294 +0x6d
+panic({0x4f61a0, 0xc0000a07e0})
+	/usr/local/go/src/runtime/panic.go:1038 +0x215
+gopkg.in/yaml%2ev3.handleErr(0xc000093a40)
+	/home/autumn/go/pkg/mod/gopkg.in/yaml.v3@v3.0.0-20210107192922-496545a6307b/yaml.go:294 +0x6d
+panic({0x4f61a0, 0xc0000a07e0})
+	/usr/local/go/src/runtime/panic.go:1038 +0x215
+gopkg.in/yaml%2ev3.handleErr(0xc000093758)
+	/home/autumn/go/pkg/mod/gopkg.in/yaml.v3@v3.0.0-20210107192922-496545a6307b/yaml.go:294 +0x6d
+panic({0x4f61a0, 0xc0000a07e0})
+	/usr/local/go/src/runtime/panic.go:1038 +0x215
+c2c-actions-mlh-workflow-parser/workflow.(*JobsPatternPropertiesNode).UnmarshalYAML(0xc0000c61a0, 0xc0000c08c0)
+	/home/autumn/MLH_Fellowship_2/c2c-actions-mlh-workflow-parser/workflow/workflow.go:559 +0x3ac
+gopkg.in/yaml%2ev3.(*decoder).callUnmarshaler(0xc0000c3880, 0x4f4120, {0x7f418952d020, 0xc0000c61a0})
+	/home/autumn/go/pkg/mod/gopkg.in/yaml.v3@v3.0.0-20210107192922-496545a6307b/decode.go:361 +0x33
+gopkg.in/yaml%2ev3.(*decoder).prepare(0x4f4120, 0xc0000ac0d0, {0x4f4120, 0xc0000ac0d0, 0x10000c000093601})
+	/home/autumn/go/pkg/mod/gopkg.in/yaml.v3@v3.0.0-20210107192922-496545a6307b/decode.go:418 +0x266
+gopkg.in/yaml%2ev3.(*decoder).unmarshal(0xc0000c3880, 0xc0000c08c0, {0x4f4120, 0xc0000ac0d0, 0x7f41b01b55b8})
+	/home/autumn/go/pkg/mod/gopkg.in/yaml.v3@v3.0.0-20210107192922-496545a6307b/decode.go:497 +0x255
+gopkg.in/yaml%2ev3.(*Node).Decode(0xd, {0x4eb9c0, 0xc0000ac0d0})
+	/home/autumn/go/pkg/mod/gopkg.in/yaml.v3@v3.0.0-20210107192922-496545a6307b/yaml.go:149 +0x1f6
+c2c-actions-mlh-workflow-parser/workflow.(*WorkflowJobsNode).UnmarshalYAML(0xc0000c6180, 0xc0000c08c0)
+	/home/autumn/MLH_Fellowship_2/c2c-actions-mlh-workflow-parser/workflow/workflow.go:481 +0x1bc
+gopkg.in/yaml%2ev3.(*decoder).callUnmarshaler(0xc0000c3810, 0x4f43c0, {0x7f418952d000, 0xc0000c6180})
+	/home/autumn/go/pkg/mod/gopkg.in/yaml.v3@v3.0.0-20210107192922-496545a6307b/decode.go:361 +0x33
+gopkg.in/yaml%2ev3.(*decoder).prepare(0x4f9ea0, 0xc0000c6180, {0x4f9ea0, 0xc0000c6180, 0x100000000000003})
+	/home/autumn/go/pkg/mod/gopkg.in/yaml.v3@v3.0.0-20210107192922-496545a6307b/decode.go:418 +0x266
+gopkg.in/yaml%2ev3.(*decoder).unmarshal(0xc0000c3810, 0xc0000c08c0, {0x4f9ea0, 0xc0000c6180, 0x7f41b01b55b8})
+	/home/autumn/go/pkg/mod/gopkg.in/yaml.v3@v3.0.0-20210107192922-496545a6307b/decode.go:497 +0x255
+gopkg.in/yaml%2ev3.(*Node).Decode(0x4f44c8, {0x4f43c0, 0xc0000c6180})
+	/home/autumn/go/pkg/mod/gopkg.in/yaml.v3@v3.0.0-20210107192922-496545a6307b/yaml.go:149 +0x1f6
+c2c-actions-mlh-workflow-parser/workflow.(*WorkflowNode).UnmarshalYAML(0xc00009e370, 0xc0000c03c0)
+	/home/autumn/MLH_Fellowship_2/c2c-actions-mlh-workflow-parser/workflow/workflow.go:60 +0x267
+gopkg.in/yaml%2ev3.(*decoder).callUnmarshaler(0xc0000c35e0, 0x4f4480, {0x7f418952cfa0, 0xc00009e370})
+	/home/autumn/go/pkg/mod/gopkg.in/yaml.v3@v3.0.0-20210107192922-496545a6307b/decode.go:361 +0x33
+gopkg.in/yaml%2ev3.(*decoder).prepare(0x4f4480, 0xc0000b2030, {0x4f4480, 0xc0000b2030, 0x0})
+	/home/autumn/go/pkg/mod/gopkg.in/yaml.v3@v3.0.0-20210107192922-496545a6307b/decode.go:418 +0x266
+gopkg.in/yaml%2ev3.(*decoder).unmarshal(0xc0000c35e0, 0xc0000c03c0, {0x4f4480, 0xc0000b2030, 0x0})
+	/home/autumn/go/pkg/mod/gopkg.in/yaml.v3@v3.0.0-20210107192922-496545a6307b/decode.go:497 +0x255
+gopkg.in/yaml%2ev3.(*decoder).document(0x4f4480, 0xc0000b2030, {0x4f4480, 0xc0000b2030, 0xc000080800})
+	/home/autumn/go/pkg/mod/gopkg.in/yaml.v3@v3.0.0-20210107192922-496545a6307b/decode.go:522 +0x5d
+gopkg.in/yaml%2ev3.(*decoder).unmarshal(0xc0000c35e0, 0xc0000c0320, {0x4f4480, 0xc0000b2030, 0x600})
+	/home/autumn/go/pkg/mod/gopkg.in/yaml.v3@v3.0.0-20210107192922-496545a6307b/decode.go:493 +0x415
+gopkg.in/yaml%2ev3.(*Decoder).Decode(0xc000093eb0, {0x4ebac0, 0xc0000b2030})
+	/home/autumn/go/pkg/mod/gopkg.in/yaml.v3@v3.0.0-20210107192922-496545a6307b/yaml.go:131 +0x231
+main.realMain({0x7ffd603c20e2, 0x3a})
+	/home/autumn/MLH_Fellowship_2/c2c-actions-mlh-workflow-parser/cmd/parser/main.go:35 +0x2c5
+main.main()
+	/home/autumn/MLH_Fellowship_2/c2c-actions-mlh-workflow-parser/cmd/parser/main.go:20 +0xcc
+exit status 2
