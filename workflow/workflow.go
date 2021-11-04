@@ -493,7 +493,7 @@ type JobsPatternPropertiesOneOfType struct {
 
 func (node *JobsPatternPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-
+	// output.go get both required arrays and loop through contents to get values
 	if len(value.Content)%2 != 0 {
 		return fmt.Errorf("%d:%d  error  expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
 	}
