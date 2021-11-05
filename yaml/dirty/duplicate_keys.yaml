@@ -1,9 +1,10 @@
-on:
+on: ubuntu
 
-name:
+name: Hank
 
-name: 
+name: hank
 
-on:
+on: Ubuntu
 
 jobs:
+  test:

@@ -6,13 +6,13 @@ on:
   check_suite:
     
 jobs:
-  ajobby:
-    name: jobby[]
+  ajobby[]:
+    name: jobby
     needs: [_jokerj]
-  _jokerj:
-    name: joker$$
+  _joker$j:
+    name: joker
     needs: [_sammysam]
   _sammysam:
-    name: jam@
+    name: jam
     needs: [_jokerj]
   

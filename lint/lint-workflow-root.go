@@ -13,7 +13,7 @@ import (
 // issues
 // 1) Is Kind a marshal error? -> Decided to only add support for kind of scalar type (!!bool, !!float, !!int, !!str, ...)
 
-func LintWorkflowRoot(sink *sink.ProblemSink, target *workflow.WorkflowNode) error {
+func lintWorkflowRoot(sink *sink.ProblemSink, target *workflow.WorkflowNode) error {
 	workflowKeyNodes := []*yaml.Node{}
 	workflowValueNodes := []*yaml.Node{}
 
@@ -22,7 +22,7 @@ func LintWorkflowRoot(sink *sink.ProblemSink, target *workflow.WorkflowNode) err
 		workflowValueNodes = append(workflowValueNodes, target.Raw.Content[i+1])
 	}
 
-	requiredKeys := map[string]bool{"on": false, "jobs": false}
+	requiredKeys := []string{"on", "jobs"}
 	if err := util.CheckRequiredKeys(target.Raw, sink, workflowKeyNodes, requiredKeys); err != nil {
 		return err
 	}

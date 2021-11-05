@@ -1,0 +1,2 @@
+../yaml/dirty/unexpected_scalar_types.yaml:1:1	error:	unexpected scalar type: int, expected scalar types: string
+../yaml/dirty/unexpected_scalar_types.yaml:5:1	error:	unexpected scalar type: int, expected scalar types: object

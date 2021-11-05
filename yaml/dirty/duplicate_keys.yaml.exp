@@ -1,7 +1,2 @@
-duplicate_keys.yaml:1:1   error   "on" key should not have an empty value 
-duplicate_keys.yaml:3:1   error   "name" key should not have an empty value 
-duplicate_keys.yaml:5:1   error   "name" key should not have an empty value 
-duplicate_keys.yaml:7:1   error   "on" key should not have an empty value 
-duplicate_keys.yaml:9:1   error   "jobs" key should not have an empty value 
-duplicate_keys.yaml:5:1   error   Duplicate Keys: name 
-duplicate_keys.yaml:7:1   error   Duplicate Keys: on 
+../yaml/dirty/duplicate_keys.yaml:5:1	error:	Duplicate Keys: name
+../yaml/dirty/duplicate_keys.yaml:7:1	error:	Duplicate Keys: on

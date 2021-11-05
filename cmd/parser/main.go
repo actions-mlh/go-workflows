@@ -2,12 +2,10 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
-	"gopkg.in/yaml.v3"
 	"c2c-actions-mlh-workflow-parser/lint"
-	"c2c-actions-mlh-workflow-parser/sink"
-	"c2c-actions-mlh-workflow-parser/workflow"
 )
 
 func main() {
@@ -23,24 +21,17 @@ func main() {
 }
 
 func realMain(inputFilename string) error {
-	input, err := os.Open(inputFilename)
+	input, err := os.ReadFile(inputFilename)
 	if err != nil {
 		return err
 	}
-	defer input.Close()
-
-	sink := &sink.ProblemSink{Filename: inputFilename, Output: os.Stdout}
-	node := new(workflow.WorkflowNode)
-	
-	if err := yaml.NewDecoder(input).Decode(&node); err != nil {
+	problems, err := lint.Lint(inputFilename, input)
+	if err != nil {
 		return err
 	}
-
-	if err := lint.LintWorkflowRoot(sink, node); err != nil {
-		return err
+	for _, problem := range problems {
+		fmt.Println(problem)
 	}
-	sink.Render()
-
 	return nil
 }
 

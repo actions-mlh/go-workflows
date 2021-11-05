@@ -1,85 +1,88 @@
 package main
 
 import (
-	"gopkg.in/yaml.v3"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"c2c-actions-mlh-workflow-parser/lint"
-	"c2c-actions-mlh-workflow-parser/sink"
-	"c2c-actions-mlh-workflow-parser/workflow"
 )
 
 func TestParse(t *testing.T) {
+	t.Log("CLEAN TESTS:")
 	root := "../yaml/clean/"
 	filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-
 		if info.IsDir() ||
 			!(filepath.Ext(path) == ".yml" ||
 				filepath.Ext(path) == ".yaml") {
 			return nil
 		}
-		input, err := os.Open(path)
+		input, err := os.ReadFile(path)
 		if err != nil {
 			return err
 		}
-		defer input.Close()
-
-		sink := &sink.ProblemSink{Filename: path, Output: os.Stdout}
-		node := new(workflow.WorkflowNode)
-		
-		if err := yaml.NewDecoder(input).Decode(&node); err != nil {
+		problems, err := lint.Lint(path, input)
+		if err != nil {
 			return err
 		}
-
-		if err := lint.LintWorkflowRoot(sink, node); err != nil {
-			return err
+		if len(problems) > 0 {
+			t.Errorf("error(s) found in clean file %s:\n%s", path, strings.Join(problems, "\n"))
 		}
-		if len(sink.Problems) > 0 {
-			t.Errorf("error(s) found in clean file %s:\n%s", path, strings.Join(sink.Problems, "\n"))
-		}
-
 		return nil
 	})
 
+	t.Log("DIRTY TESTS:")
 	root = "../yaml/dirty/"
 	filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-
 		if info.IsDir() ||
 			!(filepath.Ext(path) == ".yml" ||
 				filepath.Ext(path) == ".yaml") {
 			return nil
 		}
-		input, err := os.Open(path)
+		input, err := os.ReadFile(path)
 		if err != nil {
-			return err
+			t.Errorf("error reading file %s: %s", path, err)
 		}
-		defer input.Close()
-
-		expected, err := os.Open(path + ".exp")
-
-		sink := &sink.ProblemSink{Filename: path, Output: os.Stdout}
-		node := new(workflow.WorkflowNode)
-		
-		if err := yaml.NewDecoder(input).Decode(&node); err != nil {
-			return err
+		expectedBytes, err := os.ReadFile(path + ".exp")
+		if err != nil {
+			t.Errorf("error reading file %s.exp: %s", path, err)
+		}
+		problems, err := lint.Lint(path, input)
+		if err != nil {
+			t.Errorf("error linting file %s: %s", path, err)
+		}
+		expected := strings.Split(string(expectedBytes), "\n")
+		for _, expProblem := range expected {
+			if expProblem == "" {
+				continue
+			}
+			if !contains(problems, expProblem) {
+				t.Errorf("missing EXPECTED problem:\n%s", expProblem)
+			}
 		}
 
-		if err := lint.LintWorkflowRoot(sink, node); err != nil {
-			return err
+		for _, problem := range problems {
+			if !contains(expected, problem) {
+				t.Errorf("found UNEXPECTED problem:\n%s", problem)
+			}
 		}
-		if len(sink.Problems) > 0 {
-			t.Errorf("error(s) found in clean file %s:\n%s", path, strings.Join(sink.Problems, "\n"))
-		}
-
 		return nil
 	})
+}
+
+// yes, i know i'm in O(n^2), but if you have more than 100 errors in one YAML file you should rethink your life
+func contains(slice []string, item string) bool {
+	for _, val := range slice {
+		if val == item {
+			return true
+		}
+	}
+	return false
 }
