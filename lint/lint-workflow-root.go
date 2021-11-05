@@ -10,7 +10,7 @@ import (
 // issues
 // 1) Is Kind a marshal error? -> Decided to only add support for kind of scalar type (!!bool, !!float, !!int, !!str, ...)
 
-func lintWorkflowRoot(sink *ProblemSink, target *WorkflowNode) error {
+func lintWorkflowRoot(sink *problemSink, target *workflowNode) error {
 	workflowKeyNodes := []*yaml.Node{}
 	workflowValueNodes := []*yaml.Node{}
 
@@ -20,15 +20,15 @@ func lintWorkflowRoot(sink *ProblemSink, target *WorkflowNode) error {
 	}
 
 	requiredKeys := []string{"on", "jobs"}
-	if err := CheckRequiredKeys(target.Raw, sink, workflowKeyNodes, requiredKeys); err != nil {
+	if err := checkRequiredKeys(target.Raw, sink, workflowKeyNodes, requiredKeys); err != nil {
 		return err
 	}
 
-	if err := CheckNullPointer(sink, workflowKeyNodes, workflowValueNodes); err != nil {
+	if err := checkNullPointer(sink, workflowKeyNodes, workflowValueNodes); err != nil {
 		return err
 	}
 
-	if err := CheckDuplicateKeys(sink, workflowKeyNodes); err != nil {
+	if err := checkDuplicateKeys(sink, workflowKeyNodes); err != nil {
 		return err
 	}
 
@@ -39,7 +39,7 @@ func lintWorkflowRoot(sink *ProblemSink, target *WorkflowNode) error {
 		expectedKeys = append(expectedKeys, strings.ToLower(typeOfStruct.Field(i).Name))
 	}
 
-	if err := CheckUnexpectedKeys(sink, expectedKeys, workflowKeyNodes); err != nil {
+	if err := checkUnexpectedKeys(sink, expectedKeys, workflowKeyNodes); err != nil {
 		return err
 	}
 

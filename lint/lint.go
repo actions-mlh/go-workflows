@@ -5,8 +5,8 @@ import (
 )
 
 func Lint(filename string, input []byte) ([]string, error) {
-	sink := ProblemSink{Filename: filename}
-	node := new(WorkflowNode)
+	sink := problemSink{Filename: filename}
+	node := new(workflowNode)
 	err := yaml.Unmarshal(input, &node)
 	if err != nil {
 		return nil, err

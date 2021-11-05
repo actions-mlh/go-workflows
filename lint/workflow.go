@@ -15,55 +15,55 @@ import (
 // Properties(objects), Items(array of constants)
 // "type" -> scalar (string, bool, float, etc ...)
 
-type WorkflowNode struct {
+type workflowNode struct {
 	Raw   *yaml.Node
-	Value *WorkflowValue
+	Value *workflowValue
 }
 
-func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
+func (node *workflowNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	if len(value.Content)%2 != 0 {
 		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
 	}
 
-	event := new(WorkflowValue)
+	event := new(workflowValue)
 	for i := 0; i < len(value.Content); i += 2 {
 		keyEntry := value.Content[i]
 		valueEntry := value.Content[i+1]
 		eventKey := keyEntry.Value
 		switch eventKey {
 		case "name":
-			event.Name = new(WorkflowNameNode)
+			event.Name = new(workflowNameNode)
 			err := valueEntry.Decode(event.Name)
 			if err != nil {
 				return err
 			}
 		case "on":
-			event.On = new(WorkflowOnNode)
+			event.On = new(workflowOnNode)
 			err := valueEntry.Decode(event.On)
 			if err != nil {
 				return err
 			}
 		case "env":
-			event.Env = new(WorkflowEnvNode)
+			event.Env = new(workflowEnvNode)
 			err := valueEntry.Decode(event.Env)
 			if err != nil {
 				return err
 			}
 		case "defaults":
-			event.Defaults = new(WorkflowDefaultsNode)
+			event.Defaults = new(workflowDefaultsNode)
 			err := valueEntry.Decode(event.Defaults)
 			if err != nil {
 				return err
 			}
 		case "concurrency":
-			event.Concurrency = new(WorkflowConcurrencyNode)
+			event.Concurrency = new(workflowConcurrencyNode)
 			err := valueEntry.Decode(event.Concurrency)
 			if err != nil {
 				return err
 			}
 		case "jobs":
-			event.Jobs = new(WorkflowJobsNode)
+			event.Jobs = new(workflowJobsNode)
 			err := valueEntry.Decode(event.Jobs)
 			if err != nil {
 				return err
@@ -74,23 +74,23 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 	return nil
 }
 
-type WorkflowValue struct {
-	Name        *WorkflowNameNode        `yaml:"name"`
-	On          *WorkflowOnNode          `yaml:"on"`
-	Env         *WorkflowEnvNode         `yaml:"env"`
-	Defaults    *WorkflowDefaultsNode    `yaml:"defaults"`
-	Concurrency *WorkflowConcurrencyNode `yaml:"concurrency"`
-	Jobs        *WorkflowJobsNode        `yaml:"jobs"`
+type workflowValue struct {
+	Name        *workflowNameNode        `yaml:"name"`
+	On          *workflowOnNode          `yaml:"on"`
+	Env         *workflowEnvNode         `yaml:"env"`
+	Defaults    *workflowDefaultsNode    `yaml:"defaults"`
+	Concurrency *workflowConcurrencyNode `yaml:"concurrency"`
+	Jobs        *workflowJobsNode        `yaml:"jobs"`
 }
 
 // --------------------------------------------On----------------------------------------------------
 
-type WorkflowNameNode struct {
+type workflowNameNode struct {
 	Raw   *yaml.Node
 	Value string
 }
 
-func (node *WorkflowNameNode) UnmarshalYAML(value *yaml.Node) error {
+func (node *workflowNameNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
 	scalarTypes := []string{"!!str"}
@@ -111,18 +111,18 @@ func (node *WorkflowNameNode) UnmarshalYAML(value *yaml.Node) error {
 
 // --------------------------------------------On----------------------------------------------------
 
-type WorkflowOnNode struct {
+type workflowOnNode struct {
 	Raw   *yaml.Node
-	OneOf WorkflowOnOneOf
+	OneOf workflowOnOneOf
 }
 
-type WorkflowOnOneOf struct {
+type workflowOnOneOf struct {
 	ScalarNode   *OnEventConstants
 	SequenceNode *[]OnEventConstants
 	MappingNode  *WorkFlowOnValue
 }
 
-func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
+func (node *workflowOnNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
 	switch node.Raw.Kind {
@@ -345,18 +345,18 @@ type CreateEventObjectValue struct {
 
 // --------------------------------------------Defaults----------------------------------------------------
 
-type WorkflowDefaultsNode struct {
+type workflowDefaultsNode struct {
 	Raw   *yaml.Node
-	Value *WorkflowDefaultsValue
+	Value *workflowDefaultsValue
 }
 
-func (node *WorkflowDefaultsNode) UnmarshalYAML(value *yaml.Node) error {
+func (node *workflowDefaultsNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
 	if len(value.Content)%2 != 0 {
 		return fmt.Errorf("%d:%d  error  expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
 	}
-	event := new(WorkflowDefaultsValue)
+	event := new(workflowDefaultsValue)
 	for i := 0; i < len(value.Content); i += 2 {
 		keyEntry := value.Content[i]
 		valueEntry := value.Content[i+1]
@@ -374,7 +374,7 @@ func (node *WorkflowDefaultsNode) UnmarshalYAML(value *yaml.Node) error {
 	return value.Decode(&node.Value)
 }
 
-type WorkflowDefaultsValue struct {
+type workflowDefaultsValue struct {
 	Run *DefaultsRunNode `yaml:"run"`
 }
 
@@ -439,17 +439,17 @@ func (node *RunWorkingDirectoryNode) UnmarshalYAML(value *yaml.Node) error {
 
 // --------------------------------------------Concurrency----------------------------------------------------
 
-type WorkflowConcurrencyNode struct {
+type workflowConcurrencyNode struct {
 	Raw   *yaml.Node
-	OneOf WorkflowConcurrencyOneOf
+	OneOf workflowConcurrencyOneOf
 }
 
-type WorkflowConcurrencyOneOf struct {
+type workflowConcurrencyOneOf struct {
 	ScalarNode  *string
-	MappingNode *WorkflowConcurrencyValue
+	MappingNode *workflowConcurrencyValue
 }
 
-func (node *WorkflowConcurrencyNode) UnmarshalYAML(value *yaml.Node) error {
+func (node *workflowConcurrencyNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
 	switch node.Raw.Kind {
@@ -463,7 +463,7 @@ func (node *WorkflowConcurrencyNode) UnmarshalYAML(value *yaml.Node) error {
 		return fmt.Errorf("%d:%d  error  Expected one of: string, map type", node.Raw.Line, node.Raw.Column)
 	}
 
-	err := func(value WorkflowConcurrencyValue) error {
+	err := func(value workflowConcurrencyValue) error {
 		if value.Group == nil {
 			return fmt.Errorf("%d:%d  error  Required keys: \"group\"", node.Raw.Line, node.Raw.Column)
 		}
@@ -475,7 +475,7 @@ func (node *WorkflowConcurrencyNode) UnmarshalYAML(value *yaml.Node) error {
 	return nil
 }
 
-type WorkflowConcurrencyValue struct {
+type workflowConcurrencyValue struct {
 	Group            *ConcurrencyGroupNode            `yaml:"group"`
 	CancelInProgress *ConcurrencyCancelInProgressNode `yaml:"cancel-in-progress"`
 }
@@ -504,19 +504,19 @@ func (node *ConcurrencyCancelInProgressNode) UnmarshalYAML(value *yaml.Node) err
 
 // --------------------------------------------JOBS----------------------------------------------------
 
-type WorkflowJobsNode struct {
+type workflowJobsNode struct {
 	Raw   *yaml.Node
-	Value []*WorkflowJobsPatternProperties
+	Value []*workflowJobsPatternProperties
 }
 
-func (node *WorkflowJobsNode) UnmarshalYAML(value *yaml.Node) error {
+func (node *workflowJobsNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	if len(value.Content)%2 != 0 {
 		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
 	}
 	for i := 0; i < len(value.Content); i += 2 {
 		keyEntry := value.Content[i]
-		job := &WorkflowJobsPatternProperties{
+		job := &workflowJobsPatternProperties{
 			ID: keyEntry.Value,
 		}
 		if err := value.Decode(&job.PatternProperties); err != nil {
@@ -527,7 +527,7 @@ func (node *WorkflowJobsNode) UnmarshalYAML(value *yaml.Node) error {
 
 	return nil
 }
-type WorkflowJobsPatternProperties struct {
+type workflowJobsPatternProperties struct {
 	ID                string `yaml:"-"`
 	PatternProperties *JobsPatternPropertiesNode
 }
@@ -593,12 +593,12 @@ type JobUsesNode struct {
 
 
 // --------------------------------------------ENV----------------------------------------------------
-type WorkflowEnvNode struct {
+type workflowEnvNode struct {
 	Raw   *yaml.Node
-	Value []*WorkflowEnvValue
+	Value []*workflowEnvValue
 }
 
-func (node *WorkflowEnvNode) UnmarshalYAML(value *yaml.Node) error {
+func (node *workflowEnvNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
 	if len(value.Content)%2 != 0 {
@@ -606,7 +606,7 @@ func (node *WorkflowEnvNode) UnmarshalYAML(value *yaml.Node) error {
 	}
 	for i := 0; i < len(value.Content); i += 2 {
 		keyEntry := value.Content[i]
-		env := &WorkflowEnvValue{
+		env := &workflowEnvValue{
 			ID: keyEntry.Value,
 			Properties: &EnvPropertiesNode{
 				Raw: keyEntry,
@@ -620,7 +620,7 @@ func (node *WorkflowEnvNode) UnmarshalYAML(value *yaml.Node) error {
 	return nil
 }
 
-type WorkflowEnvValue struct {
+type workflowEnvValue struct {
 	ID         string `yaml:"-"`
 	Properties *EnvPropertiesNode
 }
