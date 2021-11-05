@@ -10,7 +10,7 @@ import (
 
 var i = flag.String("i", "", "Name of file to lint.  Equivalent to a command-line argument.")
 var o = flag.String("o", "", "A custom output file.  Defaults to stdout.")
-var h = flag.String("h", "", "Print instructions for how to use this tool.")
+var h = flag.Bool("h", false, "Print instructions for how to use this tool.")
 
 func main() {
 	flag.Parse()	
@@ -32,10 +32,7 @@ func main() {
 	})
 
 	if printHelp {
-		fmt.Println(`Usage: go run . [-o outputfile] [-i inputfile] inputfiles ...
--h Print this help message.
-nb. replace go run . with however you're running this command.
-`)
+		flag.PrintDefaults()
 		return
 	}
 
