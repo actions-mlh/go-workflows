@@ -41,7 +41,7 @@ func TestParse(t *testing.T) {
 			return err
 		}
 		if len(sink.Problems) > 0 {
-			t.Errorf("error(s) found in file %s:\n%s", path, strings.Join(sink.Problems, "\n"))
+			t.Errorf("error(s) found in clean file %s:\n%s", path, strings.Join(sink.Problems, "\n"))
 		}
 
 		return nil
