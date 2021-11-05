@@ -1,5 +1,15 @@
 My Farewell to Codegen - A Retrospective by Autumn Chiu (@jjayeon)
 
+TL;DR:
+- We're writing a GitHub workflow linter.
+- We came up with three ways to analyze YAML: using a map[string]interface{} object, inspecting the internal yaml.Node object, or rolling our own type system.
+- We decided to use code generation to produce our own type system.
+- Hank worked with a fake generated file for testing while I got codegen to work.
+- Codegen and JSON don't play well together: Go is strongly typed and JSON is weakly typed, and everything gets messed up.
+- We scrapped codegen and will continue working with Hank's stopgap file.
+
+The full version:
+
 This project arose out of a recurring need at GitHub, which was this: knowing whether a GitHub Action workflow is valid before pushing it to a repo.  For most users, the only way to know whether or not a workflow will function as intended is to push that workflow into production, let GitHub's backend attempt to process it, and see what errors they receive.  This whole process can take several minutes, which is not too long for a preprocessing step; but if, for example, a workflow has a couple instances of tabs instead of spaces, or a colon missing from some lines, that can mean 3-5 minutes between fixing each syntax error, and that's before knowing if it functions semantically.  If we could develop a client-side parser that can read, understand, lint, and debug YAML workflows for the user, it would greatly reduce the friction in the experience.
 
 Thus, Hank and I were assigned to build such a tool.  We were to build it in Go so that it could interoperate with GitHub's existing backend, and to start, we wanted to build something that could read a YAML file, scan it for errors, and print those errors to an output stream --- a simple linter.  Once we had the infrastructure to do that, it could be adapted for various other use cases around GitHub.
