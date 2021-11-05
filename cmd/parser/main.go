@@ -32,6 +32,8 @@ func main() {
 	})
 
 	if printHelp {
+		fmt.Println("Usage: go run main.go [-i inputfile] [-o outputfile] inputfiles...")
+		fmt.Println("Note that Go programs require all flags to appear before command line arguments.")
 		flag.PrintDefaults()
 		return
 	}
