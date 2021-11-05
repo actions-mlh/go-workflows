@@ -8,17 +8,6 @@ on:
 jobs:
   ajobby[]:
     name: jobby
-<<<<<<< HEAD:yaml/testing/jobs_pattern_name_validation.yaml
-    # name: jobby
-    # needs: [_jokerj]
-  _jokerj:
-    # name: joker
-    # needs: [_sammysam]
-  _sammysam:
-    # name: jam
-    # needs: [_jokerj]
-  
-=======
     needs: [_jokerj]
   _joker$j:
     name: joker
@@ -26,5 +15,3 @@ jobs:
   _sammysam:
     name: jam
     needs: [_jokerj]
-  
->>>>>>> 51b44166c4294c8a66e89022bd60c3a39454a970:yaml/dirty/jobs_pattern_name_validation.yaml
