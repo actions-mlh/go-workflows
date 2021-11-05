@@ -8,31 +8,58 @@ import (
 	"c2c-actions-mlh-workflow-parser/lint"
 )
 
+var i = flag.String("i", "", "Name of file to lint.  Equivalent to a command-line argument.")
+var o = flag.String("o", "", "A custom output file.  Defaults to stdout.")
+var h = flag.String("h", "", "Print instructions for how to use this tool.")
+
 func main() {
-	inputFilename := flag.String("i", "", "name of the file to lint")
-	flag.Parse()
+	flag.Parse()	
+	args := flag.Args()
 
-	if *inputFilename == "" {
-		log.Fatalf("-i is required")
+	if *i != "" {
+		args = append(args, *i)
 	}
-	if err := realMain(*inputFilename); err != nil {
-		log.Fatal(err)
+
+	printHelp := false
+	if len(args) == 0 {
+		printHelp = true
+	}
+
+	flag.Visit(func (f *flag.Flag) {
+		if f.Name == "h" {
+			printHelp = true
+		}
+	})
+
+	if printHelp {
+		fmt.Println(`Usage: go run . [-o outputfile] [-i inputfile] inputfiles ...
+-h Print this help message.
+nb. replace go run . with however you're running this command.
+`)
+		return
+	}
+
+	w := os.Stdout
+	var err error
+	if *o != "" {
+		w, err = os.Create(*o)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	defer w.Close()
+
+	for _, filename := range args {
+		input, err := os.ReadFile(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+		problems, err := lint.Lint(filename, input)
+		if err != nil {
+			log.Fatal(err)			
+		}
+		for _, problem := range problems {
+			fmt.Fprintln(w, problem)
+		}
 	}
 }
-
-func realMain(inputFilename string) error {
-	input, err := os.ReadFile(inputFilename)
-	if err != nil {
-		return err
-	}
-	problems, err := lint.Lint(inputFilename, input)
-	if err != nil {
-		return err
-	}
-	for _, problem := range problems {
-		fmt.Println(problem)
-	}
-	return nil
-}
-
-
