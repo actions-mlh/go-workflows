@@ -1,0 +1,3 @@
+../yaml/dirty/jobs_pattern_name_validation.yaml:9:1	error:	invalid job name "ajobby[]"
+../yaml/dirty/jobs_pattern_name_validation.yaml:12:1	error:	invalid job name "_joker$j"
+../yaml/dirty/jobs_pattern_name_validation.yaml:15:1	error:	invalid job name "@_sammysam"

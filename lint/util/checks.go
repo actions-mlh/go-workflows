@@ -7,24 +7,17 @@ import (
 	// "fmt"
 )
 
-func CheckRequiredKeys(raw *yaml.Node, sink *sink.ProblemSink, keys []*yaml.Node, requiredKeys map[string]bool) error {
-	for _, key := range keys {
-		if _, contains := requiredKeys[key.Value]; contains {
-			requiredKeys[key.Value] = true
+func CheckRequiredKeys(raw *yaml.Node, sink *sink.ProblemSink, workflowKeyNodes []*yaml.Node, requiredKeys []string) error {
+	keys := []string{}
+	for _, node := range workflowKeyNodes {
+		keys = append(keys, node.Value)
+	}
+		
+	for _, key := range requiredKeys {
+		if !contains(keys, key) {
+			sink.Record(raw, "missing required key: %s", key)
 		}
 	}
-
-	required := []string{}
-	for k, v := range requiredKeys {
-		if !v{
-			required = append(required, k)
-		}
-	}
-
-	if len(required) != 0 {
-		sink.Record(raw, "Required Keys: %s", strings.Join(required, ","))
-	}
-
 	return nil
 }
 
@@ -88,4 +81,13 @@ func CheckUnexpectedScalarTypes(sink *sink.ProblemSink, raw *yaml.Node, scalarTy
 	}
 
 	return nil
+}
+
+func contains(slice []string, item string) bool {
+	for _, val := range slice {
+		if val == item {
+			return true
+		}
+	}
+	return false
 }
