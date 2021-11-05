@@ -1,0 +1,2 @@
+../yaml/dirty/required_root_keys.yaml:1:1	error:	missing required key: on
+../yaml/dirty/required_root_keys.yaml:1:1	error:	missing required key: jobs

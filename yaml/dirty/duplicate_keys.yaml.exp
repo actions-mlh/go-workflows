@@ -1,0 +1,2 @@
+../yaml/dirty/duplicate_keys.yaml:5:1	error:	Duplicate Keys: name
+../yaml/dirty/duplicate_keys.yaml:7:1	error:	Duplicate Keys: on
