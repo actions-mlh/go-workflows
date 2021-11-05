@@ -1,13 +1,14 @@
 package lint
 
 import (
-	"c2c-actions-mlh-workflow-parser/workflow"
 	"c2c-actions-mlh-workflow-parser/lint/util"
 	"c2c-actions-mlh-workflow-parser/sink"
-	"gopkg.in/yaml.v3"
+	"c2c-actions-mlh-workflow-parser/workflow"
+	"fmt"
 	"reflect"
 	"strings"
-	"fmt"
+
+	"gopkg.in/yaml.v3"
 )
 
 // issues
@@ -46,21 +47,14 @@ func LintWorkflowRoot(sink *sink.ProblemSink, target *workflow.WorkflowNode) err
 		return err
 	}
 
+	fmt.Println("-------TESTING--------")
+	// fmt.Printf("%+v\n", target.Value.Env.Value[0])
 
-	// fmt.Println("-------TESTING--------")
-	// fmt.Printf("%+v\n", target.Value.Jobs)
-	// fmt.Printf("%+v\n", target.Value.Jobs.Value[0])
-
-	// for i := 0; i < len(workflowValueNodes); i += 1 {
-	// 	// fmt.Printf("%+v\n", target.Value[i])
-	// 	fmt.Printf("%+v\n", workflowKeyNodes[i])
-	// 	fmt.Printf("%+v\n", workflowValueNodes[i])
+	// for _, c := range target.Value.Env.Value {
+	// 	fmt.Printf("%+v\n", c.Properties.Raw)
 	// }
 
-	// fmt.Printf("%+v\n", target.Value[0].Name)
-	// for _, value := range target.Value {
-	// 	fmt.Printf("%+v\n", value.Name)	
-	// }
+	fmt.Println("-------HERE--------")
 
 	// if err := lintWorkflowName(sink, workflow.Name, target.Raw); err != nil {
 	// 	return err

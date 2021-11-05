@@ -8,11 +8,12 @@ on:
 jobs:
   ajobby:
     name: jobby
-    needs: [_jokerj]
+    # name: jobby
+    # needs: [_jokerj]
   _jokerj:
-    name: joker
-    needs: [_sammysam]
+    # name: joker
+    # needs: [_sammysam]
   _sammysam:
-    name: jam
-    needs: [_jokerj]
+    # name: jam
+    # needs: [_jokerj]
   

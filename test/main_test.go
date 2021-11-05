@@ -13,7 +13,7 @@ import (
 )
 
 func TestParse(t *testing.T) {
-	root := "../yaml/clean/"
+	root := "../yaml/clean/starter-workflows-main/testing"
 	filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
