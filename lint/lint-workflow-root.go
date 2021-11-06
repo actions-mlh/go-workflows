@@ -45,7 +45,7 @@ func lintWorkflowRoot(sink *problemSink, target *WorkflowNode) error {
 	}
 
 	fmt.Println("-------TESTING--------")
-	fmt.Printf("%+v\n", target.Value.Defaults.Value.Run.Value.Shell.Value)
+	fmt.Printf("%+v\n", target.Value.Concurrency.OneOf.MappingNode.CancelInProgress.Value)
 	// fmt.Printf("%+v\n", target.Value.Env.Value[0])
 
 	// for _, c := range target.Value.Env.Value {

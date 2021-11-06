@@ -12,3 +12,7 @@ defaults:
   run:
     working-directory: scripts
     shell: python
+
+concurrency: 
+  group: hello
+  cancel-in-progress: true
