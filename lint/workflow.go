@@ -1,4 +1,4 @@
-package workflow
+package lint
 
 import (
 	"fmt"
@@ -430,7 +430,7 @@ const (
 	RunShell_Powershell RunShellConstants = "powershell"
 )
 
-var RunShell_Constants = []RunShellConstants {
+var RunShell_Constants = []RunShellConstants{
 	RunShell_Bash,
 	RunShell_Pwsh,
 	RunShell_Python,
@@ -552,6 +552,7 @@ func (node *WorkflowJobsNode) UnmarshalYAML(value *yaml.Node) error {
 
 	return nil
 }
+
 type WorkflowJobsPatternProperties struct {
 	ID                string `yaml:"-"`
 	PatternProperties *JobsPatternPropertiesNode
@@ -616,7 +617,6 @@ type JobUsesNode struct {
 
 // --------------------------------------------JOBS----------------------------------------------------
 
-
 // --------------------------------------------ENV----------------------------------------------------
 type WorkflowEnvNode struct {
 	Raw   *yaml.Node
@@ -638,7 +638,7 @@ func (node *WorkflowEnvNode) UnmarshalYAML(value *yaml.Node) error {
 			},
 		}
 		if err := value.Decode(&env.Properties); err != nil {
-			return err 
+			return err
 		}
 		node.Value = append(node.Value, env)
 	}
@@ -651,7 +651,7 @@ type WorkflowEnvValue struct {
 }
 
 type EnvPropertiesNode struct {
-	Raw *yaml.Node
+	Raw   *yaml.Node
 	Value string
 }
 

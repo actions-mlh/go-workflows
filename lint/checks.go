@@ -1,13 +1,12 @@
-package util
+package lint
 
 import (
 	"strings"
 	"gopkg.in/yaml.v3"
-	"c2c-actions-mlh-workflow-parser/sink"
 	// "fmt"
 )
 
-func CheckRequiredKeys(raw *yaml.Node, sink *sink.ProblemSink, workflowKeyNodes []*yaml.Node, requiredKeys []string) error {
+func checkRequiredKeys(raw *yaml.Node, sink *problemSink, workflowKeyNodes []*yaml.Node, requiredKeys []string) error {
 	keys := []string{}
 	for _, node := range workflowKeyNodes {
 		keys = append(keys, node.Value)
@@ -15,13 +14,13 @@ func CheckRequiredKeys(raw *yaml.Node, sink *sink.ProblemSink, workflowKeyNodes 
 		
 	for _, key := range requiredKeys {
 		if !contains(keys, key) {
-			sink.Record(raw, "missing required key: %s", key)
+			sink.record(raw, "missing required key: %s", key)
 		}
 	}
 	return nil
 }
 
-func CheckDuplicateKeys(sink *sink.ProblemSink, nodeKeys []*yaml.Node ) error {
+func checkDuplicateKeys(sink *problemSink, nodeKeys []*yaml.Node ) error {
 	nonDuplicateKeys := make(map[string]int) 
 
 	for _, nodeKey := range nodeKeys {
@@ -29,19 +28,19 @@ func CheckDuplicateKeys(sink *sink.ProblemSink, nodeKeys []*yaml.Node ) error {
 			nonDuplicateKeys[nodeKey.Value] = 1
 		} else {
 			nonDuplicateKeys[nodeKey.Value]++
-			sink.Record(nodeKey, "Duplicate Keys: %s", nodeKey.Value)
+			sink.record(nodeKey, "Duplicate Keys: %s", nodeKey.Value)
 		}
 	}
 	return nil
 }
 
-func CheckNullPointer(sink *sink.ProblemSink, nodeKeys []*yaml.Node, nodeValues []*yaml.Node) error {
+func checkNullPointer(sink *problemSink, nodeKeys []*yaml.Node, nodeValues []*yaml.Node) error {
 	for i := 0; i < len(nodeKeys); i++ {
 		nodeKey := nodeKeys[i]
 		nodeValue := nodeValues[i]
 
 		if nodeValue.Tag == "!!null" {
-			sink.Record(nodeKey, "\"%s\" key should not have an empty value", nodeKey.Value)
+			sink.record(nodeKey, "\"%s\" key should not have an empty value", nodeKey.Value)
 		}
 	}
 
@@ -49,7 +48,7 @@ func CheckNullPointer(sink *sink.ProblemSink, nodeKeys []*yaml.Node, nodeValues 
 }
 
 
-func CheckUnexpectedKeys(sink *sink.ProblemSink, expectedKeys []string, nodeKeys []*yaml.Node) error {
+func checkUnexpectedKeys(sink *problemSink, expectedKeys []string, nodeKeys []*yaml.Node) error {
 	for _, nodeKey := range nodeKeys {
 		contains := false
 
@@ -60,7 +59,7 @@ func CheckUnexpectedKeys(sink *sink.ProblemSink, expectedKeys []string, nodeKeys
 		}
 
 		if !contains {
-			sink.Record(nodeKey, "unexpected key \"%s\". expected one of keys %s", nodeKey.Value, strings.Join(expectedKeys, ", "))
+			sink.record(nodeKey, "unexpected key \"%s\". expected one of keys %s", nodeKey.Value, strings.Join(expectedKeys, ", "))
 		}
 	}
 
@@ -68,7 +67,7 @@ func CheckUnexpectedKeys(sink *sink.ProblemSink, expectedKeys []string, nodeKeys
 	return nil
 }
 
-func CheckUnexpectedScalarTypes(sink *sink.ProblemSink, raw *yaml.Node, scalarTypes []string) error {
+func checkUnexpectedScalarTypes(sink *problemSink, raw *yaml.Node, scalarTypes []string) error {
 	contains := false
 	for _, scalarType := range scalarTypes {
 		if scalarType == raw.Tag {
@@ -77,7 +76,7 @@ func CheckUnexpectedScalarTypes(sink *sink.ProblemSink, raw *yaml.Node, scalarTy
 	}
 
 	if !contains {
-		sink.Record(raw, "unexpected scalar type: %s, expected scalar types: %s", raw.Tag, strings.Join(scalarTypes, ","))
+		sink.record(raw, "unexpected scalar type: %s, expected scalar types: %s", raw.Tag, strings.Join(scalarTypes, ","))
 	}
 
 	return nil

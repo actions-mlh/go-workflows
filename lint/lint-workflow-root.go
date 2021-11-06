@@ -1,21 +1,17 @@
 package lint
 
 import (
-	"c2c-actions-mlh-workflow-parser/lint/util"
-	"c2c-actions-mlh-workflow-parser/sink"
-	"c2c-actions-mlh-workflow-parser/workflow"
 	"fmt"
 	"reflect"
 	"strings"
 
 	"gopkg.in/yaml.v3"
-	// "fmt"
 )
 
 // issues
 // 1) Is Kind a marshal error? -> Decided to only add support for kind of scalar type (!!bool, !!float, !!int, !!str, ...)
 
-func lintWorkflowRoot(sink *sink.ProblemSink, target *workflow.WorkflowNode) error {
+func lintWorkflowRoot(sink *problemSink, target *WorkflowNode) error {
 	workflowKeyNodes := []*yaml.Node{}
 	workflowValueNodes := []*yaml.Node{}
 
@@ -25,15 +21,15 @@ func lintWorkflowRoot(sink *sink.ProblemSink, target *workflow.WorkflowNode) err
 	}
 
 	requiredKeys := []string{"on", "jobs"}
-	if err := util.CheckRequiredKeys(target.Raw, sink, workflowKeyNodes, requiredKeys); err != nil {
+	if err := checkRequiredKeys(target.Raw, sink, workflowKeyNodes, requiredKeys); err != nil {
 		return err
 	}
 
-	if err := util.CheckNullPointer(sink, workflowKeyNodes, workflowValueNodes); err != nil {
+	if err := checkNullPointer(sink, workflowKeyNodes, workflowValueNodes); err != nil {
 		return err
 	}
 
-	if err := util.CheckDuplicateKeys(sink, workflowKeyNodes); err != nil {
+	if err := checkDuplicateKeys(sink, workflowKeyNodes); err != nil {
 		return err
 	}
 
@@ -44,7 +40,7 @@ func lintWorkflowRoot(sink *sink.ProblemSink, target *workflow.WorkflowNode) err
 		expectedKeys = append(expectedKeys, strings.ToLower(typeOfStruct.Field(i).Name))
 	}
 
-	if err := util.CheckUnexpectedKeys(sink, expectedKeys, workflowKeyNodes); err != nil {
+	if err := checkUnexpectedKeys(sink, expectedKeys, workflowKeyNodes); err != nil {
 		return err
 	}
 
