@@ -389,13 +389,13 @@ func (node *DefaultsRunNode) UnmarshalYAML(value *yaml.Node) error {
 }
 
 type DefaultsRunValue struct {
-	Shell            RunShellNode            `yaml:"shell"`
-	WorkingDirectory RunWorkingDirectoryNode `yaml:"working-directory"`
+	Shell            *RunShellNode            `yaml:"shell"`
+	WorkingDirectory *RunWorkingDirectoryNode `yaml:"working-directory"`
 }
 
 type RunShellNode struct {
 	Raw   *yaml.Node
-	Value RunShellAnyOfConstants
+	Value RunShellConstants
 }
 
 func (node *RunShellNode) UnmarshalYAML(value *yaml.Node) error {
@@ -403,27 +403,41 @@ func (node *RunShellNode) UnmarshalYAML(value *yaml.Node) error {
 
 	switch node.Raw.Kind {
 	case yaml.ScalarNode:
-		if node.Raw.Tag != "!!str" {
-			// this return the specific scalar value
-			return fmt.Errorf("%d:%d  error  Expected any of: string type", node.Raw.Line, node.Raw.Column)
+		scalarTypes := []string{"!!str"}
+		contains := false
+		for _, scalarType := range scalarTypes {
+			if node.Raw.Tag == scalarType {
+				contains = true
+			}
+		}
+		if !contains {
+			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
 		}
 		return value.Decode(&node.Value)
 	default:
-		// can change this to: Expect any of: (scalar, sequence, mapping) instead of its scalar value
 		return fmt.Errorf("%d:%d  error  Expected any of: string type", node.Raw.Line, node.Raw.Column)
 	}
 }
 
-type RunShellAnyOfConstants string
+type RunShellConstants string
 
 const (
-	RunShell_Bash       RunShellAnyOfConstants = "bash"
-	RunShell_Pwsh       RunShellAnyOfConstants = "pwsh"
-	RunShell_Python     RunShellAnyOfConstants = "python"
-	RunShell_Sh         RunShellAnyOfConstants = "sh"
-	RunShell_Cmd        RunShellAnyOfConstants = "cmd"
-	RunShell_Powershell RunShellAnyOfConstants = "powershell"
+	RunShell_Bash       RunShellConstants = "bash"
+	RunShell_Pwsh       RunShellConstants = "pwsh"
+	RunShell_Python     RunShellConstants = "python"
+	RunShell_Sh         RunShellConstants = "sh"
+	RunShell_Cmd        RunShellConstants = "cmd"
+	RunShell_Powershell RunShellConstants = "powershell"
 )
+
+var RunShell_Constants = []RunShellConstants {
+	RunShell_Bash,
+	RunShell_Pwsh,
+	RunShell_Python,
+	RunShell_Sh,
+	RunShell_Cmd,
+	RunShell_Powershell,
+}
 
 type RunWorkingDirectoryNode struct {
 	Raw   *yaml.Node
@@ -432,7 +446,18 @@ type RunWorkingDirectoryNode struct {
 
 func (node *RunWorkingDirectoryNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	return value.Decode(&node.Value)
+	scalarTypes := []string{"!!str"}
+	contains := false
+	for _, scalarType := range scalarTypes {
+		if node.Raw.Tag == scalarType {
+			contains = true
+		}
+	}
+	if !contains {
+		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
+	}
+
+	return node.Raw.Decode(&node.Value)
 }
 
 // --------------------------------------------Defaults----------------------------------------------------

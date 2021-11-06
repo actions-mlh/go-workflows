@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+
 	"gopkg.in/yaml.v3"
 	// "fmt"
 )
@@ -48,6 +49,7 @@ func lintWorkflowRoot(sink *sink.ProblemSink, target *workflow.WorkflowNode) err
 	}
 
 	fmt.Println("-------TESTING--------")
+	fmt.Printf("%+v\n", target.Value.Defaults.Value.Run.Value.Shell.Value)
 	// fmt.Printf("%+v\n", target.Value.Env.Value[0])
 
 	// for _, c := range target.Value.Env.Value {
