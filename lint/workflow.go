@@ -456,7 +456,6 @@ func (node *RunWorkingDirectoryNode) UnmarshalYAML(value *yaml.Node) error {
 	if !contains {
 		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
 	}
-
 	return node.Raw.Decode(&node.Value)
 }
 
@@ -470,7 +469,7 @@ type WorkflowConcurrencyNode struct {
 }
 
 type WorkflowConcurrencyOneOf struct {
-	ScalarNode  *string
+	ScalarNode  string
 	MappingNode *WorkflowConcurrencyValue
 }
 
@@ -479,23 +478,43 @@ func (node *WorkflowConcurrencyNode) UnmarshalYAML(value *yaml.Node) error {
 
 	switch node.Raw.Kind {
 	case yaml.ScalarNode:
+		scalarTypes := []string{"!!str"}
+		contains := false
+		for _, scalarType := range scalarTypes {
+			if node.Raw.Tag == scalarType {
+				contains = true
+			}
+		}
+		if !contains {
+			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
+		}
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.MappingNode:
-		if err := value.Decode(&node.OneOf.MappingNode); err != nil {
-			return err
+		if len(value.Content)%2 != 0 {
+			return fmt.Errorf("%d:%d  error  expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
 		}
-	default:
-		return fmt.Errorf("%d:%d  error  Expected one of: string, map type", node.Raw.Line, node.Raw.Column)
-	}
-
-	err := func(value WorkflowConcurrencyValue) error {
-		if value.Group == nil {
-			return fmt.Errorf("%d:%d  error  Required keys: \"group\"", node.Raw.Line, node.Raw.Column)
+		event := new(WorkflowConcurrencyValue)
+		for i := 0; i < len(value.Content); i += 2 {
+			keyEntry := value.Content[i]
+			valueEntry := value.Content[i+1]
+			eventKey := keyEntry.Value
+			switch eventKey {
+			case "group":
+				event.Group = new(ConcurrencyGroupNode)
+				err := valueEntry.Decode(event.Group)
+				fmt.Printf("%+v\n", event.Group)
+				if err != nil {
+					return err
+				}
+			case "cancel-in-progress":
+				event.CancelInProgress = new(ConcurrencyCancelInProgressNode)
+				err := valueEntry.Decode(event.CancelInProgress)
+				if err != nil {
+					return err
+				}
+			}
 		}
-		return nil
-	}(*node.OneOf.MappingNode) //checks if oneOf exists, if it does add oneOf and its type: "object" , "array", "scalar"
-	if err != nil {
-		return err
+		node.OneOf.MappingNode = event
 	}
 	return nil
 }
@@ -510,19 +529,40 @@ type ConcurrencyGroupNode struct {
 	Value string
 }
 
-type ConcurrencyCancelInProgressNode struct {
-	Raw   *yaml.Node
-	Value bool
-}
-
 func (node *ConcurrencyGroupNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
+	scalarTypes := []string{"!!str"}
+	contains := false
+	for _, scalarType := range scalarTypes {
+		if node.Raw.Tag == scalarType {
+			contains = true
+		}
+	}
+	if !contains {
+		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
+	}
 	return value.Decode(&node.Value)
+}
+
+type ConcurrencyCancelInProgressNode struct {
+	Raw   *yaml.Node
+	Value string
 }
 
 func (node *ConcurrencyCancelInProgressNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	return value.Decode(&node.Value)
+	scalarTypes := []string{"!!bool"}
+	contains := false
+	for _, scalarType := range scalarTypes {
+		if node.Raw.Tag == scalarType {
+			contains = true
+		}
+	}
+	if !contains {
+		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
+	}
+	value.Decode(&node.Value)
+	return nil
 }
 
 // --------------------------------------------Concurrency----------------------------------------------------
