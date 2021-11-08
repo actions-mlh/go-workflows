@@ -502,7 +502,6 @@ func (node *WorkflowConcurrencyNode) UnmarshalYAML(value *yaml.Node) error {
 			case "group":
 				event.Group = new(ConcurrencyGroupNode)
 				err := valueEntry.Decode(event.Group)
-				fmt.Printf("%+v\n", event.Group)
 				if err != nil {
 					return err
 				}
