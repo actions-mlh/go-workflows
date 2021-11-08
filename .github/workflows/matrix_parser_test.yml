@@ -1,4 +1,4 @@
-name: matrix-parser-test
+name: matrix parser test
 
 on:
   push:
