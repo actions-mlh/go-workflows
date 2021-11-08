@@ -1,10 +1,8 @@
 package lint
 
 import (
-	"fmt"
 	"reflect"
 	"strings"
-
 	"gopkg.in/yaml.v3"
 )
 
@@ -44,15 +42,15 @@ func lintWorkflowRoot(sink *problemSink, target *WorkflowNode) error {
 		return err
 	}
 
-	fmt.Println("-------TESTING--------")
-	fmt.Printf("%+v\n", target.Value.Concurrency.OneOf.MappingNode.CancelInProgress.Value)
+	// fmt.Println("-------TESTING--------")
+	// fmt.Printf("%+v\n", target.Value.Concurrency.OneOf.MappingNode.CancelInProgress.Value)
 	// fmt.Printf("%+v\n", target.Value.Env.Value[0])
 
 	// for _, c := range target.Value.Env.Value {
 	// 	fmt.Printf("%+v\n", c.Properties.Raw)
 	// }
 
-	fmt.Println("-------HERE--------")
+	// fmt.Println("-------HERE--------")
 
 	// if err := lintWorkflowName(sink, workflow.Name, target.Raw); err != nil {
 	// 	return err

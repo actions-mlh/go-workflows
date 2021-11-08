@@ -11,6 +11,7 @@ import (
 
 func TestParse(t *testing.T) {
 	root := "../yaml/clean/"
+
 	filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
