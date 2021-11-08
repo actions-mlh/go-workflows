@@ -1,4 +1,4 @@
-name: Go
+name: parser test 1.17
 
 on:
   push:
