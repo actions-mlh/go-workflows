@@ -42,6 +42,16 @@ func lintWorkflowRoot(sink *problemSink, target *WorkflowNode) error {
 		return err
 	}
 
+	if target.Value.Name != nil {
+		if err := checkUnexpectedScalarTypes(sink, target.Value.Name.Raw, []string{"!!str"}); err != nil {
+			return err
+		}
+	}
+
+	if target.Value.Jobs != nil {
+		
+	}
+
 	// fmt.Println("-------TESTING--------")
 	// fmt.Printf("%+v\n", target.Value.Concurrency.OneOf.MappingNode.CancelInProgress.Value)
 	// fmt.Printf("%+v\n", target.Value.Env.Value[0])
