@@ -18,12 +18,6 @@ func (sink *problemSink) record(raw *yaml.Node, format string, args ...interface
 	)
 }
 
-func (sink *problemSink) recordMultiple(raw *yaml.Node, format string, args ...interface{}) {
-	for _, node := range raw.Content {
-		sink.record(node, format, args)
-	}
-}
-
 func (sink *problemSink) render(w io.Writer) {
 	for _, problem := range sink.Problems {
 		fmt.Fprint(w, problem)
