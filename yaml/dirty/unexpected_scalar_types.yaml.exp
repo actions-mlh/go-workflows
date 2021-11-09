@@ -1,2 +1,2 @@
 ../yaml/dirty/unexpected_scalar_types.yaml:1:7	error:	unexpected scalar type: !!int, expected scalar types: !!str
-../yaml/dirty/unexpected_scalar_types.yaml:5:1	error:	unexpected scalar type: !!str, expected scalar types: object
+../yaml/dirty/unexpected_scalar_types.yaml:5:7	error:	unexpected scalar type: !!str, expected scalar types: !!map
