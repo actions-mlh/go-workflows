@@ -3,6 +3,7 @@ package lint
 import (
 	"fmt"
 	"gopkg.in/yaml.v3"
+	"strings"
 )
 
 // field checks ->
