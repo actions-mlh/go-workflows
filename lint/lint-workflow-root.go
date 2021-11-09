@@ -58,13 +58,6 @@ func lintWorkflowRoot(sink *problemSink, target *WorkflowNode) error {
 	}
 
 	// fmt.Println("-------TESTING--------")
-	// fmt.Printf("%+v\n", target.Value.Concurrency.OneOf.MappingNode.CancelInProgress.Value)
-	// fmt.Printf("%+v\n", target.Value.Env.Value[0])
-
-	// for _, c := range target.Value.Env.Value {
-	// 	fmt.Printf("%+v\n", c.Properties.Raw)
-	// }
-
 	// fmt.Println("-------HERE--------")
 
 	// if err := lintWorkflowName(sink, workflow.Name, target.Raw); err != nil {
@@ -106,11 +99,11 @@ func lintWorkflowRoot(sink *problemSink, target *WorkflowNode) error {
 // 				}
 // 			}
 
-// 			remainingString := jobValueID[1:]
-// 			alphabetValidation := regexp.MustCompile(`^[A-Za-z]+$`).MatchString
-// 			if !alphabetValidation(remainingString) {
-// 				sink.Record(jobRaw, "job ID's must contain only alphanumeric characters \"-\", or \"_\"")
-// 			}
+			// remainingString := jobValueID[1:]
+			// alphabetValidation := regexp.MustCompile(`"^[_a-zA-Z][a-zA-Z0-9_-]*$"`).MatchString
+			// if !alphabetValidation(remainingString) {
+			// 	sink.Record(jobRaw, "job ID's must contain only alphanumeric characters \"-\", or \"_\"")
+			// }
 // 			return nil
 // 		}
 
