@@ -42,6 +42,21 @@ func lintWorkflowRoot(sink *problemSink, target *WorkflowNode) error {
 		return err
 	}
 
+	if target.Value.Name != nil {
+		if err := checkUnexpectedScalarTypes(sink, target.Value.Name.Raw, []string{"!!str"}); err != nil {
+			return err
+		}
+	}
+
+	if target.Value.Jobs != nil && target.Value.Jobs.Raw != nil {
+		if err := checkUnexpectedScalarTypes(sink, target.Value.Jobs.Raw, []string{"!!map"}); err != nil {
+			return err
+		}
+		if err := checkJobNames(sink, target.Value.Jobs.Raw); err != nil {
+			return err
+		}
+	}
+
 	// fmt.Println("-------TESTING--------")
 	// fmt.Println("-------HERE--------")
 

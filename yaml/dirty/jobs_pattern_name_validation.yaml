@@ -8,10 +8,11 @@ on:
 jobs:
   ajobby[]:
     name: jobby
-    needs: [_jokerj]
-  _joker$j:
+    needs: [joker$j]
+  joker$j:
     name: joker
     needs: [_sammysam]
   _sammysam:
     name: jam
-    needs: [_jokerj]
+    needs: [joker$j]
+  validName:
