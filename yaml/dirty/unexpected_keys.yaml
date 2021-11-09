@@ -19,6 +19,51 @@ jobs:
       access-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }} 
       password: helloworld
     runs-on: [self-hosted, linux]
+    environment:  
+        name: production_environment
+        url: https://github.com
+    outputs:
+      output1: ${{ steps.step1.outputs.test }}
+      output2: ${{ steps.step2.outputs.test }}
+    env:
+      FIRST_NAME: Mona
+    defaults:
+      run:
+        shell: bash
+        working-directory: python
+    steps:
+      - name: Checkout repository
+        id: step1
+        shell: python
+        with:
+          args: aww
+          withone: 1
+        continue-on-error: true
+        timeout-minutes: 31
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        id: step2
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+    timeout-minutes: 340
+    continue-on-error: true
+    container: 
+      credentials:
+        username: hankc9
+      env:
+        env1: d
+      ports: 
+        - 1
+        - 2
+      volumes: [adw, aew, a]
+      options: a
+    services:
+      serv1:
+        credentials:
+          username: yujin1
+    concurrency: 
+      group: ${{ github.head_ref }}
+      cancel-in-progress: true
+    
 
 
 env: 
