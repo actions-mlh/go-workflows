@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"strings"
 	"gopkg.in/yaml.v3"
+	"fmt"
 )
 
 // issues
@@ -42,11 +43,11 @@ func lintWorkflowRoot(sink *problemSink, target *WorkflowNode) error {
 		return err
 	}
 
-	if target.Value.Name != nil {
-		if err := checkUnexpectedScalarTypes(sink, target.Value.Name.Raw, []string{"!!str"}); err != nil {
-			return err
-		}
-	}
+	// if target.Value.Name != nil {
+	// 	if err := checkUnexpectedScalarTypes(sink, target.Value.Name.Raw, []string{"!!str"}); err != nil {
+	// 		return err
+	// 	}
+	// }
 
 	if target.Value.Jobs != nil && target.Value.Jobs.Raw != nil {
 		if err := checkUnexpectedScalarTypes(sink, target.Value.Jobs.Raw, []string{"!!map"}); err != nil {
@@ -57,8 +58,9 @@ func lintWorkflowRoot(sink *problemSink, target *WorkflowNode) error {
 		}
 	}
 
-	// fmt.Println("-------TESTING--------")
-	// fmt.Println("-------HERE--------")
+	fmt.Println("-------TESTING--------")
+
+	fmt.Println("-------HERE--------")
 
 	// if err := lintWorkflowName(sink, workflow.Name, target.Raw); err != nil {
 	// 	return err
