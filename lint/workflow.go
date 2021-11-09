@@ -68,6 +68,12 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 			if err != nil {
 				return err
 			}
+		case "permissions":
+			event.Permissions = new(DefinitionPermissionsNode)
+			err := valueEntry.Decode(event.Permissions)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	node.Value = event
@@ -75,12 +81,13 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 }
 
 type WorkflowValue struct {
-	Name        *WorkflowNameNode        `yaml:"name"`
-	On          *WorkflowOnNode          `yaml:"on"`
-	Env         *WorkflowEnvNode         `yaml:"env"`
-	Defaults    *WorkflowDefaultsNode    `yaml:"defaults"`
-	Concurrency *WorkflowConcurrencyNode `yaml:"concurrency"`
-	Jobs        *WorkflowJobsNode        `yaml:"jobs"`
+	Name        *WorkflowNameNode          `yaml:"name"`
+	On          *WorkflowOnNode            `yaml:"on"`
+	Env         *WorkflowEnvNode           `yaml:"env"`
+	Defaults    *WorkflowDefaultsNode      `yaml:"defaults"`
+	Concurrency *WorkflowConcurrencyNode   `yaml:"concurrency"`
+	Jobs        *WorkflowJobsNode          `yaml:"jobs"`
+	Permissions *DefinitionPermissionsNode `yaml:"permissions"`
 }
 
 // --------------------------------------------On----------------------------------------------------
@@ -295,8 +302,6 @@ func (node *OnCheckSuiteNode) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
-				// if "type" of the child does not contain "type": "null",
-				// order of check -> child "type" -> $ref ("type")
 				if event.Types.Value == nil {
 					return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
 				}
@@ -626,7 +631,7 @@ func (node *JobsPatternPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 				return err
 			}
 		case "permissions":
-			event.Permissions = new(JobPermissionsNode)
+			event.Permissions = new(JobsPermissionsEventNode)
 			err := valueEntry.Decode(event.Permissions)
 			if err != nil {
 				return err
@@ -727,92 +732,18 @@ func (node *JobsPatternPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 	return nil
 }
 
-type JobsPatternPropertiesValue struct {
-	Name           *JobNameNode           `yaml:"name"`
-	Needs          *JobNeedsNode          `yaml:"needs"`
-	Permissions    *JobPermissionsNode    `yaml:"permissions"`
-	If             *JobIfNode             `yaml:"if"`
-	Uses           *JobUsesNode           `yaml:"uses"`
-	With           *JobWithNode           `yaml:"with"`
-	Secrets        *JobSecretsNode        `yaml:"secrets"`
-	RunsOn         *JobRunsOnNode         `yaml:"runs-on"`
-	Environment    *JobEnvironmentNode    `yaml:"environment"`
-	Outputs        *JobOutputsNode        `yaml:"outputs"`
-	Env            *JobEnvNode            `yaml:"env"`
-	Defaults       *JobDefaultsNode       `yaml:"defaults"`
-	Steps          *JobStepsNode          `yaml:"steps"`
-	TimeoutMinutes *JobTimeoutMinutesNode `yaml:"timeout-minutes"`
-	// Strategy *JobStrategyNode `yaml:"strategy"`
-	ContinueOnError *JobContinueOnErrorNode `yaml:"continue-on-error"`
-	Container       *JobContainerNode       `yaml:"container"`
-	Services        *JobServicesNode        `yaml:"services"`
-	Concurrency     *JobConcurrencyNode     `yaml:"concurrency"`
-}
-
-type JobNameNode struct {
+type JobsPermissionsEventNode struct {
 	Raw   *yaml.Node
-	Value string
+	Value *DefinitionPermissionsValue
 }
 
-func (node *JobNameNode) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-	return value.Decode(&node.Value)
-}
-
-type JobNeedsNode struct {
-	Raw   *yaml.Node
-	OneOf JobNeedsOneOf
-}
-
-type JobNeedsOneOf struct {
-	ScalarNode   string
-	SequenceNode *[]string
-}
-
-func (node *JobNeedsNode) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-
-	switch node.Raw.Kind {
-	case yaml.ScalarNode:
-		scalarTypes := []string{"!!str"}
-		contains := false
-		for _, scalarType := range scalarTypes {
-			if node.Raw.Tag == scalarType {
-				contains = true
-			}
-		}
-		if !contains {
-			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-		}
-		return value.Decode(&node.OneOf.ScalarNode)
-	case yaml.SequenceNode:
-		return value.Decode(&node.OneOf.SequenceNode)
-	}
-	return nil
-}
-
-type JobPermissionsNode struct {
-	Raw   *yaml.Node
-	Value *JobPermissionsValue
-}
-
-func (node *JobPermissionsNode) UnmarshalYAML(value *yaml.Node) error {
+func (node *JobsPermissionsEventNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
 	if len(value.Content)%2 != 0 {
 		return fmt.Errorf("%d:%d  error  expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
 	}
-	event := new(JobPermissionsValue)
+	event := new(DefinitionPermissionsValue)
 	for i := 0; i < len(value.Content); i += 2 {
 		keyEntry := value.Content[i]
 		valueEntry := value.Content[i+1]
@@ -890,142 +821,78 @@ func (node *JobPermissionsNode) UnmarshalYAML(value *yaml.Node) error {
 	return nil
 }
 
-type JobPermissionsValue struct {
-	Actions            *PermissionsActionsNode            `yaml:"actions"`
-	Checks             *PermissionsChecksNode             `yaml:"checks"`
-	Contents           *PermissionsContentsNode           `yaml:"contents"`
-	Deployments        *PermissionsDeploymentsNode        `yaml:"deployments"`
-	Issues             *PermissionsIssuesNode             `yaml:"issues"`
-	Packages           *PermissionsPackagesNode           `yaml:"packages"`
-	PullRequests       *PermissionsPullRequestsNode       `yaml:"pull-requests"`
-	RepositoryProjects *PermissionsRepositoryProjectsNode `yaml:"repository-projects"`
-	SecurityEvents     *PermissionsSecurityEventsNode     `yaml:"security-events"`
-	Statuses           *PermissionsStatusesNode           `yaml:"statuses"`
-	IdToken            *PermissionsIdTokenNode            `yaml:"id-token"`
+type JobsPatternPropertiesValue struct {
+	Name           *JobNameNode              `yaml:"name"`
+	Needs          *JobNeedsNode             `yaml:"needs"`
+	Permissions    *JobsPermissionsEventNode `yaml:"permissions"`
+	If             *JobIfNode                `yaml:"if"`
+	Uses           *JobUsesNode              `yaml:"uses"`
+	With           *JobWithNode              `yaml:"with"`
+	Secrets        *JobSecretsNode           `yaml:"secrets"`
+	RunsOn         *JobRunsOnNode            `yaml:"runs-on"`
+	Environment    *JobEnvironmentNode       `yaml:"environment"`
+	Outputs        *JobOutputsNode           `yaml:"outputs"`
+	Env            *JobEnvNode               `yaml:"env"`
+	Defaults       *JobDefaultsNode          `yaml:"defaults"`
+	Steps          *JobStepsNode             `yaml:"steps"`
+	TimeoutMinutes *JobTimeoutMinutesNode    `yaml:"timeout-minutes"`
+	// Strategy *JobStrategyNode `yaml:"strategy"`
+	ContinueOnError *JobContinueOnErrorNode `yaml:"continue-on-error"`
+	Container       *JobContainerNode       `yaml:"container"`
+	Services        *JobServicesNode        `yaml:"services"`
+	Concurrency     *JobConcurrencyNode     `yaml:"concurrency"`
 }
 
-type PermissionsActionsNode struct {
+type JobNameNode struct {
 	Raw   *yaml.Node
-	Value *JobPermissionsConstants
+	Value string
 }
 
-func (node *PermissionsActionsNode) UnmarshalYAML(value *yaml.Node) error {
+func (node *JobNameNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
+	scalarTypes := []string{"!!str"}
+	contains := false
+	for _, scalarType := range scalarTypes {
+		if node.Raw.Tag == scalarType {
+			contains = true
+		}
+	}
+	if !contains {
+		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
+	}
 	return value.Decode(&node.Value)
 }
 
-type PermissionsChecksNode struct {
+type JobNeedsNode struct {
 	Raw   *yaml.Node
-	Value *JobPermissionsConstants
+	OneOf JobNeedsOneOf
 }
 
-func (node *PermissionsChecksNode) UnmarshalYAML(value *yaml.Node) error {
+type JobNeedsOneOf struct {
+	ScalarNode   string
+	SequenceNode *[]string
+}
+
+func (node *JobNeedsNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	return value.Decode(&node.Value)
-}
 
-type PermissionsContentsNode struct {
-	Raw   *yaml.Node
-	Value *JobPermissionsConstants
-}
-
-func (node *PermissionsContentsNode) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-type PermissionsDeploymentsNode struct {
-	Raw   *yaml.Node
-	Value *JobPermissionsConstants
-}
-
-func (node *PermissionsDeploymentsNode) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-type PermissionsIssuesNode struct {
-	Raw   *yaml.Node
-	Value *JobPermissionsConstants
-}
-
-func (node *PermissionsIssuesNode) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-type PermissionsPackagesNode struct {
-	Raw   *yaml.Node
-	Value *JobPermissionsConstants
-}
-
-func (node *PermissionsPackagesNode) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-type PermissionsPullRequestsNode struct {
-	Raw   *yaml.Node
-	Value *JobPermissionsConstants
-}
-
-func (node *PermissionsPullRequestsNode) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-type PermissionsRepositoryProjectsNode struct {
-	Raw   *yaml.Node
-	Value *JobPermissionsConstants
-}
-
-func (node *PermissionsRepositoryProjectsNode) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-type PermissionsSecurityEventsNode struct {
-	Raw   *yaml.Node
-	Value *JobPermissionsConstants
-}
-
-func (node *PermissionsSecurityEventsNode) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-type PermissionsStatusesNode struct {
-	Raw   *yaml.Node
-	Value *JobPermissionsConstants
-}
-
-func (node *PermissionsStatusesNode) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-type PermissionsIdTokenNode struct {
-	Raw   *yaml.Node
-	Value *JobPermissionsConstants
-}
-
-func (node *PermissionsIdTokenNode) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-type JobPermissionsConstants string
-
-const (
-	JobPermissions_Read  JobPermissionsConstants = "read"
-	JobPermissions_Write JobPermissionsConstants = "write"
-	JobPermissions_None  JobPermissionsConstants = "none"
-)
-
-var JobPermissions_Constants = []JobPermissionsConstants{
-	JobPermissions_Read,
-	JobPermissions_Write,
-	JobPermissions_None,
+	switch node.Raw.Kind {
+	case yaml.ScalarNode:
+		scalarTypes := []string{"!!str"}
+		contains := false
+		for _, scalarType := range scalarTypes {
+			if node.Raw.Tag == scalarType {
+				contains = true
+			}
+		}
+		if !contains {
+			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
+		}
+		return value.Decode(&node.OneOf.ScalarNode)
+	case yaml.SequenceNode:
+		return value.Decode(&node.OneOf.SequenceNode)
+	}
+	return nil
 }
 
 type JobIfNode struct {
@@ -2358,7 +2225,7 @@ func (node *JobServicesPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 }
 
 type JobConcurrencyNode struct {
-	Raw *yaml.Node
+	Raw   *yaml.Node
 	OneOf JobConcurrencyOneOf
 }
 
@@ -2466,3 +2333,256 @@ func (node *EnvPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 }
 
 // --------------------------------------------ENV----------------------------------------------------
+
+// --------------------------------------------Permissions----------------------------------------------------
+
+type DefinitionPermissionsNode struct {
+	Raw   *yaml.Node
+	OneOf DefinitionPermissionsOneOf
+}
+
+type DefinitionPermissionsOneOf struct {
+	ScalarNode  *string
+	MappingNode *DefinitionPermissionsValue
+}
+
+func (node *DefinitionPermissionsNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	switch node.Raw.Kind {
+	case yaml.ScalarNode:
+		scalarTypes := []string{"!!str"}
+		contains := false
+		for _, scalarType := range scalarTypes {
+			if node.Raw.Tag == scalarType {
+				contains = true
+			}
+		}
+		if !contains {
+			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
+		}
+	
+		return value.Decode(&node.OneOf.ScalarNode)
+	case yaml.MappingNode:
+		if len(value.Content)%2 != 0 {
+			return fmt.Errorf("%d:%d  error  expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		}
+		event := new(DefinitionPermissionsValue)
+		for i := 0; i < len(value.Content); i += 2 {
+			keyEntry := value.Content[i]
+			valueEntry := value.Content[i+1]
+			eventKey := keyEntry.Value
+			switch eventKey {
+			case "actions":
+				event.Actions = new(PermissionsActionsNode)
+				err := valueEntry.Decode(event.Actions)
+				if err != nil {
+					return err
+				}
+			case "checks":
+				event.Checks = new(PermissionsChecksNode)
+				err := valueEntry.Decode(event.Checks)
+				if err != nil {
+					return err
+				}
+			case "contents":
+				event.Contents = new(PermissionsContentsNode)
+				err := valueEntry.Decode(event.Contents)
+				if err != nil {
+					return err
+				}
+			case "deployments":
+				event.Deployments = new(PermissionsDeploymentsNode)
+				err := valueEntry.Decode(event.Deployments)
+				if err != nil {
+					return err
+				}
+			case "issues":
+				event.Issues = new(PermissionsIssuesNode)
+				err := valueEntry.Decode(event.Issues)
+				if err != nil {
+					return err
+				}
+			case "packages":
+				event.Packages = new(PermissionsPackagesNode)
+				err := valueEntry.Decode(event.Packages)
+				if err != nil {
+					return err
+				}
+			case "pull-requests":
+				event.PullRequests = new(PermissionsPullRequestsNode)
+				err := valueEntry.Decode(event.PullRequests)
+				if err != nil {
+					return err
+				}
+			case "repository-projects":
+				event.RepositoryProjects = new(PermissionsRepositoryProjectsNode)
+				err := valueEntry.Decode(event.RepositoryProjects)
+				if err != nil {
+					return err
+				}
+			case "security-events":
+				event.SecurityEvents = new(PermissionsSecurityEventsNode)
+				err := valueEntry.Decode(event.SecurityEvents)
+				if err != nil {
+					return err
+				}
+			case "statuses":
+				event.Statuses = new(PermissionsStatusesNode)
+				err := valueEntry.Decode(event.Statuses)
+				if err != nil {
+					return err
+				}
+			case "id-token":
+				event.IdToken = new(PermissionsIdTokenNode)
+				err := valueEntry.Decode(event.IdToken)
+				if err != nil {
+					return err
+				}
+			}
+		}
+		node.OneOf.MappingNode = event
+		return nil
+	}
+
+	return nil
+}
+
+type DefinitionPermissionsValue struct {
+	Actions            *PermissionsActionsNode            `yaml:"actions"`
+	Checks             *PermissionsChecksNode             `yaml:"checks"`
+	Contents           *PermissionsContentsNode           `yaml:"contents"`
+	Deployments        *PermissionsDeploymentsNode        `yaml:"deployments"`
+	Issues             *PermissionsIssuesNode             `yaml:"issues"`
+	Packages           *PermissionsPackagesNode           `yaml:"packages"`
+	PullRequests       *PermissionsPullRequestsNode       `yaml:"pull-requests"`
+	RepositoryProjects *PermissionsRepositoryProjectsNode `yaml:"repository-projects"`
+	SecurityEvents     *PermissionsSecurityEventsNode     `yaml:"security-events"`
+	Statuses           *PermissionsStatusesNode           `yaml:"statuses"`
+	IdToken            *PermissionsIdTokenNode            `yaml:"id-token"`
+}
+
+type PermissionsActionsNode struct {
+	Raw   *yaml.Node
+	Value *JobPermissionsConstants
+}
+
+func (node *PermissionsActionsNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type PermissionsChecksNode struct {
+	Raw   *yaml.Node
+	Value *JobPermissionsConstants
+}
+
+func (node *PermissionsChecksNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type PermissionsContentsNode struct {
+	Raw   *yaml.Node
+	Value *JobPermissionsConstants
+}
+
+func (node *PermissionsContentsNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type PermissionsDeploymentsNode struct {
+	Raw   *yaml.Node
+	Value *JobPermissionsConstants
+}
+
+func (node *PermissionsDeploymentsNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type PermissionsIssuesNode struct {
+	Raw   *yaml.Node
+	Value *JobPermissionsConstants
+}
+
+func (node *PermissionsIssuesNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type PermissionsPackagesNode struct {
+	Raw   *yaml.Node
+	Value *JobPermissionsConstants
+}
+
+func (node *PermissionsPackagesNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type PermissionsPullRequestsNode struct {
+	Raw   *yaml.Node
+	Value *JobPermissionsConstants
+}
+
+func (node *PermissionsPullRequestsNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type PermissionsRepositoryProjectsNode struct {
+	Raw   *yaml.Node
+	Value *JobPermissionsConstants
+}
+
+func (node *PermissionsRepositoryProjectsNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type PermissionsSecurityEventsNode struct {
+	Raw   *yaml.Node
+	Value *JobPermissionsConstants
+}
+
+func (node *PermissionsSecurityEventsNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type PermissionsStatusesNode struct {
+	Raw   *yaml.Node
+	Value *JobPermissionsConstants
+}
+
+func (node *PermissionsStatusesNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type PermissionsIdTokenNode struct {
+	Raw   *yaml.Node
+	Value *JobPermissionsConstants
+}
+
+func (node *PermissionsIdTokenNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type JobPermissionsConstants string
+
+const (
+	JobPermissions_Read  JobPermissionsConstants = "read"
+	JobPermissions_Write JobPermissionsConstants = "write"
+	JobPermissions_None  JobPermissionsConstants = "none"
+)
+
+var JobPermissions_Constants = []JobPermissionsConstants{
+	JobPermissions_Read,
+	JobPermissions_Write,
+	JobPermissions_None,
+}
+
+// --------------------------------------------Permissions----------------------------------------------------

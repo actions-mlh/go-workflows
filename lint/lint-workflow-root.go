@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"strings"
 	"gopkg.in/yaml.v3"
+	"fmt"
 )
 
 // issues
@@ -43,6 +44,7 @@ func lintWorkflowRoot(sink *problemSink, target *WorkflowNode) error {
 	}
 
 	// fmt.Println("-------TESTING--------")
+	fmt.Printf("%+v\n", *&target.Value.On.OneOf)
 	// fmt.Println("-------HERE--------")
 
 	// if err := lintWorkflowName(sink, workflow.Name, target.Raw); err != nil {
