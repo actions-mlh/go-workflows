@@ -2,9 +2,8 @@ package lint
 
 import (
 	"fmt"
-	"strings"
-
 	"gopkg.in/yaml.v3"
+	"strings"
 )
 
 // field checks ->
@@ -99,18 +98,7 @@ type WorkflowNameNode struct {
 
 func (node *WorkflowNameNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ","))
-	}
-
+	// TYPE:string
 	return value.Decode(&node.Value)
 }
 
@@ -134,16 +122,7 @@ func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
 
 	switch node.Raw.Kind {
 	case yaml.ScalarNode:
-		scalarTypes := []string{"!!str"}
-		contains := false
-		for _, scalarType := range scalarTypes {
-			if node.Raw.Tag == scalarType {
-				contains = true
-			}
-		}
-		if !contains {
-			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ","))
-		}
+		// TYPE:string
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.SequenceNode:
 		return value.Decode(&node.OneOf.SequenceNode)
@@ -408,16 +387,7 @@ func (node *RunShellNode) UnmarshalYAML(value *yaml.Node) error {
 
 	switch node.Raw.Kind {
 	case yaml.ScalarNode:
-		scalarTypes := []string{"!!str"}
-		contains := false
-		for _, scalarType := range scalarTypes {
-			if node.Raw.Tag == scalarType {
-				contains = true
-			}
-		}
-		if !contains {
-			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-		}
+		// TYPE:string
 		return value.Decode(&node.Value)
 	default:
 		return fmt.Errorf("%d:%d  error  Expected any of: string type", node.Raw.Line, node.Raw.Column)
@@ -451,16 +421,7 @@ type RunWorkingDirectoryNode struct {
 
 func (node *RunWorkingDirectoryNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
+	// TYPE:string
 	return node.Raw.Decode(&node.Value)
 }
 
@@ -483,16 +444,7 @@ func (node *WorkflowConcurrencyNode) UnmarshalYAML(value *yaml.Node) error {
 
 	switch node.Raw.Kind {
 	case yaml.ScalarNode:
-		scalarTypes := []string{"!!str"}
-		contains := false
-		for _, scalarType := range scalarTypes {
-			if node.Raw.Tag == scalarType {
-				contains = true
-			}
-		}
-		if !contains {
-			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-		}
+		// TYPE:string
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.MappingNode:
 		if len(value.Content)%2 != 0 {
@@ -535,16 +487,7 @@ type ConcurrencyGroupNode struct {
 
 func (node *ConcurrencyGroupNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
+	// TYPE:string
 	return value.Decode(&node.Value)
 }
 
@@ -555,17 +498,9 @@ type ConcurrencyCancelInProgressNode struct {
 
 func (node *ConcurrencyCancelInProgressNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!bool"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-	return value.Decode(&node.Value)
+	// TYPE:string
+	value.Decode(&node.Value)
+	return nil
 }
 
 // --------------------------------------------Concurrency----------------------------------------------------

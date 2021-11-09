@@ -63,7 +63,6 @@ jobs:
     concurrency: 
       group: ${{ github.head_ref }}
       cancel-in-progress: true
-    
 env: 
   Happy: fsaf
   Yolo: false
@@ -76,6 +75,6 @@ defaults:
 concurrency: 
   group: hello
   cancel-in-progress: true
-
+  
 permissions: 
   actions: a
