@@ -1,2 +1,2 @@
-../yaml/dirty/unexpected_keys.yaml:7:1	error:	unexpected key "wowField". expected one of keys name, on, defaults, concurrency, jobs
-../yaml/dirty/unexpected_keys.yaml:9:1	error:	unexpected key "fm". expected one of keys name, on, defaults, concurrency, jobs
+../yaml/dirty/unexpected_keys.yaml:7:1  error:  unexpected key "wowField". expected one of keys name, on, env, defaults, concurrency, jobs, permissions
+../yaml/dirty/unexpected_keys.yaml:9:1  error:  unexpected key "fm". expected one of keys name, on, env, defaults, concurrency, jobs, permissions
