@@ -84,7 +84,7 @@ func checkUnexpectedScalarTypes(sink *problemSink, raw *yaml.Node, scalarTypes [
 
 func checkJobNames(sink *problemSink, raw *yaml.Node) error {
 	for i := 0; i < len(raw.Content); i += 2 {
-		valid, err := regexp.MatchString("^[a-zA-Z][a-zA-Z0-9-]*$", raw.Content[i].Value)
+		valid, err := regexp.MatchString("^[a-zA-Z_][a-zA-Z0-9-_]*$", raw.Content[i].Value)
 		if err != nil {
 			return err
 		}
