@@ -3,7 +3,6 @@ package lint
 import (
 	"strings"
 	"gopkg.in/yaml.v3"
-	"regexp"
 )
 
 func checkRequiredKeys(raw *yaml.Node, sink *problemSink, workflowKeyNodes []*yaml.Node, requiredKeys []string) error {
@@ -82,18 +81,6 @@ func checkUnexpectedScalarTypes(sink *problemSink, raw *yaml.Node, scalarTypes [
 	return nil
 }
 
-func checkJobNames(sink *problemSink, raw *yaml.Node) error {
-	for i := 0; i < len(raw.Content); i += 2 {
-		valid, err := regexp.MatchString("^[a-zA-Z_][a-zA-Z0-9-_]*$", raw.Content[i].Value)
-		if err != nil {
-			return err
-		}
-		if !valid {
-			sink.record(raw.Content[i], "invalid job name \"%s\"", raw.Content[i].Value)
-		}
-	}
-	return nil
-}
 
 func contains(slice []string, item string) bool {
 	for _, val := range slice {
