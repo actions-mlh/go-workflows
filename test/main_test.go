@@ -24,12 +24,12 @@ func TestParse(t *testing.T) {
 		}
 		input, err := os.ReadFile(path)
 		if err != nil {
+			t.Errorf("error reading file %s: %s", path, err)
 			return err
 		}
 		problems, err := lint.Lint(path, input)
 		if err != nil {
 			t.Errorf("error linting file %s:\n%s", path, err)
-			return err
 		}
 		if len(problems) > 0 {
 			t.Errorf("error(s) found in clean file %s:\n%s", path, strings.Join(problems, "\n"))
