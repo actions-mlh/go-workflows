@@ -1,24 +1,27 @@
-package lint
+package jobs
 
 import (
 	"regexp"
 	"gopkg.in/yaml.v3"
+
+	"c2c-actions-mlh-workflow-parser/lint/workflow"
+	"c2c-actions-mlh-workflow-parser/lint/sink"
 )
 
-func checkJobNames(sink *problemSink, raw *yaml.Node) error {
+func checkJobNames(sink *sink.ProblemSink, raw *yaml.Node) error {
 	for i := 0; i < len(raw.Content); i += 2 {
 		valid, err := regexp.MatchString("^[a-zA-Z_][a-zA-Z0-9-_]*$", raw.Content[i].Value)
 		if err != nil {
 			return err
 		}
-		if !valid {
-			sink.record(raw.Content[i], "invalid job name \"%s\"", raw.Content[i].Value)
+		if !valid { 
+			sink.Record(raw.Content[i], "invalid job name \"%s\"", raw.Content[i].Value)
 		}
 	}
 	return nil
 }
 
-func checkCyclicDependencies(sink *problemSink, target *WorkflowJobsNode) error {
+func checkCyclicDependencies(sink *sink.ProblemSink, target *workflow.WorkflowJobsNode) error {
 	arrayOfjobNeedsRelations := [][]string{}
 	checked := make(map[string]bool)
 	path := make(map[string]bool)
@@ -46,7 +49,7 @@ func checkCyclicDependencies(sink *problemSink, target *WorkflowJobsNode) error 
 	for _, jobValue := range target.Value {
 		currentJobName := jobValue.ID
 		if isCyclic(currentJobName, needsAdjacencyList, checked, path) {
-			sink.record(jobValue.PatternProperties.Value.Needs.Raw, "contains cyclic dependencies")
+			sink.Record(jobValue.PatternProperties.Value.Needs.Raw, "contains cyclic dependencies")
 		}
 	}
 
