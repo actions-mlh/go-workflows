@@ -1,6 +1,9 @@
 package workflow
 
-import "gopkg.in/yaml.v3"
+import (
+	"fmt"
+	"gopkg.in/yaml.v3"
+)
 
 type WorkflowDefaultsNode struct {
 	Raw   *yaml.Node
@@ -11,7 +14,7 @@ func (node *WorkflowDefaultsNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
 	if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process defaults: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 	}
 	event := new(WorkflowDefaultsValue)
 	for i := 0; i < len(value.Content); i += 2 {
@@ -57,14 +60,8 @@ type RunShellNode struct {
 
 func (node *RunShellNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-
-	switch node.Raw.Kind {
-	case yaml.ScalarNode:
-		// TYPE:string
-		return value.Decode(&node.Value)
-	default:
-		return fmt.Errorf("%d:%d  error  Expected any of: string type", node.Raw.Line, node.Raw.Column)
-	}
+	// TYPE:string
+	return value.Decode(&node.Value)
 }
 
 type RunShellConstants string

@@ -1,6 +1,9 @@
 package workflow
 
-import "gopkg.in/yaml.v3"
+import (
+	"fmt"
+	"gopkg.in/yaml.v3"
+)
 
 type WorkflowJobsNode struct {
 	Raw   *yaml.Node
@@ -10,7 +13,7 @@ type WorkflowJobsNode struct {
 func (node *WorkflowJobsNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process jobs: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 	}
 	for i := 0; i < len(value.Content); i += 2 {
 		keyEntry := value.Content[i]
@@ -40,7 +43,7 @@ type JobsPatternPropertiesNode struct {
 func (node *JobsPatternPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	if len(node.Raw.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process jobsPatternProperties: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 	}
 	event := new(JobsPatternPropertiesValue)
 	for i := 0; i < len(value.Content); i += 2 {
@@ -171,7 +174,7 @@ func (node *JobsPermissionsEventNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
 	if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process jobsPermissionsEvent: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 	}
 	event := new(DefinitionPermissionsValue)
 	for i := 0; i < len(value.Content); i += 2 {
@@ -280,16 +283,7 @@ type JobNameNode struct {
 
 func (node *JobNameNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
+	// TYPE:string
 	return value.Decode(&node.Value)
 }
 
@@ -308,16 +302,7 @@ func (node *JobNeedsNode) UnmarshalYAML(value *yaml.Node) error {
 
 	switch node.Raw.Kind {
 	case yaml.ScalarNode:
-		scalarTypes := []string{"!!str"}
-		contains := false
-		for _, scalarType := range scalarTypes {
-			if node.Raw.Tag == scalarType {
-				contains = true
-			}
-		}
-		if !contains {
-			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-		}
+		// TYPE:string
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.SequenceNode:
 		return value.Decode(&node.OneOf.SequenceNode)
@@ -332,17 +317,7 @@ type JobIfNode struct {
 
 func (node *JobIfNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	// TYPE:string
 	return value.Decode(&node.Value)
 }
 
@@ -353,17 +328,7 @@ type JobUsesNode struct {
 
 func (node *JobUsesNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	// TYPE:string
 	return value.Decode(&node.Value)
 }
 
@@ -375,7 +340,7 @@ type JobWithNode struct {
 func (node *JobWithNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process jobWith: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 	}
 	for i := 0; i < len(value.Content); i += 2 {
 		keyEntry := value.Content[i]
@@ -403,17 +368,7 @@ type WithPropertiesNode struct {
 
 func (node *WithPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str", "!!bool", "!!int"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!str", "!!bool", "!!int"
 	return node.Raw.Decode(&node.Value)
 }
 
@@ -425,7 +380,7 @@ type JobSecretsNode struct {
 func (node *JobSecretsNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process jobSecrets: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 	}
 	for i := 0; i < len(value.Content); i += 2 {
 		keyEntry := value.Content[i]
@@ -453,17 +408,7 @@ type SecretsPropertiesNode struct {
 
 func (node *SecretsPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str", "!!bool", "!!int"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!str", "!!bool", "!!int"
 	return node.Raw.Decode(&node.Value)
 }
 
@@ -476,16 +421,7 @@ func (node *JobRunsOnNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	switch node.Raw.Kind {
 	case yaml.ScalarNode:
-		scalarTypes := []string{"!!str"}
-		contains := false
-		for _, scalarType := range scalarTypes {
-			if node.Raw.Tag == scalarType {
-				contains = true
-			}
-		}
-		if !contains {
-			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ","))
-		}
+		//TYPE:"!!str"
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.SequenceNode:
 		return value.Decode(&node.OneOf.SequenceNode)
@@ -569,20 +505,11 @@ func (node *JobEnvironmentNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	switch node.Raw.Kind {
 	case yaml.ScalarNode:
-		scalarTypes := []string{"!!str"}
-		contains := false
-		for _, scalarType := range scalarTypes {
-			if node.Raw.Tag == scalarType {
-				contains = true
-			}
-		}
-		if !contains {
-			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ","))
-		}
+		//TYPE:"!!str"
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.MappingNode:
 		if len(node.Raw.Content)%2 != 0 {
-			return fmt.Errorf("%d:%d  error  expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process jobEnvironment: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 		}
 		event := new(JobEnvironmentValue)
 		for i := 0; i < len(value.Content); i += 2 {
@@ -621,16 +548,7 @@ type EnvironmentNameNode struct {
 
 func (node *EnvironmentNameNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ","))
-	}
+	//TYPE:"!!str"
 	return value.Decode(&node.Value)
 }
 
@@ -641,16 +559,7 @@ type EnvironmentUrlNode struct {
 
 func (node *EnvironmentUrlNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ","))
-	}
+	//TYPE:"!!str"
 	return value.Decode(&node.Value)
 }
 
@@ -662,7 +571,7 @@ type JobOutputsNode struct {
 func (node *JobOutputsNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process jobOutputs: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 	}
 	for i := 0; i < len(value.Content); i += 2 {
 		keyEntry := value.Content[i]
@@ -690,17 +599,7 @@ type OutputsPropertiesNode struct {
 
 func (node *OutputsPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!str"
 	return value.Decode(&node.Value)
 }
 
@@ -712,7 +611,7 @@ type JobEnvNode struct {
 func (node *JobEnvNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process jobEnv: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 	}
 	for i := 0; i < len(value.Content); i += 2 {
 		keyEntry := value.Content[i]
@@ -740,16 +639,7 @@ type JobEnvPropertiesNode struct {
 
 func (node *JobEnvPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str", "!!bool", "!!int"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
+	//TYPE:"!!str", "!!bool", "!!int"
 	return value.Decode(&node.Value)
 }
 
@@ -762,7 +652,7 @@ func (node *JobDefaultsNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
 	if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process jobDefaults: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 	}
 	event := new(JobDefaultsValue)
 	for i := 0; i < len(value.Content); i += 2 {
@@ -811,16 +701,7 @@ func (node *JobRunShellNode) UnmarshalYAML(value *yaml.Node) error {
 
 	switch node.Raw.Kind {
 	case yaml.ScalarNode:
-		scalarTypes := []string{"!!str"}
-		contains := false
-		for _, scalarType := range scalarTypes {
-			if node.Raw.Tag == scalarType {
-				contains = true
-			}
-		}
-		if !contains {
-			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-		}
+		//TYPE:"!!str"
 		return value.Decode(&node.Value)
 	default:
 		return fmt.Errorf("%d:%d  error  Expected any of: string type", node.Raw.Line, node.Raw.Column)
@@ -834,16 +715,7 @@ type JobRunWorkingDirectoryNode struct {
 
 func (node *JobRunWorkingDirectoryNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
+	//TYPE:"!!str"
 	return node.Raw.Decode(&node.Value)
 }
 
@@ -854,12 +726,10 @@ type JobStepsNode struct {
 
 func (node *JobStepsNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
-	}
 	for _, stepsContent := range node.Raw.Content {
 		if len(stepsContent.Content)%2 != 0 {
-			return fmt.Errorf("%d:%d  error  expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+			return fmt.Errorf("%d:%d\terror\tCould not process jobSteps: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
+
 		}
 		event := new(JobStepsValue)
 		for i := 0; i < len(stepsContent.Content); i += 2 {
@@ -961,17 +831,7 @@ type StepsIdNode struct {
 
 func (node *StepsIdNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!str"
 	return value.Decode(&node.Value)
 }
 
@@ -982,17 +842,7 @@ type StepsNameNode struct {
 
 func (node *StepsNameNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!str"
 	return value.Decode(&node.Value)
 }
 
@@ -1003,17 +853,7 @@ type StepsIfNode struct {
 
 func (node *StepsIfNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!str"
 	return value.Decode(&node.Value)
 }
 
@@ -1024,17 +864,7 @@ type StepsUsesNode struct {
 
 func (node *StepsUsesNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!str"
 	return value.Decode(&node.Value)
 }
 
@@ -1045,17 +875,7 @@ type StepsRunNode struct {
 
 func (node *StepsRunNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!str"
 	return value.Decode(&node.Value)
 }
 
@@ -1066,17 +886,7 @@ type StepsWorkingDirectoryNode struct {
 
 func (node *StepsWorkingDirectoryNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!str"
 	return value.Decode(&node.Value)
 }
 
@@ -1087,17 +897,7 @@ type StepsShellNode struct {
 
 func (node *StepsShellNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!str"
 	return value.Decode(&node.Value)
 }
 
@@ -1110,7 +910,7 @@ func (node *StepsWithNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
 	if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process stepsWith: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 	}
 	for i := 0; i < len(value.Content); i += 2 {
 		keyEntry := value.Content[i]
@@ -1138,38 +938,18 @@ type StepsWithPropertiesNode struct {
 
 func (node *StepsWithPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str", "!!bool", "!!int"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!str", "!!bool", "!!int"
 	return value.Decode(&node.Value)
 }
 
 type StepsEnvNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *map[string]string
 }
 
 func (node *StepsEnvNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str", "!!bool", "!!int"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:map[string]string
 	return value.Decode(&node.Value)
 }
 
@@ -1180,17 +960,7 @@ type StepsContinueOnErrorNode struct {
 
 func (node *StepsContinueOnErrorNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str", "!!bool"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!str", "!!bool"
 	return value.Decode(&node.Value)
 }
 
@@ -1201,17 +971,7 @@ type StepsTimeoutMinutesNode struct {
 
 func (node *StepsTimeoutMinutesNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!int"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!int"
 	return value.Decode(&node.Value)
 }
 
@@ -1222,17 +982,7 @@ type JobTimeoutMinutesNode struct {
 
 func (node *JobTimeoutMinutesNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!int"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!int"
 	return value.Decode(&node.Value)
 }
 
@@ -1243,17 +993,7 @@ type JobContinueOnErrorNode struct {
 
 func (node *JobContinueOnErrorNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!bool", "!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!bool", "!!str"
 	return value.Decode(&node.Value)
 }
 
@@ -1272,20 +1012,11 @@ func (node *JobContainerNode) UnmarshalYAML(value *yaml.Node) error {
 
 	switch node.Raw.Kind {
 	case yaml.ScalarNode:
-		scalarTypes := []string{"!!str"}
-		contains := false
-		for _, scalarType := range scalarTypes {
-			if node.Raw.Tag == scalarType {
-				contains = true
-			}
-		}
-		if !contains {
-			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ","))
-		}
+		//TYPE:"!!str"
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.MappingNode:
 		if len(value.Content)%2 != 0 {
-			return fmt.Errorf("%d:%d  error  expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process jobContainer: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 		}
 		event := new(JobContainerValue)
 		for i := 0; i < len(value.Content); i += 2 {
@@ -1352,17 +1083,7 @@ type ContainerImageNode struct {
 
 func (node *ContainerImageNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!str"
 	return value.Decode(&node.Value)
 }
 
@@ -1375,7 +1096,7 @@ func (node *ContainerCredentialsNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
 	if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process ContainerCredentials: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 	}
 	event := new(ContainerCredentialsValue)
 	for i := 0; i < len(value.Content); i += 2 {
@@ -1414,17 +1135,7 @@ type CredentialsUsernameNode struct {
 
 func (node *CredentialsUsernameNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!str"
 	return value.Decode(&node.Value)
 }
 
@@ -1435,17 +1146,7 @@ type CredentialsPasswordNode struct {
 
 func (node *CredentialsPasswordNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!str"
 	return value.Decode(&node.Value)
 }
 
@@ -1458,7 +1159,7 @@ func (node *ContainerEnvNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 
 	if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process containerEnv: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 	}
 	for i := 0; i < len(value.Content); i += 2 {
 		keyEntry := value.Content[i]
@@ -1486,17 +1187,7 @@ type ContainerEnvPropertiesNode struct {
 
 func (node *ContainerEnvPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str", "!!bool", "!!int"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!str", "!!bool", "!!int"
 	return value.Decode(&node.Value)
 }
 
@@ -1507,19 +1198,6 @@ type ContainerPortsNode struct {
 
 func (node *ContainerPortsNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	for _, content := range node.Raw.Content {
-		scalarTypes := []string{"!!str", "!!int"}
-		contains := false
-		for _, scalarType := range scalarTypes {
-			if content.Tag == scalarType {
-				contains = true
-			}
-		}
-		if !contains {
-			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-		}
-	}
-
 	return value.Decode(&node.Value)
 }
 
@@ -1530,19 +1208,6 @@ type ContainerVolumesNode struct {
 
 func (node *ContainerVolumesNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	for _, content := range node.Raw.Content {
-		scalarTypes := []string{"!!str"}
-		contains := false
-		for _, scalarType := range scalarTypes {
-			if content.Tag == scalarType {
-				contains = true
-			}
-		}
-		if !contains {
-			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-		}
-	}
-
 	return value.Decode(&node.Value)
 }
 
@@ -1553,17 +1218,7 @@ type ContainerOptionsNode struct {
 
 func (node *ContainerOptionsNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	scalarTypes := []string{"!!str"}
-	contains := false
-	for _, scalarType := range scalarTypes {
-		if node.Raw.Tag == scalarType {
-			contains = true
-		}
-	}
-	if !contains {
-		return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-	}
-
+	//TYPE:"!!str"
 	return value.Decode(&node.Value)
 }
 
@@ -1575,7 +1230,7 @@ type JobServicesNode struct {
 func (node *JobServicesNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process jobServices: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 	}
 	for i := 0; i < len(value.Content); i += 2 {
 		keyEntry := value.Content[i]
@@ -1669,20 +1324,11 @@ func (node *JobConcurrencyNode) UnmarshalYAML(value *yaml.Node) error {
 
 	switch node.Raw.Kind {
 	case yaml.ScalarNode:
-		scalarTypes := []string{"!!str"}
-		contains := false
-		for _, scalarType := range scalarTypes {
-			if node.Raw.Tag == scalarType {
-				contains = true
-			}
-		}
-		if !contains {
-			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
-		}
+		//TYPE:"!!str"
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.MappingNode:
 		if len(value.Content)%2 != 0 {
-			return fmt.Errorf("%d:%d  error  expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process jobConcurrency: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 		}
 		event := new(WorkflowConcurrencyValue)
 		for i := 0; i < len(value.Content); i += 2 {

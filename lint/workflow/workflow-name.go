@@ -1,6 +1,8 @@
 package workflow
 
-import "gopkg.in/yaml.v3"
+import (
+	"gopkg.in/yaml.v3"
+)
 
 type WorkflowNameNode struct {
 	Raw   *yaml.Node

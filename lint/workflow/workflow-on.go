@@ -1,6 +1,9 @@
 package workflow
 
-import "gopkg.in/yaml.v3"
+import (
+	"fmt"
+	"gopkg.in/yaml.v3"
+)
 
 type WorkflowOnNode struct {
 	Raw   *yaml.Node
@@ -24,7 +27,7 @@ func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
 	case yaml.MappingNode:
 		value := node.Raw
 		if len(value.Content)%2 != 0 {
-			return fmt.Errorf("%d:%d  error  expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process on: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 		}
 		event := new(WorkFlowOnValue)
 		for i := 0; i < len(value.Content); i += 2 {
@@ -137,7 +140,7 @@ type OnCheckRunNode struct {
 func (node *OnCheckRunNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process onCheckRun: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 	}
 	event := new(DefinitionsTypeValue)
 	for i := 0; i < len(value.Content); i += 2 {
@@ -166,7 +169,7 @@ type OnCheckSuiteNode struct {
 func (node *OnCheckSuiteNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process onCheckSuite: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 	}
 	event := new(DefinitionsTypeValue)
 	for i := 0; i < len(value.Content); i += 2 {
@@ -195,7 +198,7 @@ type OnDiscussionNode struct {
 func (node *OnDiscussionNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process onDiscussion: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 	}
 	event := new(DefinitionsTypeValue)
 	for i := 0; i < len(value.Content); i += 2 {
@@ -224,7 +227,7 @@ type OnDiscussionCommentNode struct {
 func (node *OnDiscussionCommentNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+		return fmt.Errorf("%d:%d\terror\tCould not process onDiscussionComment: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 	}
 	event := new(DefinitionsTypeValue)
 	for i := 0; i < len(value.Content); i += 2 {
