@@ -974,7 +974,7 @@ type JobNeedsNode struct {
 }
 
 type JobNeedsOneOf struct {
-	ScalarNode   string
+	ScalarNode   *string
 	SequenceNode *[]string
 }
 

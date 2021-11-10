@@ -8,10 +8,9 @@ on:
 jobs:
   jobOne:
     name: jobby
-    needs: [jobTwo]
+    needs: jobThre
   jobTwo:
     name: joker
-    needs: [jobOne]
+    needs: [jobOne, jobThree]
   jobThree:
-    name: sam
-    needs: [jobOne]
+    needs: jobTwo

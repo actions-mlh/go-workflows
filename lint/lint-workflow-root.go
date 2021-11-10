@@ -1,10 +1,11 @@
 package lint
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
+
 	"gopkg.in/yaml.v3"
-	"fmt"
 )
 
 // issues
@@ -49,26 +50,17 @@ func lintWorkflowRoot(sink *problemSink, target *WorkflowNode) error {
 	// 	}
 	// }
 
-	if target.Value.Jobs != nil && target.Value.Jobs.Raw != nil {
-		if err := checkUnexpectedScalarTypes(sink, target.Value.Jobs.Raw, []string{"!!map"}); err != nil {
-			return err
-		}
-		if err := checkJobNames(sink, target.Value.Jobs.Raw); err != nil {
-			return err
-		}
-	}
-
 	fmt.Println("-------TESTING--------")
-
 	fmt.Println("-------HERE--------")
 
 	// if err := lintWorkflowName(sink, workflow.Name, target.Raw); err != nil {
 	// 	return err
 	// }
 
-	// if err := lintWorkflowJobs(sink, workflow.Jobs, target.Raw); err != nil {
-	// 	return err
-	// }
+	if err := lintWorkflowJobs(sink, target.Value.Jobs); err != nil {
+		return err
+	}
+	
 	return nil
 }
 
@@ -101,11 +93,11 @@ func lintWorkflowRoot(sink *problemSink, target *WorkflowNode) error {
 // 				}
 // 			}
 
-			// remainingString := jobValueID[1:]
-			// alphabetValidation := regexp.MustCompile(`"^[_a-zA-Z][a-zA-Z0-9_-]*$"`).MatchString
-			// if !alphabetValidation(remainingString) {
-			// 	sink.Record(jobRaw, "job ID's must contain only alphanumeric characters \"-\", or \"_\"")
-			// }
+// remainingString := jobValueID[1:]
+// alphabetValidation := regexp.MustCompile(`"^[_a-zA-Z][a-zA-Z0-9_-]*$"`).MatchString
+// if !alphabetValidation(remainingString) {
+// 	sink.Record(jobRaw, "job ID's must contain only alphanumeric characters \"-\", or \"_\"")
+// }
 // 			return nil
 // 		}
 
