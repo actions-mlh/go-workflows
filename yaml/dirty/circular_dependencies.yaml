@@ -6,10 +6,10 @@ on:
   check_suite:
     
 jobs:
-  job_1:
+  jobOne:
     name: jobby
-    needs: [job_1, h]
-  job_2:
+  jobTwo:
     name: joker
-    needs: [job_2]
-  
+    needs: [jobOne, jobThree]
+  jobThree:
+    needs: jobTwo

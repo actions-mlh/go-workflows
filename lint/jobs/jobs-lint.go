@@ -12,9 +12,9 @@ func Lint(sink *sink.ProblemSink, target *workflow.WorkflowJobsNode) error {
 			return err
 		}
 
-		// if err := checkCyclicDependencies(sink, target); err != nil {
-		// 	return err
-		// }
+		if err := checkCyclicDependencies(sink, target); err != nil {
+			return err
+		}
 	}
 	
 	return nil

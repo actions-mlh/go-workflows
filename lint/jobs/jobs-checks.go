@@ -31,15 +31,18 @@ func checkCyclicDependencies(sink *sink.ProblemSink, target *workflow.WorkflowJo
 		checked[next] = false
 		path[next] = false
 
-		if jobValue.PatternProperties.Value.Needs.OneOf.ScalarNode != nil {
-			prev := *jobValue.PatternProperties.Value.Needs.OneOf.ScalarNode
-			arrayOfjobNeedsRelations = append(arrayOfjobNeedsRelations, []string{next, prev})
-		} else if jobValue.PatternProperties.Value.Needs.OneOf.SequenceNode != nil {
-			for _, prev := range *jobValue.PatternProperties.Value.Needs.OneOf.SequenceNode {
-				arrayOfjobNeedsRelations = append(arrayOfjobNeedsRelations, []string{next, prev})
+		if jobValue.PatternProperties != nil {
+			if jobValue.PatternProperties.Value.Needs != nil {
+				if jobValue.PatternProperties.Value.Needs.OneOf.ScalarNode != nil {
+					prev := *jobValue.PatternProperties.Value.Needs.OneOf.ScalarNode
+					arrayOfjobNeedsRelations = append(arrayOfjobNeedsRelations, []string{next, prev})
+				} else if jobValue.PatternProperties.Value.Needs.OneOf.SequenceNode != nil {
+					for _, prev := range *jobValue.PatternProperties.Value.Needs.OneOf.SequenceNode {
+						arrayOfjobNeedsRelations = append(arrayOfjobNeedsRelations, []string{next, prev})
+					}
+				}
 			}
 		}
-
 	}
 	needsAdjacencyList := make(map[string][]string)
 	for _, relation := range arrayOfjobNeedsRelations {
