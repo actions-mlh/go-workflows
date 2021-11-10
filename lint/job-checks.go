@@ -19,7 +19,7 @@ func checkJobNames(sink *problemSink, raw *yaml.Node) error {
 }
 
 func checkCyclicDependencies(sink *problemSink, target *WorkflowJobsNode) error {
-	adjList := [][]string{}
+	arrayOfjobNeedsRelations := [][]string{}
 	checked := make(map[string]bool)
 	path := make(map[string]bool)
 
@@ -30,22 +30,22 @@ func checkCyclicDependencies(sink *problemSink, target *WorkflowJobsNode) error 
 
 		if jobValue.PatternProperties.Value.Needs.OneOf.ScalarNode != nil {
 			prev := *jobValue.PatternProperties.Value.Needs.OneOf.ScalarNode
-			adjList = append(adjList, []string{next, prev})
+			arrayOfjobNeedsRelations = append(arrayOfjobNeedsRelations, []string{next, prev})
 		} else if jobValue.PatternProperties.Value.Needs.OneOf.SequenceNode != nil {
 			for _, prev := range *jobValue.PatternProperties.Value.Needs.OneOf.SequenceNode {
-				adjList = append(adjList, []string{next, prev})
+				arrayOfjobNeedsRelations = append(arrayOfjobNeedsRelations, []string{next, prev})
 			}
 		}
 
 	}
-	needsMap := make(map[string][]string)
-	for _, relation := range adjList {
-		needsMap[relation[0]] = append(needsMap[relation[0]], relation[1])
+	needsAdjacencyList := make(map[string][]string)
+	for _, relation := range arrayOfjobNeedsRelations {
+		needsAdjacencyList[relation[0]] = append(needsAdjacencyList[relation[0]], relation[1])
 	}
 
 	for _, jobValue := range target.Value {
 		currentJobName := jobValue.ID
-		if isCyclic(currentJobName, needsMap, checked, path) {
+		if isCyclic(currentJobName, needsAdjacencyList, checked, path) {
 			sink.record(jobValue.PatternProperties.Value.Needs.Raw, "contains cyclic dependencies")
 		}
 	}
@@ -53,7 +53,7 @@ func checkCyclicDependencies(sink *problemSink, target *WorkflowJobsNode) error 
 	return nil
 }
 
-func isCyclic(currentJobName string, needsMap map[string][]string, checked map[string]bool, path map[string]bool) bool{
+func isCyclic(currentJobName string, needsAdjacencyList map[string][]string, checked map[string]bool, path map[string]bool) bool{
 	// base cases 
 	if checked[currentJobName] { // no cycle is formed with currentJobName
 		return false
@@ -65,8 +65,8 @@ func isCyclic(currentJobName string, needsMap map[string][]string, checked map[s
 	path[currentJobName] = true
 	childReturnValue := false
 	// scan children using postorder DFS
-	for _, child := range needsMap[currentJobName] {
-		childReturnValue = isCyclic(child, needsMap, checked, path)
+	for _, child := range needsAdjacencyList[currentJobName] {
+		childReturnValue = isCyclic(child, needsAdjacencyList, checked, path)
 		if childReturnValue { break }
 	}
 
