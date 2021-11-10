@@ -1,1 +1,1 @@
-../yaml/dirty/circular_dependencies.yaml:11:1	error:	circular dependency detected: jobOne > jobTwo > jobOne
+../yaml/dirty/circular_dependencies.yaml:13:12	error:	contains cyclic dependencies
