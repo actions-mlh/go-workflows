@@ -2,8 +2,9 @@ package lint
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v3"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 // field checks ->
@@ -68,7 +69,7 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 				return err
 			}
 		case "permissions":
-			event.Permissions = new(DefinitionPermissionsNode)
+			event.Permissions = new(WorkflowPermissionsNode)
 			err := valueEntry.Decode(event.Permissions)
 			if err != nil {
 				return err
@@ -80,25 +81,24 @@ func (node *WorkflowNode) UnmarshalYAML(value *yaml.Node) error {
 }
 
 type WorkflowValue struct {
-	Name        *WorkflowNameNode          `yaml:"name"`
-	On          *WorkflowOnNode            `yaml:"on"`
-	Env         *WorkflowEnvNode           `yaml:"env"`
-	Defaults    *WorkflowDefaultsNode      `yaml:"defaults"`
-	Concurrency *WorkflowConcurrencyNode   `yaml:"concurrency"`
-	Jobs        *WorkflowJobsNode          `yaml:"jobs"`
-	Permissions *DefinitionPermissionsNode `yaml:"permissions"`
+	Name        *WorkflowNameNode        `yaml:"name"`
+	On          *WorkflowOnNode          `yaml:"on"`
+	Env         *WorkflowEnvNode         `yaml:"env"`
+	Defaults    *WorkflowDefaultsNode    `yaml:"defaults"`
+	Concurrency *WorkflowConcurrencyNode `yaml:"concurrency"`
+	Jobs        *WorkflowJobsNode        `yaml:"jobs"`
+	Permissions *WorkflowPermissionsNode `yaml:"permissions"`
 }
 
 // --------------------------------------------On----------------------------------------------------
 
 type WorkflowNameNode struct {
 	Raw   *yaml.Node
-	Value string
+	Value *string
 }
 
 func (node *WorkflowNameNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	// TYPE:string
 	return value.Decode(&node.Value)
 }
 
@@ -122,7 +122,6 @@ func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
 
 	switch node.Raw.Kind {
 	case yaml.ScalarNode:
-		// TYPE:string
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.SequenceNode:
 		return value.Decode(&node.OneOf.SequenceNode)
@@ -155,6 +154,48 @@ func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
+			case "delete":
+				event.Delete = new(OnDeleteNode)
+				err := valueEntry.Decode(event.Delete)
+				if err != nil {
+					return err
+				}
+			case "deployment":
+				event.Deployment = new(OnDeploymentNode)
+				err := valueEntry.Decode(event.Deployment)
+				if err != nil {
+					return err
+				}
+			case "deployment_status":
+				event.DeploymentStatus = new(OnDeploymentStatusNode)
+				err := valueEntry.Decode(event.DeploymentStatus)
+				if err != nil {
+					return err
+				}
+			case "discussion":
+				event.Discussion = new(OnDiscussionNode)
+				err := valueEntry.Decode(event.Discussion)
+				if err != nil {
+					return err
+				}
+			case "discussion_comment":
+				event.DiscussionComment = new(OnDiscussionCommentNode)
+				err := valueEntry.Decode(event.DiscussionComment)
+				if err != nil {
+					return err
+				}
+			case "fork":
+				event.Fork = new(OnForkNode)
+				err := valueEntry.Decode(event.Fork)
+				if err != nil {
+					return err
+				}
+			case "gollum":
+				event.Gollum = new(OnGollumNode)
+				err := valueEntry.Decode(event.Gollum)
+				if err != nil {
+					return err
+				}
 			}
 		}
 		node.OneOf.MappingNode = event
@@ -180,149 +221,278 @@ var OnEvent_Constants = []OnEventConstants{
 	OnEvent_Deployment}
 
 type WorkFlowOnValue struct {
-	CheckRun   *OnCheckRunNode   `yaml:"check_run,omitempty"`
-	CheckSuite *OnCheckSuiteNode `yaml:"check_suite,omitempty"`
-	Create     *OnCreateNode     `yaml:"create,omitempty"`
+	CheckRun          *OnCheckRunNode          `yaml:"check_run"`
+	CheckSuite        *OnCheckSuiteNode        `yaml:"check_suite"`
+	Create            *OnCreateNode            `yaml:"create"`
+	Delete            *OnDeleteNode            `yaml:"delete"`
+	Deployment        *OnDeploymentNode        `yaml:"deployment"`
+	DeploymentStatus  *OnDeploymentStatusNode  `yaml:"deployment_status"`
+	Discussion        *OnDiscussionNode        `yaml:"discussion"`
+	DiscussionComment *OnDiscussionCommentNode `yaml:"discussion_comment"`
+	Fork              *OnForkNode              `yaml:"fork"`
+	Gollum            *OnGollumNode            `yaml:"gollum"`
 }
 
 type OnCheckRunNode struct {
 	Raw   *yaml.Node
-	OneOf OnCheckRunOneOf
-}
-
-type OnCheckRunOneOf struct {
-	MappingNode *OnCheckRunValue
+	Value *DefintionsTypeValue
 }
 
 func (node *OnCheckRunNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
+	if len(value.Content)%2 != 0 {
+		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+	}
+	event := new(DefintionsTypeValue)
+	for i := 0; i < len(value.Content); i += 2 {
+		keyEntry := value.Content[i]
+		valueEntry := value.Content[i+1]
 
-	switch node.Raw.Kind {
-	case yaml.MappingNode:
-		value := node.Raw
-		if len(value.Content)%2 != 0 {
-			return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
-		}
-		event := new(OnCheckRunValue)
-		for i := 0; i < len(value.Content); i += 2 {
-			keyEntry := value.Content[i]
-			valueEntry := value.Content[i+1]
-
-			eventKey := keyEntry.Value
-			switch eventKey {
-			case "types":
-				event.Types = new(CheckRunTypesNode)
-				err := valueEntry.Decode(event.Types)
-				if err != nil {
-					return err
-				}
+		eventKey := keyEntry.Value
+		switch eventKey {
+		case "types":
+			event.Types = new(DefintionsTypeNode)
+			err := valueEntry.Decode(event.Types)
+			if err != nil {
+				return err
 			}
 		}
-		node.OneOf.MappingNode = event
-		return nil
-	default:
-		return fmt.Errorf("%d:%d  error  Expected one of: map type", node.Raw.Line, node.Raw.Column)
 	}
+	node.Value = event
+	return nil
 }
-
-type OnCheckRunValue struct {
-	Types *CheckRunTypesNode `yaml:"types,omitempty"`
-}
-
-type CheckRunTypesNode struct {
-	Raw   *yaml.Node
-	Value *[]CheckRunTypesConstants
-}
-
-func (node *CheckRunTypesNode) UnmarshalYAML(value *yaml.Node) error {
-	node.Raw = value
-	return value.Decode(&node.Value)
-}
-
-type CheckRunTypesConstants string
-
-const (
-	CheckRunTypes_Created         CheckRunTypesConstants = "create"
-	CheckRunTypes_Rerequested     CheckRunTypesConstants = "rerequested"
-	CheckRunTypes_Completed       CheckRunTypesConstants = "completed"
-	CheckRunTypes_RequestedAction CheckRunTypesConstants = "requested_action"
-)
 
 type OnCheckSuiteNode struct {
 	Raw   *yaml.Node
-	OneOf *OnCheckSuiteOneOf
-}
-
-type OnCheckSuiteOneOf struct {
-	MappingNode *OnCheckSuiteValue
-}
-
-type OnCheckSuiteValue struct {
-	Types *CheckSuiteTypesNode `yaml:"types"`
+	Value *DefintionsTypeValue
 }
 
 func (node *OnCheckSuiteNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
-	switch node.Raw.Kind {
-	case yaml.MappingNode:
-		value := node.Raw
-		if len(value.Content)%2 != 0 {
-			return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
-		}
-		event := new(OnCheckSuiteValue)
-		for i := 0; i < len(value.Content); i += 2 {
-			keyEntry := value.Content[i]
-			valueEntry := value.Content[i+1]
-			eventKey := keyEntry.Value
-			switch eventKey {
-			case "types":
-				event.Types = new(CheckSuiteTypesNode)
-				err := valueEntry.Decode(event.Types)
-				if err != nil {
-					return err
-				}
-				if event.Types.Value == nil {
-					return fmt.Errorf("%d:%d  error  Unexpected one of: null type", node.Raw.Line, node.Raw.Column)
-				}
-			default:
-				return fmt.Errorf("%d:%d  error  Expected one of: types", node.Raw.Line, node.Raw.Column)
+	if len(value.Content)%2 != 0 {
+		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+	}
+	event := new(DefintionsTypeValue)
+	for i := 0; i < len(value.Content); i += 2 {
+		keyEntry := value.Content[i]
+		valueEntry := value.Content[i+1]
+
+		eventKey := keyEntry.Value
+		switch eventKey {
+		case "types":
+			event.Types = new(DefintionsTypeNode)
+			err := valueEntry.Decode(event.Types)
+			if err != nil {
+				return err
 			}
 		}
-		node.OneOf.MappingNode = event
-		return nil
-	default:
-		return fmt.Errorf("%d:%d  error  Expected one of: map type", node.Raw.Line, node.Raw.Column)
 	}
+	node.Value = event
+	return nil
 }
 
-type CheckSuiteTypesNode struct {
+type OnDiscussionNode struct {
 	Raw   *yaml.Node
-	Value *[]CheckSuiteTypesConstants
+	Value *DefintionsTypeValue
 }
 
-func (node *CheckSuiteTypesNode) UnmarshalYAML(value *yaml.Node) error {
+func (node *OnDiscussionNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	if len(value.Content)%2 != 0 {
+		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+	}
+	event := new(DefintionsTypeValue)
+	for i := 0; i < len(value.Content); i += 2 {
+		keyEntry := value.Content[i]
+		valueEntry := value.Content[i+1]
+
+		eventKey := keyEntry.Value
+		switch eventKey {
+		case "types":
+			event.Types = new(DefintionsTypeNode)
+			err := valueEntry.Decode(event.Types)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	node.Value = event
+	return nil
+}
+
+type OnDiscussionCommentNode struct {
+	Raw   *yaml.Node
+	Value *DefintionsTypeValue
+}
+
+func (node *OnDiscussionCommentNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	if len(value.Content)%2 != 0 {
+		return fmt.Errorf("%d:%d  error  Expected even number of key value pairs", node.Raw.Line, node.Raw.Column)
+	}
+	event := new(DefintionsTypeValue)
+	for i := 0; i < len(value.Content); i += 2 {
+		keyEntry := value.Content[i]
+		valueEntry := value.Content[i+1]
+
+		eventKey := keyEntry.Value
+		switch eventKey {
+		case "types":
+			event.Types = new(DefintionsTypeNode)
+			err := valueEntry.Decode(event.Types)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	node.Value = event
+	return nil
+}
+
+type DefintionsTypeValue struct {
+	Types *DefintionsTypeNode `yaml:"types"`
+}
+
+type DefintionsTypeNode struct {
+	Raw   *yaml.Node
+	Value *[]DefinitionsTypesConstants
+}
+
+func (node *DefintionsTypeNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	return value.Decode(&node.Value)
 }
 
-type CheckSuiteTypesConstants string
+type DefinitionsTypesConstants string
 
 const (
-	CheckSuiteTypes_Completed   CheckSuiteTypesConstants = "completed"
-	CheckSuiteTypes_Requested   CheckSuiteTypesConstants = "requested"
-	CheckSuiteTypes_Rerequested CheckSuiteTypesConstants = "rerequested"
+	CheckRunTypes_Created         DefinitionsTypesConstants = "create"
+	CheckRunTypes_Rerequested     DefinitionsTypesConstants = "rerequested"
+	CheckRunTypes_Completed       DefinitionsTypesConstants = "completed"
+	CheckRunTypes_RequestedAction DefinitionsTypesConstants = "requested_action"
 )
+
+var CheckRunTypes_Constants = []DefinitionsTypesConstants{
+	CheckRunTypes_Created,
+	CheckRunTypes_Rerequested,
+	CheckRunTypes_Completed,
+	CheckRunTypes_RequestedAction,
+}
+
+const (
+	CheckSuiteTypes_Completed   DefinitionsTypesConstants = "completed"
+	CheckSuiteTypes_Requested   DefinitionsTypesConstants = "requested"
+	CheckSuiteTypes_Rerequested DefinitionsTypesConstants = "rerequested"
+)
+
+var CheckSuiteTypes_Constants = []DefinitionsTypesConstants{
+	CheckSuiteTypes_Completed,
+	CheckSuiteTypes_Requested,
+	CheckSuiteTypes_Rerequested,
+}
+
+const (
+	DiscussionTypes_Opened          DefinitionsTypesConstants = "opened"
+	DiscussionTypes_Edited          DefinitionsTypesConstants = "edited"
+	DiscussionTypes_Deleted         DefinitionsTypesConstants = "deleted"
+	DiscussionTypes_Transferred     DefinitionsTypesConstants = "transferred"
+	DiscussionTypes_Pinned          DefinitionsTypesConstants = "pinned"
+	DiscussionTypes_Unpinned        DefinitionsTypesConstants = "unpinned"
+	DiscussionTypes_Labeled         DefinitionsTypesConstants = "labeled"
+	DiscussionTypes_Unlabeled       DefinitionsTypesConstants = "unlabeled"
+	DiscussionTypes_Locked          DefinitionsTypesConstants = "locked"
+	DiscussionTypes_Unlocked        DefinitionsTypesConstants = "unlocked"
+	DiscussionTypes_CategoryChanged DefinitionsTypesConstants = "category_changed"
+	DiscussionTypes_Answered        DefinitionsTypesConstants = "answered"
+	DiscussionTypes_Unanswered      DefinitionsTypesConstants = "unanswered"
+)
+
+var DiscussionTypes_Constants = []DefinitionsTypesConstants{
+	DiscussionTypes_Opened,
+	DiscussionTypes_Edited,
+	DiscussionTypes_Deleted,
+	DiscussionTypes_Transferred,
+	DiscussionTypes_Pinned,
+	DiscussionTypes_Unpinned,
+	DiscussionTypes_Labeled,
+	DiscussionTypes_Unlabeled,
+	DiscussionTypes_Locked,
+	DiscussionTypes_Unlocked,
+	DiscussionTypes_CategoryChanged,
+	DiscussionTypes_Answered,
+	DiscussionTypes_Unanswered,
+}
+
+const (
+	DiscussionCommentTypes_Created DefinitionsTypesConstants = "created"
+	DiscussionCommentTypes_Edited  DefinitionsTypesConstants = "edited"
+	DiscussionCommentTypes_Deleted DefinitionsTypesConstants = "deleted"
+)
+
+var DiscussionCommentTypes_Constants = []DefinitionsTypesConstants{
+	DiscussionCommentTypes_Created,
+	DiscussionCommentTypes_Edited,
+	DiscussionCommentTypes_Deleted,
+}
 
 type OnCreateNode struct {
 	Raw   *yaml.Node
-	Value *CreateEventObjectOneOf
+	Value *string
 }
 
-type CreateEventObjectOneOf struct {
-	MappingNode *CreateEventObjectValue //if properties or items key do not exist within Create parent field remove this?
+func (node *OnCreateNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
 }
 
-type CreateEventObjectValue struct {
+type OnDeleteNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnDeleteNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnDeploymentNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnDeploymentNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnDeploymentStatusNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnDeploymentStatusNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnForkNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnForkNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnGollumNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnGollumNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
 }
 
 // --------------------------------------------On----------------------------------------------------
@@ -804,7 +974,7 @@ type JobNeedsNode struct {
 }
 
 type JobNeedsOneOf struct {
-	ScalarNode   string
+	ScalarNode   *string
 	SequenceNode *[]string
 }
 
@@ -2271,17 +2441,17 @@ func (node *EnvPropertiesNode) UnmarshalYAML(value *yaml.Node) error {
 
 // --------------------------------------------Permissions----------------------------------------------------
 
-type DefinitionPermissionsNode struct {
+type WorkflowPermissionsNode struct {
 	Raw   *yaml.Node
-	OneOf DefinitionPermissionsOneOf
+	OneOf WorkflowPermissionsOneOf
 }
 
-type DefinitionPermissionsOneOf struct {
+type WorkflowPermissionsOneOf struct {
 	ScalarNode  *string
 	MappingNode *DefinitionPermissionsValue
 }
 
-func (node *DefinitionPermissionsNode) UnmarshalYAML(value *yaml.Node) error {
+func (node *WorkflowPermissionsNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	switch node.Raw.Kind {
 	case yaml.ScalarNode:
@@ -2295,7 +2465,7 @@ func (node *DefinitionPermissionsNode) UnmarshalYAML(value *yaml.Node) error {
 		if !contains {
 			return fmt.Errorf("%d:%d  error  %s %s", node.Raw.Line, node.Raw.Column, "expected one of scalar types:", strings.Join(scalarTypes, ", "))
 		}
-	
+
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.MappingNode:
 		if len(value.Content)%2 != 0 {
