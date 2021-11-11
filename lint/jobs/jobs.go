@@ -8,7 +8,6 @@ import (
 )
 
 func Lint(sink *sink.ProblemSink, target *workflow.WorkflowJobsNode) error {
-
 	if target != nil && target.Raw != nil {
 		if err := checkJobType(sink, target); err != nil {
 			return err
@@ -20,7 +19,6 @@ func Lint(sink *sink.ProblemSink, target *workflow.WorkflowJobsNode) error {
 			return err
 		}
 	}
-
 	return nil
 }
 

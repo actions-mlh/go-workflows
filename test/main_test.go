@@ -26,7 +26,6 @@ func TestParse(t *testing.T) {
 		input, err := os.ReadFile(path)
 		if err != nil {
 			t.Errorf("error reading file %s: %s", path, err)
-			return err
 		}
 		problems, err := lint.Lint(path, input)
 		if err != nil {

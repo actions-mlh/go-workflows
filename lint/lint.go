@@ -27,7 +27,6 @@ func Lint(filename string, input []byte) ([]string, error) {
 	if err != nil {
 		return sink.Problems, err
 	}
-
 	err = jobs.Lint(&sink, node.Value.Jobs)
 	if err != nil {
 		return sink.Problems, err
