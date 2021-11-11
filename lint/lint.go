@@ -7,6 +7,7 @@ import (
 	"c2c-actions-mlh-workflow-parser/lint/sink"
 
 	"c2c-actions-mlh-workflow-parser/lint/root"
+	"c2c-actions-mlh-workflow-parser/lint/name"
 	"c2c-actions-mlh-workflow-parser/lint/jobs"
 )
 
@@ -21,6 +22,12 @@ func Lint(filename string, input []byte) ([]string, error) {
 	err = root.Lint(&sink, node)
 	if err != nil {
 		return sink.Problems, err
+	}
+	if node.Value.Name != nil {
+		err = name.Lint(&sink, node.Value.Name)
+		if err != nil {
+			return sink.Problems, err
+		}
 	}
 	err = jobs.Lint(&sink, node.Value.Jobs)
 	if err != nil {

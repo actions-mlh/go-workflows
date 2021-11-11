@@ -35,14 +35,6 @@ func Lint(sink *sink.ProblemSink, target *workflow.WorkflowNode) error {
 		return err
 	}
 
-	nameType := []string{"!!str"}
-	if target.Value.Name != nil {
-		err := checkUnexpectedScalarTypes(sink, target.Value.Name.Raw, nameType)
-		if err != nil {
-			return err
-		}
-	}
-
 	jobsType := []string{"!!map"}
 	if target.Value.Jobs != nil  && target.Value.Jobs.Raw != nil {
 		err := checkUnexpectedScalarTypes(sink, target.Value.Jobs.Raw, jobsType)
