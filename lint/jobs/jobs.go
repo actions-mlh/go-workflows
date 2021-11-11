@@ -8,6 +8,21 @@ import (
 	"c2c-actions-mlh-workflow-parser/lint/sink"
 )
 
+func Lint(sink *sink.ProblemSink, target *workflow.WorkflowJobsNode) error {
+
+	if target != nil && target.Raw != nil {
+		if err := checkJobNames(sink, target.Raw); err != nil {
+			return err
+		}
+
+		if err := checkCyclicDependencies(sink, target); err != nil {
+			return err
+		}
+	}
+	
+	return nil
+}
+
 func checkJobNames(sink *sink.ProblemSink, raw *yaml.Node) error {
 	for i := 0; i < len(raw.Content); i += 2 {
 		valid, err := regexp.MatchString("^[a-zA-Z_][a-zA-Z0-9-_]*$", raw.Content[i].Value)
