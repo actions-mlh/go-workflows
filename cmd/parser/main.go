@@ -12,6 +12,7 @@ import (
 var i = flag.String("i", "", "Name of file to lint.  Equivalent to a command-line argument.")
 var o = flag.String("o", "", "A custom output file.  Defaults to stdout.")
 var h = flag.Bool("h", false, "Print instructions for how to use this tool.")
+var d = flag.Bool("d", false, "Debug: see full tree of workflow.")
 
 func main() {
 	flag.Parse()
@@ -22,6 +23,7 @@ func main() {
 	}
 
 	printHelp := false
+	spew := false
 	if len(args) == 0 {
 		printHelp = true
 	}
@@ -29,6 +31,9 @@ func main() {
 	flag.Visit(func(f *flag.Flag) {
 		if f.Name == "h" {
 			printHelp = true
+		}
+		if f.Name == "d" {
+			spew = true
 		}
 	})
 
@@ -54,7 +59,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		problems, err := lint.Lint(filename, input)
+		problems, err := lint.Lint(filename, input, spew)
 		if err != nil {
 			log.Fatal(err)
 		}
