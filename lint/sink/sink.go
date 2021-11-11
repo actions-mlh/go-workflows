@@ -2,8 +2,8 @@ package sink
 
 import (
 	"fmt"
-	"io"
 	"gopkg.in/yaml.v3"
+	"io"
 )
 
 type ProblemSink struct {
@@ -13,8 +13,8 @@ type ProblemSink struct {
 
 func (sink *ProblemSink) Record(raw *yaml.Node, format string, args ...interface{}) {
 	sink.Problems = append(sink.Problems,
-		fmt.Sprintf("%s:%d:%d\terror:\t", sink.Filename, raw.Line, raw.Column) + 
-		fmt.Sprintf(format, args...),
+		fmt.Sprintf("%s:%d:%d\terror:\t", sink.Filename, raw.Line, raw.Column)+
+			fmt.Sprintf(format, args...),
 	)
 }
 

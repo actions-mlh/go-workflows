@@ -24,7 +24,7 @@ func (node *WorkflowConcurrencyNode) UnmarshalYAML(value *yaml.Node) error {
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.MappingNode:
 		if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d\terror\tCould not process concurrency: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
+			return fmt.Errorf("%d:%d\terror\tCould not process concurrency: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 		}
 		event := new(WorkflowConcurrencyValue)
 		for i := 0; i < len(value.Content); i += 2 {

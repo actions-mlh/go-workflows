@@ -509,7 +509,7 @@ func (node *JobEnvironmentNode) UnmarshalYAML(value *yaml.Node) error {
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.MappingNode:
 		if len(node.Raw.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d\terror\tCould not process jobEnvironment: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
+			return fmt.Errorf("%d:%d\terror\tCould not process jobEnvironment: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 		}
 		event := new(JobEnvironmentValue)
 		for i := 0; i < len(value.Content); i += 2 {
@@ -1016,7 +1016,7 @@ func (node *JobContainerNode) UnmarshalYAML(value *yaml.Node) error {
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.MappingNode:
 		if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d\terror\tCould not process jobContainer: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
+			return fmt.Errorf("%d:%d\terror\tCould not process jobContainer: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 		}
 		event := new(JobContainerValue)
 		for i := 0; i < len(value.Content); i += 2 {
@@ -1328,7 +1328,7 @@ func (node *JobConcurrencyNode) UnmarshalYAML(value *yaml.Node) error {
 		return value.Decode(&node.OneOf.ScalarNode)
 	case yaml.MappingNode:
 		if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d\terror\tCould not process jobConcurrency: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
+			return fmt.Errorf("%d:%d\terror\tCould not process jobConcurrency: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 		}
 		event := new(WorkflowConcurrencyValue)
 		for i := 0; i < len(value.Content); i += 2 {

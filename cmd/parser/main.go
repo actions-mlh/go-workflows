@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+
 	"c2c-actions-mlh-workflow-parser/lint"
 )
 
@@ -13,7 +14,7 @@ var o = flag.String("o", "", "A custom output file.  Defaults to stdout.")
 var h = flag.Bool("h", false, "Print instructions for how to use this tool.")
 
 func main() {
-	flag.Parse()	
+	flag.Parse()
 	args := flag.Args()
 
 	if *i != "" {
@@ -25,7 +26,7 @@ func main() {
 		printHelp = true
 	}
 
-	flag.Visit(func (f *flag.Flag) {
+	flag.Visit(func(f *flag.Flag) {
 		if f.Name == "h" {
 			printHelp = true
 		}
@@ -55,7 +56,7 @@ func main() {
 		}
 		problems, err := lint.Lint(filename, input)
 		if err != nil {
-			log.Fatal(err)			
+			log.Fatal(err)
 		}
 		for _, problem := range problems {
 			fmt.Fprintln(w, problem)

@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
 	"c2c-actions-mlh-workflow-parser/lint"
 )
 

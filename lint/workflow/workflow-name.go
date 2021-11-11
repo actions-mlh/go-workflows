@@ -13,5 +13,3 @@ func (node *WorkflowNameNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	return value.Decode(&node.Value)
 }
-
-

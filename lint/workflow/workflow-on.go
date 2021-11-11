@@ -27,7 +27,7 @@ func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
 	case yaml.MappingNode:
 		value := node.Raw
 		if len(value.Content)%2 != 0 {
-		return fmt.Errorf("%d:%d\terror\tCould not process on: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
+			return fmt.Errorf("%d:%d\terror\tCould not process on: value.Contents has odd length, should be paired", node.Raw.Line, node.Raw.Column)
 		}
 		event := new(WorkFlowOnValue)
 		for i := 0; i < len(value.Content); i += 2 {
@@ -247,7 +247,6 @@ func (node *OnDiscussionCommentNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Value = event
 	return nil
 }
-
 
 type DefinitionsTypeValue struct {
 	Types *DefinitionsTypeNode `yaml:"types"`
