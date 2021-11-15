@@ -59,7 +59,10 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		problems, err := lint.Lint(filename, input, spew)
+		if spew {
+			lint.Spew(input)
+		}
+		problems, err := lint.Lint(filename, input)
 		if err != nil {
 			log.Fatal(err)
 		}

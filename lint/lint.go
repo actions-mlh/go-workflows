@@ -14,22 +14,14 @@ import (
 	"c2c-actions-mlh-workflow-parser/lint/root"
 )
 
-func Lint(filename string, input []byte, debug bool) ([]string, error) {
+func Lint(filename string, input []byte) ([]string, error) {
 	sink := sink.ProblemSink{Filename: filename}
 	node := new(workflow.WorkflowNode)
 	err := yaml.Unmarshal(input, &node)
 	if err != nil {
 		return sink.Problems, err
 	}
-	if debug {
-		fmt.Println("~~ORIGINAL FILE:~~")
-		fmt.Println(string(input))
-		fmt.Println("~~PROCESSED INFO:~~")
-		err = spew(node)
-		if err != nil {
-			return sink.Problems, err
-		}
-	}
+
 	err = root.Lint(&sink, node)
 	if err != nil {
 		return sink.Problems, err
@@ -45,7 +37,15 @@ func Lint(filename string, input []byte, debug bool) ([]string, error) {
 	return sink.Problems, nil
 }
 
-func spew(node *workflow.WorkflowNode) error {
+func Spew(input []byte) error {
+	fmt.Println("~~ORIGINAL FILE:~~")
+	fmt.Println(string(input))
+	fmt.Println("~~PROCESSED INFO:~~")
+	node := new(workflow.WorkflowNode)
+	err := yaml.Unmarshal(input, &node)
+	if err != nil {
+		return err
+	}
 	bytes, err := json.Marshal(node)
 	if err != nil {
 		return err
