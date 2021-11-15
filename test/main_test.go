@@ -13,6 +13,13 @@ import (
 func TestParse(t *testing.T) {
 	root := "../yaml/clean/"
 
+	/*
+	   Scan the directory of clean files and attempt to lint each of them.
+	   The files come from https://github.com/actions/starter-workflows and should contain no errors.
+	   If any errors are found, fail the test and report the found errors.
+
+	   see yaml/clean/README.md for more information.
+	*/
 	t.Log("CLEAN TESTS:")
 	filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
@@ -27,6 +34,7 @@ func TestParse(t *testing.T) {
 		if err != nil {
 			t.Errorf("error reading file %s: %s", path, err)
 		}
+		// lint call
 		problems, err := lint.Lint(path, input)
 		if err != nil {
 			t.Errorf("error linting file %s:\n%s", path, err)
@@ -37,6 +45,15 @@ func TestParse(t *testing.T) {
 		return nil
 	})
 
+	/*
+	   Scan the directory of dirty files.
+	   Each dirty file has a corresponding .exp file containing the errors expected from linting.
+	   We loop through both the expected errors and the ones produced from the input.
+	   Any expected error not found will be reported,
+	   and any errors not specified in the .exp file will be reported as well.
+
+	   see yaml/dirty/README.md for more information.
+	*/
 	t.Log("DIRTY TESTS:")
 	root = "../yaml/dirty/"
 	filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
@@ -56,6 +73,7 @@ func TestParse(t *testing.T) {
 		if err != nil {
 			t.Errorf("error reading file %s.exp: %s", path, err)
 		}
+		// lint call
 		problems, err := lint.Lint(path, input)
 		if err != nil {
 			t.Errorf("error linting file %s: %s", path, err)

@@ -4,6 +4,8 @@
 
 Shamelessly ripped from https://github.com/actions/starter-workflows.
 
+The tester in `test/main_test.go` will scan this directory for YAML files, lint them, and report any errors it finds.  Of course, since these are clean files, we should expect to see no errors.
+
 ## Starter Workflows
 
 These are the workflow files for helping people get started with GitHub Actions.  They're presented whenever you start to create a new GitHub Actions workflow.
