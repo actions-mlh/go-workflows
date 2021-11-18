@@ -10,16 +10,15 @@ import (
 	"c2c-actions-mlh-workflow-parser/lint"
 )
 
-func TestParse(t *testing.T) {
+/*
+   Scan the directory of clean files and attempt to lint each of them.
+   The files come from https://github.com/actions/starter-workflows and should contain no errors.
+   If any errors are found, fail the test and report the found errors.
+
+   see yaml/clean/README.md for more information.
+*/
+func TestClean(t *testing.T) {
 	root := "../yaml/clean/"
-
-	/*
-	   Scan the directory of clean files and attempt to lint each of them.
-	   The files come from https://github.com/actions/starter-workflows and should contain no errors.
-	   If any errors are found, fail the test and report the found errors.
-
-	   see yaml/clean/README.md for more information.
-	*/
 	t.Log("CLEAN TESTS:")
 	filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
@@ -44,7 +43,9 @@ func TestParse(t *testing.T) {
 		}
 		return nil
 	})
+}
 
+func TestDirty(t *testing.T) {
 	/*
 	   Scan the directory of dirty files.
 	   Each dirty file has a corresponding .exp file containing the errors expected from linting.
@@ -55,7 +56,7 @@ func TestParse(t *testing.T) {
 	   see yaml/dirty/README.md for more information.
 	*/
 	t.Log("DIRTY TESTS:")
-	root = "../yaml/dirty/"
+	root := "../yaml/dirty/"
 	filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
