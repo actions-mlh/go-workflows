@@ -497,7 +497,7 @@ var DiscussionCommentTypes_Constants = []DefinitionsTypesConstants{
 
 type OnCreateNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnCreateNode) UnmarshalYAML(value *yaml.Node) error {
@@ -507,7 +507,7 @@ func (node *OnCreateNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnDeleteNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnDeleteNode) UnmarshalYAML(value *yaml.Node) error {
@@ -517,7 +517,7 @@ func (node *OnDeleteNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnDeploymentNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnDeploymentNode) UnmarshalYAML(value *yaml.Node) error {
@@ -527,7 +527,7 @@ func (node *OnDeploymentNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnDeploymentStatusNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnDeploymentStatusNode) UnmarshalYAML(value *yaml.Node) error {
@@ -537,7 +537,7 @@ func (node *OnDeploymentStatusNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnForkNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnForkNode) UnmarshalYAML(value *yaml.Node) error {
@@ -547,7 +547,7 @@ func (node *OnForkNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnGollumNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnGollumNode) UnmarshalYAML(value *yaml.Node) error {
@@ -557,7 +557,7 @@ func (node *OnGollumNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnIssueCommentNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnIssueCommentNode) UnmarshalYAML(value *yaml.Node) error {
@@ -567,7 +567,7 @@ func (node *OnIssueCommentNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnIssuesNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnIssuesNode) UnmarshalYAML(value *yaml.Node) error {
@@ -577,7 +577,7 @@ func (node *OnIssuesNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnLabelNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnLabelNode) UnmarshalYAML(value *yaml.Node) error {
@@ -587,7 +587,7 @@ func (node *OnLabelNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnMilestoneNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnMilestoneNode) UnmarshalYAML(value *yaml.Node) error {
@@ -597,7 +597,7 @@ func (node *OnMilestoneNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnPageBuildNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnPageBuildNode) UnmarshalYAML(value *yaml.Node) error {
@@ -607,7 +607,7 @@ func (node *OnPageBuildNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnProjectNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnProjectNode) UnmarshalYAML(value *yaml.Node) error {
@@ -617,7 +617,7 @@ func (node *OnProjectNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnProjectCardNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnProjectCardNode) UnmarshalYAML(value *yaml.Node) error {
@@ -627,7 +627,7 @@ func (node *OnProjectCardNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnProjectColumnNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnProjectColumnNode) UnmarshalYAML(value *yaml.Node) error {
@@ -637,7 +637,7 @@ func (node *OnProjectColumnNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnPublicNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnPublicNode) UnmarshalYAML(value *yaml.Node) error {
@@ -647,7 +647,7 @@ func (node *OnPublicNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnPullRequestNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnPullRequestNode) UnmarshalYAML(value *yaml.Node) error {
@@ -657,7 +657,7 @@ func (node *OnPullRequestNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnPullRequestReviewNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnPullRequestReviewNode) UnmarshalYAML(value *yaml.Node) error {
@@ -667,7 +667,7 @@ func (node *OnPullRequestReviewNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnPullRequestReviewCommentNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnPullRequestReviewCommentNode) UnmarshalYAML(value *yaml.Node) error {
@@ -677,7 +677,7 @@ func (node *OnPullRequestReviewCommentNode) UnmarshalYAML(value *yaml.Node) erro
 
 type OnPullRequestTargetNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnPullRequestTargetNode) UnmarshalYAML(value *yaml.Node) error {
@@ -687,7 +687,7 @@ func (node *OnPullRequestTargetNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnPushNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnPushNode) UnmarshalYAML(value *yaml.Node) error {
@@ -697,7 +697,7 @@ func (node *OnPushNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnRegistryPackageNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnRegistryPackageNode) UnmarshalYAML(value *yaml.Node) error {
@@ -707,7 +707,7 @@ func (node *OnRegistryPackageNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnReleaseNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnReleaseNode) UnmarshalYAML(value *yaml.Node) error {
@@ -717,7 +717,7 @@ func (node *OnReleaseNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnStatusNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnStatusNode) UnmarshalYAML(value *yaml.Node) error {
@@ -727,7 +727,7 @@ func (node *OnStatusNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnWatchNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnWatchNode) UnmarshalYAML(value *yaml.Node) error {
@@ -737,7 +737,7 @@ func (node *OnWatchNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnWorkflowRunNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnWorkflowRunNode) UnmarshalYAML(value *yaml.Node) error {
@@ -747,7 +747,7 @@ func (node *OnWorkflowRunNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnScheduleNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnScheduleNode) UnmarshalYAML(value *yaml.Node) error {
@@ -757,7 +757,7 @@ func (node *OnScheduleNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnWorkflowDispatchNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnWorkflowDispatchNode) UnmarshalYAML(value *yaml.Node) error {
@@ -767,7 +767,7 @@ func (node *OnWorkflowDispatchNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnRepositoryDispatchNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnRepositoryDispatchNode) UnmarshalYAML(value *yaml.Node) error {
@@ -777,7 +777,7 @@ func (node *OnRepositoryDispatchNode) UnmarshalYAML(value *yaml.Node) error {
 
 type OnWorkflowCallNode struct {
 	Raw   *yaml.Node
-	Value *string
+	Value *interface{}
 }
 
 func (node *OnWorkflowCallNode) UnmarshalYAML(value *yaml.Node) error {
