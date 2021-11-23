@@ -95,6 +95,144 @@ func (node *WorkflowOnNode) UnmarshalYAML(value *yaml.Node) error {
 				if err != nil {
 					return err
 				}
+			case "issue_comment":
+				event.IssueComment = new(OnIssueCommentNode)
+				err := valueEntry.Decode(event.IssueComment)
+				if err != nil {
+					return err
+				}
+			case "issues":
+				event.Issues = new(OnIssuesNode)
+				err := valueEntry.Decode(event.Issues)
+				if err != nil {
+					return err
+				}
+			case "label":
+				event.Label = new(OnLabelNode)
+				err := valueEntry.Decode(event.Label)
+				if err != nil {
+					return err
+				}
+			case "milestone":
+				event.Milestone = new(OnMilestoneNode)
+				err := valueEntry.Decode(event.Milestone)
+				if err != nil {
+					return err
+				}
+			case "page_build":
+				event.PageBuild = new(OnPageBuildNode)
+				err := valueEntry.Decode(event.PageBuild)
+				if err != nil {
+					return err
+				}
+			case "project":
+				event.Project = new(OnProjectNode)
+				err := valueEntry.Decode(event.Project)
+				if err != nil {
+					return err
+				}
+			case "project_card":
+				event.ProjectCard = new(OnProjectCardNode)
+				err := valueEntry.Decode(event.ProjectCard)
+				if err != nil {
+					return err
+				}
+			case "project_column":
+				event.ProjectColumn = new(OnProjectColumnNode)
+				err := valueEntry.Decode(event.ProjectColumn)
+				if err != nil {
+					return err
+				}
+			case "public":
+				event.Public = new(OnPublicNode)
+				err := valueEntry.Decode(event.Public)
+				if err != nil {
+					return err
+				}
+			case "pull_request":
+				event.PullRequest = new(OnPullRequestNode)
+				err := valueEntry.Decode(event.PullRequest)
+				if err != nil {
+					return err
+				}
+			case "pull_request_review":
+				event.PullRequestReview = new(OnPullRequestReviewNode)
+				err := valueEntry.Decode(event.PullRequestReview)
+				if err != nil {
+					return err
+				}
+			case "pull_request_review_comment":
+				event.PullRequestReviewComment = new(OnPullRequestReviewCommentNode)
+				err := valueEntry.Decode(event.PullRequestReviewComment)
+				if err != nil {
+					return err
+				}
+			case "pull_request_target":
+				event.PullRequestTarget = new(OnPullRequestTargetNode)
+				err := valueEntry.Decode(event.PullRequestTarget)
+				if err != nil {
+					return err
+				}
+			case "push":
+				event.Push = new(OnPushNode)
+				err := valueEntry.Decode(event.Push)
+				if err != nil {
+					return err
+				}
+			case "registry_package":
+				event.RegistryPackage = new(OnRegistryPackageNode)
+				err := valueEntry.Decode(event.RegistryPackage)
+				if err != nil {
+					return err
+				}
+			case "release":
+				event.Release = new(OnReleaseNode)
+				err := valueEntry.Decode(event.Release)
+				if err != nil {
+					return err
+				}
+			case "status":
+				event.Status = new(OnStatusNode)
+				err := valueEntry.Decode(event.Status)
+				if err != nil {
+					return err
+				}
+			case "watch":
+				event.Watch = new(OnWatchNode)
+				err := valueEntry.Decode(event.Watch)
+				if err != nil {
+					return err
+				}
+			case "workflow_run":
+				event.WorkflowRun = new(OnWorkflowRunNode)
+				err := valueEntry.Decode(event.WorkflowRun)
+				if err != nil {
+					return err
+				}
+			case "schedule":
+				event.Schedule = new(OnScheduleNode)
+				err := valueEntry.Decode(event.Schedule)
+				if err != nil {
+					return err
+				}
+			case "workflow_dispatch":
+				event.WorkflowDispatch = new(OnWorkflowDispatchNode)
+				err := valueEntry.Decode(event.WorkflowDispatch)
+				if err != nil {
+					return err
+				}
+			case "repository_dispatch":
+				event.RepositoryDispatch = new(OnRepositoryDispatchNode)
+				err := valueEntry.Decode(event.RepositoryDispatch)
+				if err != nil {
+					return err
+				}
+			case "workflow_call":
+				event.WorkflowCall = new(OnWorkflowCallNode)
+				err := valueEntry.Decode(event.WorkflowCall)
+				if err != nil {
+					return err
+				}
 			}
 		}
 		node.OneOf.MappingNode = event
@@ -120,16 +258,39 @@ var OnEvent_Constants = []OnEventConstants{
 	OnEvent_Deployment}
 
 type WorkFlowOnValue struct {
-	CheckRun          *OnCheckRunNode          `yaml:"check_run"`
-	CheckSuite        *OnCheckSuiteNode        `yaml:"check_suite"`
-	Create            *OnCreateNode            `yaml:"create"`
-	Delete            *OnDeleteNode            `yaml:"delete"`
-	Deployment        *OnDeploymentNode        `yaml:"deployment"`
-	DeploymentStatus  *OnDeploymentStatusNode  `yaml:"deployment_status"`
-	Discussion        *OnDiscussionNode        `yaml:"discussion"`
-	DiscussionComment *OnDiscussionCommentNode `yaml:"discussion_comment"`
-	Fork              *OnForkNode              `yaml:"fork"`
-	Gollum            *OnGollumNode            `yaml:"gollum"`
+	CheckRun                 *OnCheckRunNode                 `yaml:"check_run"`
+	CheckSuite               *OnCheckSuiteNode               `yaml:"check_suite"`
+	Create                   *OnCreateNode                   `yaml:"create"`
+	Delete                   *OnDeleteNode                   `yaml:"delete"`
+	Deployment               *OnDeploymentNode               `yaml:"deployment"`
+	DeploymentStatus         *OnDeploymentStatusNode         `yaml:"deployment_status"`
+	Discussion               *OnDiscussionNode               `yaml:"discussion"`
+	DiscussionComment        *OnDiscussionCommentNode        `yaml:"discussion_comment"`
+	Fork                     *OnForkNode                     `yaml:"fork"`
+	Gollum                   *OnGollumNode                   `yaml:"gollum"`
+	IssueComment             *OnIssueCommentNode             `yaml:"issue_comment"`
+	Issues                   *OnIssuesNode                   `yaml:"issues"`
+	Label                    *OnLabelNode                    `yaml:"label"`
+	Milestone                *OnMilestoneNode                `yaml:"milestone"`
+	PageBuild                *OnPageBuildNode                `yaml:"page_build"`
+	Project                  *OnProjectNode                  `yaml:"project"`
+	ProjectCard              *OnProjectCardNode              `yaml:"project_card"`
+	ProjectColumn            *OnProjectColumnNode            `yaml:"project_column"`
+	Public                   *OnPublicNode                   `yaml:"public"`
+	PullRequest              *OnPullRequestNode              `yaml:"pull_request"`
+	PullRequestReview        *OnPullRequestReviewNode        `yaml:"pull_request_review"`
+	PullRequestReviewComment *OnPullRequestReviewCommentNode `yaml:"pull_request_review_comment"`
+	PullRequestTarget        *OnPullRequestTargetNode        `yaml:"pull_request_target"`
+	Push                     *OnPushNode                     `yaml:"push"`
+	RegistryPackage          *OnRegistryPackageNode          `yaml:"registry_package"`
+	Release                  *OnReleaseNode                  `yaml:"release"`
+	Status                   *OnStatusNode                   `yaml:"status"`
+	Watch                    *OnWatchNode                    `yaml:"watch"`
+	WorkflowRun              *OnWorkflowRunNode              `yaml:"workflow_run"`
+	Schedule                 *OnScheduleNode                 `yaml:"schedule"`
+	WorkflowDispatch         *OnWorkflowDispatchNode         `yaml:"workflow_dispatch"`
+	RepositoryDispatch       *OnRepositoryDispatchNode       `yaml:"repository_dispatch"`
+	WorkflowCall             *OnWorkflowCallNode             `yaml:"workflow_call"`
 }
 
 type OnCheckRunNode struct {
@@ -390,6 +551,236 @@ type OnGollumNode struct {
 }
 
 func (node *OnGollumNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnIssueCommentNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnIssueCommentNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnIssuesNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnIssuesNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnLabelNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnLabelNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnMilestoneNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnMilestoneNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnPageBuildNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnPageBuildNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnProjectNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnProjectNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnProjectCardNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnProjectCardNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnProjectColumnNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnProjectColumnNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnPublicNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnPublicNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnPullRequestNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnPullRequestNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnPullRequestReviewNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnPullRequestReviewNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnPullRequestReviewCommentNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnPullRequestReviewCommentNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnPullRequestTargetNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnPullRequestTargetNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnPushNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnPushNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnRegistryPackageNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnRegistryPackageNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnReleaseNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnReleaseNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnStatusNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnStatusNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnWatchNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnWatchNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnWorkflowRunNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnWorkflowRunNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnScheduleNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnScheduleNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnWorkflowDispatchNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnWorkflowDispatchNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnRepositoryDispatchNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnRepositoryDispatchNode) UnmarshalYAML(value *yaml.Node) error {
+	node.Raw = value
+	return value.Decode(&node.Value)
+}
+
+type OnWorkflowCallNode struct {
+	Raw   *yaml.Node
+	Value *string
+}
+
+func (node *OnWorkflowCallNode) UnmarshalYAML(value *yaml.Node) error {
 	node.Raw = value
 	return value.Decode(&node.Value)
 }

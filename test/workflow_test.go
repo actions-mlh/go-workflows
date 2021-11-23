@@ -14,7 +14,7 @@ import (
    We expect to see each line in the original file appear in the spewed contents.
    If not, throw an error.
 */
-func TestWorkflow(t *testing.T) {
+func unusedTestWorkflow(t *testing.T) {
 	root := "../yaml/clean/"
 	t.Log("WORKFLOW TESTS:")
 	filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
