@@ -1,0 +1,72 @@
+{
+    "name": "tcp-websocket",
+    "displayName": "tcp websocket VS Code example",
+    "description": "",
+    "version": "0.0.28",
+    "publisher": "itemis",
+    "icon": "",
+    "license": "EPL-1.0",
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+    "bugs": {
+        "url": ""
+    },
+    "engines": {
+        "vscode": "^1.49.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "activationEvents": [
+        "onLanguage:plaintext"
+    ],
+    "main": "out/extension",
+    "contributes": {
+        "languages": [
+            {
+                "id": "",
+                "aliases": [
+                    ""
+                ],
+                "extensions": [
+                    ""
+                ],
+                "configuration": ""
+            }
+        ],
+        "grammars": [
+            {
+                "language": "",
+                "scopeName": "",
+                "path": ""
+            }
+        ],
+        "commands": [
+            {
+                "command": "",
+                "title": ""
+            },
+            {
+                "command": "",
+                "title": ""
+            }
+        ]
+    },
+    "devDependencies": {
+        "@types/node": "^13.13.25",
+        "@types/vscode": "^1.49.0",
+        "typescript": "^3.9.7",
+        "vscode-test": "^1.4.0"
+    },
+    "dependencies": {
+        "vscode-languageclient": "^6.1.3"
+    },
+    "scripts": {
+        "prepublish": "tsc -p ./src",
+        "compile": "tsc -p ./src",
+        "watch": "tsc -w -p ./src",
+        "update-vscode": "node ./node_modules/vscode/bin/install"
+    }
+}

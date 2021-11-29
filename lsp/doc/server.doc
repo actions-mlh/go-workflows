@@ -1,0 +1,32 @@
+Issues
+
+1) Server did not send correct data format to the client, which is why 
+the client did not send a "initialized" request back.
+
+Solution
+
+1) Wireshark: to traffic sniff both correct and incorrect data being sent.
+
+    Sub-Issues
+        1) Packages such as "go.lsp.dev/jsonrpc2", did not include jsonrpc2 field, which specified
+        the version of jsonrpc2 being supported
+        2) Content-length: var\r\n\r\n: format being sent was incorrect. 
+            a) Realized it was sending "Content-length: var\r\n\r\n", with quotes and the actaul
+                string representation of \r\n, not the hex value which was %0A%0D -> CR LF
+            b) converted "Content-length: var\r\n\r\n" into a binary value of the hex value, using
+                binaryRepresentation, err := hex.DecodeString("Content-length: var\r\n\r\n")
+        3) Missing field in result field of response being sent back to client
+            a) Found successful case of initialize response which was:
+                {
+                    "jsonrpc": "2.0",
+                    "id": 0,
+                    "result": {
+                        "capabilities": {
+                        "textDocumentSync": 2,
+                        "completionProvider": { "resolveProvider": true },
+                        "workspace": { "workspaceFolders": { "supported": true } }
+                        }
+                    }
+                }
+            b) Which i formated and sent back, think it was missing workspace field values.
+

@@ -1,0 +1,22 @@
+{
+  "1": {
+    "capabilities": {
+      "textDocumentSync": 2,
+      "completionProvider": { "resolveProvider": true },
+      "workspace": { "workspaceFolders": { "supported": true } }
+    },
+    "2": {
+      "jsonrpc": "2.0",
+      "result": {
+        "capabilities": {
+          "textDocumentSync": 1,
+          "hoverProvider": true,
+          "definitionProvider": true,
+          "referencesProvider": true
+        }
+      },
+      "error": null,
+      "id": 0
+    }
+  }
+}

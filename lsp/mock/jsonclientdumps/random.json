@@ -1,0 +1,12 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "capabilities": {
+      "textDocumentSync": 1,
+      "hoverProvider": true,
+      "definitionProvider": true,
+      "referencesProvider": true
+    }
+  },
+  "id": 0
+}
