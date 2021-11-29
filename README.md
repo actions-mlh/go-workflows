@@ -2,6 +2,10 @@
 
 Engineering demonstration by GitHub's MLH externs for an Action workflow parser and integration with developer tools. 
 
+## Support
+
+No support by GitHub will be provided for this project.
+
 ## Usage
 
 Clone this repository and run
@@ -31,6 +35,11 @@ For future maintainers, a recommended development procedure is as follows:
 2. Write a dirty YAML file and the corresponding .exp file for that lint.
 3. Run `go test ./test` to make sure the files are being found correctly.  You should fail the newly introduced tests.
 4. Code until you pass the above tests.  Make sure you run `go test ./test` so that you know if you fail any previous tests as well.
+
+
+## License
+
+MIT.
 
 ## Contact
 
