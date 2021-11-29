@@ -1,6 +1,6 @@
 # Github Workflow Parser
 
-A Go command line tool for linting and validating GitHub Actions.
+Engineering demonstration by GitHub's MLH externs for an Action workflow parser and integration with developer tools. 
 
 ## Usage
 
