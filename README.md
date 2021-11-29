@@ -36,6 +36,7 @@ For future maintainers, a recommended development procedure is as follows:
 3. Run `go test ./test` to make sure the files are being found correctly.  You should fail the newly introduced tests.
 4. Code until you pass the above tests.  Make sure you run `go test ./test` so that you know if you fail any previous tests as well.
 
+Please note as well that the lints in `lint/` are incomplete.  See the README there for more info.
 
 ## License
 

@@ -1,4 +1,10 @@
-# For when it's time to incorporate this project into the gh cli tool
+# update here
+
+https://github.com/jjayeon/cli/commit/62168be6fdbb38ca709bd023209082c70edec2ab
+
+Update: the above commit deletes the copy-paste files mentioned below and replaces them with a proper import of the repository at https://github.com/actions-mlh/go-workflows.  As of now, all updates to that repository will be reflected in the code here.
+
+## For when it's time to incorporate this project into the gh cli tool
 
 https://github.com/jjayeon/cli/commit/c03dd40769622389827bca6c46440cdec7d75bbf
 
