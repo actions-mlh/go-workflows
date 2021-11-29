@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"c2c-actions-mlh-workflow-parser/lint"
+	"github.com/actions-mlh/go-workflows/lint"
 )
 
 var i = flag.String("i", "", "Name of file to lint.  Equivalent to a command-line argument.")

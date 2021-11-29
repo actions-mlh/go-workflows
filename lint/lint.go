@@ -3,16 +3,17 @@ package lint
 import (
 	"encoding/json"
 	"fmt"
-	"gopkg.in/yaml.v3"
 	"strings"
 
-	"c2c-actions-mlh-workflow-parser/lint/sink"
-	"c2c-actions-mlh-workflow-parser/lint/workflow"
+	"gopkg.in/yaml.v3"
 
-	"c2c-actions-mlh-workflow-parser/lint/root"
-	"c2c-actions-mlh-workflow-parser/lint/name"
-	"c2c-actions-mlh-workflow-parser/lint/jobs"
-	"c2c-actions-mlh-workflow-parser/lint/on"
+	"github.com/actions-mlh/go-workflows/lint/sink"
+	"github.com/actions-mlh/go-workflows/lint/workflow"
+
+	"github.com/actions-mlh/go-workflows/lint/jobs"
+	"github.com/actions-mlh/go-workflows/lint/name"
+	"github.com/actions-mlh/go-workflows/lint/on"
+	"github.com/actions-mlh/go-workflows/lint/root"
 )
 
 func Lint(filename string, input []byte) ([]string, error) {

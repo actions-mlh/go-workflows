@@ -1,8 +1,8 @@
 package on
 
 import (
-	"c2c-actions-mlh-workflow-parser/lint/sink"
-	"c2c-actions-mlh-workflow-parser/lint/workflow"
+	"github.com/actions-mlh/go-workflows/lint/sink"
+	"github.com/actions-mlh/go-workflows/lint/workflow"
 )
 
 func Lint(sink *sink.ProblemSink, target *workflow.WorkflowOnNode) error {

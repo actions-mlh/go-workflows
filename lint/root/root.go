@@ -1,11 +1,12 @@
 package root
 
 import (
-	"gopkg.in/yaml.v3"
 	"strings"
 
-	"c2c-actions-mlh-workflow-parser/lint/sink"
-	"c2c-actions-mlh-workflow-parser/lint/workflow"
+	"gopkg.in/yaml.v3"
+
+	"github.com/actions-mlh/go-workflows/lint/sink"
+	"github.com/actions-mlh/go-workflows/lint/workflow"
 )
 
 func Lint(sink *sink.ProblemSink, target *workflow.WorkflowNode) error {
