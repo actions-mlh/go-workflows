@@ -11,12 +11,53 @@ import (
 	"os"
 	"strings"
 	"testing"
-
 	"github.com/stretchr/testify/require"
 	"go.lsp.dev/jsonrpc2"
 	"go.lsp.dev/protocol"
 	"go.uber.org/zap"
+	"github.com/pkg/errors"
 )
+
+func TestNewInitializeResult(t *testing.T) {
+	body := parse.LspBody{
+		Jsonrpc: "2.0",
+		Id:      0,
+		Method:  "initialize",
+		Params:  jsonclientdumps.JsonRawMessage,
+	}
+	params := body.Params
+	initializeParamStruct := protocol.InitializeParams{}
+	err := json.Unmarshal(params, &initializeParamStruct)
+	if err != nil {
+		errors.New("decoding lsp body params")
+	}
+
+	tests := []struct {
+		name    string
+		initParamStruct protocol.InitializeParams
+		want    string
+	}{
+		{
+			name: "initialize function test",
+			initParamStruct: initializeParamStruct,
+			want:   "hello",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := parse.NewInitializeResult(tt.initParamStruct)
+			fmt.Println("-----------TESTING FILE-------------")
+			if err != nil {
+				fmt.Printf("%+v\n", err)
+			}
+			fmt.Printf("%+v\n", result)
+			// require.NoError(t, err)
+			require.Equal(t, tt.want, err)
+		})
+	}
+
+
+}
 
 func TestInitialize(t *testing.T) {
 	file, err := os.OpenFile("../../mock/mockwriter/writer.txt", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)

@@ -20,7 +20,7 @@
         "Programming Languages"
     ],
     "activationEvents": [
-        "onLanguage:plaintext"
+        "onLanguage:yaml"
     ],
     "main": "out/extension",
     "contributes": {

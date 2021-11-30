@@ -14,16 +14,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
-
 	"github.com/pkg/errors"
-
-	// "github.com/sourcegraph/go-langserver/pkg/lsp"
-	// "kythe.io/kythe/go/languageserver"
-	// "kythe.io/kythe/go/services/xrefs"
-	// "go.lsp.dev/protocol"
-	// "go.uber.org/zap"
-	// "go.lsp.dev/jsonrpc2"
-
 )
 
 const (
@@ -132,6 +123,7 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 		return errors.Wrap(err, "encoding marshalled header")
 	}
 
+	// write to client
 	if _, err := conn.Write(*responseHeader); err != nil {
 		return errors.Wrap(err, "writing response to connection")
 	}
