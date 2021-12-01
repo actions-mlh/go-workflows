@@ -16,7 +16,7 @@ let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
     console.log("configuring workspace...");
-    context.subscriptions.push(startLanguageServerTCP(5007, ["plaintext"]));
+    context.subscriptions.push(startLanguageServerTCP(5007, ["yaml"]));
 }
 
 function startLanguageServerTCP(address: number, documentSelector: string[]): Disposable {

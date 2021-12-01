@@ -16,23 +16,16 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-
-	// "github.com/sourcegraph/go-langserver/pkg/lsp"
-	// "kythe.io/kythe/go/languageserver"
-	// "kythe.io/kythe/go/services/xrefs"
-	// "go.lsp.dev/protocol"
-	// "go.uber.org/zap"
-	// "go.lsp.dev/jsonrpc2"
-
 )
 
 const (
-	// maxContentLength = 1 << 20
+// maxContentLength = 1 << 20
 )
 
 const (
 	serverInitialize  string = "initialize"
 	serverInitialized string = "initialized"
+	didChanged        string = "textDocument/didChange"
 )
 
 func main() {
@@ -110,6 +103,9 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 	case serverInitialize:
 		result, err = tcpserver.Initialize(body)
 	case serverInitialized:
+
+	// case didChange:
+	// 	tcpServer.didChange()
 	default:
 		err = errors.Errorf("unsupported method: %q", body.Method)
 	}
@@ -132,12 +128,13 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 		return errors.Wrap(err, "encoding marshalled header")
 	}
 
+	// write to client
 	if _, err := conn.Write(*responseHeader); err != nil {
-		return errors.Wrap(err, "writing response to connection")
+		return errors.Wrap(err, "writing header response to connection")
 	}
 
 	if _, err := conn.Write(marshalledBodyRequest); err != nil {
-		return errors.Wrap(err, "writing response to connection")
+		return errors.Wrap(err, "writing header response to connection")
 	}
 
 	return nil

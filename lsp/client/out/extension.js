@@ -10,7 +10,7 @@ const vscode_languageclient_1 = require("vscode-languageclient");
 let client;
 function activate(context) {
     console.log("configuring workspace...");
-    context.subscriptions.push(startLanguageServerTCP(5007, ["plaintext"]));
+    context.subscriptions.push(startLanguageServerTCP(5007, ["yaml"]));
 }
 exports.activate = activate;
 function startLanguageServerTCP(address, documentSelector) {
