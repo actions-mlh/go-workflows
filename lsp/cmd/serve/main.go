@@ -193,7 +193,6 @@ func parseRequest(in io.Reader) (_ *parse.LspRequest, last bool, err error) {
 	default:
 		return nil, false, errors.Errorf("unsupported content type: %q", header.ContentType)
 	}
-
 	parsedBody, err := parseBody(in, header.ContentLength)
 	if err != nil {
 		return nil, false, errors.Wrap(err, "parsing body")
@@ -221,7 +220,7 @@ func parseHeader(in io.Reader) (*parse.LspHeader, error) {
 
 	for scan.Scan() {
 		header := scan.Text()
-		fmt.Println(header)
+		// fmt.Println("HEADER:", header)
 		if header == "" {
 			// last header
 			return &lsp, nil
@@ -262,6 +261,7 @@ func parseBody(in io.Reader, contentLength int64) (string, error) {
 	scanner := bufio.NewScanner(in)
 
 	split := func(data []byte, atEOF bool) (advance int, token []byte, err error) {
+		fmt.Printf("\nsplit: %d/%d\n", len(data), contentLength)
 		if atEOF || (len(data) == int(contentLength)) {
 			return len(data), data, nil
 		}
@@ -270,9 +270,9 @@ func parseBody(in io.Reader, contentLength int64) (string, error) {
 	scanner.Split(split)
 	buf := make([]byte, 2)
 	scanner.Buffer(buf, bufio.MaxScanTokenSize)
-	fmt.Println("entering loop (parseBody)")
+	fmt.Println("entering loop (parseBody) :", contentLength)
 	for scanner.Scan() { // stuck here waiting for more input
-		fmt.Println("in loop")
+		fmt.Println("in loop:", contentLength)
 		if len(scanner.Bytes()) == int(contentLength) {
 			body = scanner.Text()
 			break
