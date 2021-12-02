@@ -25,7 +25,7 @@ func NewInitializeResult(initializeParamStruct protocol.InitializeParams) (*Init
 	 * `TextDocumentSyncKind.None`.
 	 */
 	// Non-Detailed
-	result.Capabilities.TextDocumentSync = 2
+	result.Capabilities.TextDocumentSync = 1
 
 	// Completion Request
 	result.Capabilities.CompletionProvider.ResolveProvider = true
