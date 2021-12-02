@@ -11,10 +11,11 @@ import (
 	tcpserver "lsp/server"
 	"lsp/server/parse"
 	"net"
-	"os"
+	// "os"
 	"strconv"
 	"strings"
 
+	// "github.com/actions-mlh/go-workflows/lint"
 	"github.com/pkg/errors"
 )
 
@@ -77,13 +78,15 @@ func handleClientConn(conn io.ReadWriteCloser) error {
 
 	more := true
 	for more {
-		req, last, err := parseRequest(io.TeeReader(conn, os.Stderr))
+		// req, last, err := parseRequest(io.TeeReader(conn, os.Stderr))
+		fmt.Println("HERE (handleClientConn loop)")
+		req, last, err := parseRequest(conn)
 		if err != nil {
 			return errors.Wrap(err, "parsing request")
 		}
 
 		if last {
-			more = false
+			// more = false
 		}
 
 		// handle request and respond
@@ -95,6 +98,7 @@ func handleClientConn(conn io.ReadWriteCloser) error {
 }
 
 func serveReq(conn io.Writer, req *parse.LspRequest) error {
+	fmt.Println("HERE (serveReq)")
 	body := req.Body
 	var result interface{}
 	var err error
@@ -107,7 +111,8 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 	// case didChange:
 	// 	tcpServer.didChange()
 	default:
-		err = errors.Errorf("unsupported method: %q", body.Method)
+		// err = errors.Errorf("unsupported method: %q", body.Method)
+		fmt.Println("HERE (serveReq switch)")
 	}
 	if err != nil {
 		return errors.Wrap(err, "handling method")
@@ -179,6 +184,7 @@ func marshalInterface(obj interface{}) (json.RawMessage, error) {
 }
 
 func parseRequest(in io.Reader) (_ *parse.LspRequest, last bool, err error) {
+	fmt.Println("HERE (parseRequest)")
 	header, err := parseHeader(in)
 	if err != nil {
 		return nil, false, errors.Wrap(err, "parsing header")
