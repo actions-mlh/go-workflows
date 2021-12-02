@@ -11,7 +11,7 @@ import (
 	tcpserver "lsp/server"
 	"lsp/server/parse"
 	"net"
-	// "os"
+	"os"
 	"strconv"
 	"strings"
 
@@ -76,15 +76,11 @@ func handleClientConn(conn io.ReadWriteCloser) error {
 	defer conn.Close()
 	fmt.Print("\n")
 
-	more := true
-	for more {
-		// req, last, err := parseRequest(io.TeeReader(conn, os.Stderr))
-		fmt.Println("HERE (handleClientConn loop)")
-		req, last, err := parseRequest(conn)
+	for {
+		req, last, err := parseRequest(io.TeeReader(conn, os.Stderr))
 		if err != nil {
 			return errors.Wrap(err, "parsing request")
 		}
-
 		if last {
 			// more = false
 		}
@@ -184,7 +180,6 @@ func marshalInterface(obj interface{}) (json.RawMessage, error) {
 }
 
 func parseRequest(in io.Reader) (_ *parse.LspRequest, last bool, err error) {
-	fmt.Println("HERE (parseRequest)")
 	header, err := parseHeader(in)
 	if err != nil {
 		return nil, false, errors.Wrap(err, "parsing header")
@@ -203,7 +198,6 @@ func parseRequest(in io.Reader) (_ *parse.LspRequest, last bool, err error) {
 	if err != nil {
 		return nil, false, errors.Wrap(err, "parsing body")
 	}
-
 	body := new(parse.LspBody)
 	err = json.Unmarshal([]byte(parsedBody), &body)
 
@@ -276,16 +270,17 @@ func parseBody(in io.Reader, contentLength int64) (string, error) {
 	scanner.Split(split)
 	buf := make([]byte, 2)
 	scanner.Buffer(buf, bufio.MaxScanTokenSize)
-	for scanner.Scan() {
+	fmt.Println("entering loop (parseBody)")
+	for scanner.Scan() { // stuck here waiting for more input
+		fmt.Println("in loop")
 		if len(scanner.Bytes()) == int(contentLength) {
 			body = scanner.Text()
 			break
 		}
 	}
-
+	fmt.Println("exiting loop")
 	if err := scanner.Err(); err != nil {
 		return "", errors.Wrap(err, "scanning body entries")
 	}
-
 	return body, nil
 }
