@@ -184,34 +184,11 @@ func parseRequest(in io.Reader) (_ *parse.LspRequest, last bool, err error) {
 		return nil, false, errors.Wrap(err, "parsing header")
 	}
 
-	switch header.ContentType {
-	case "application/vscode-jsonrpc; charset=utf-8":
-		// continue
-	case "":
-
-	default:
-		return nil, false, errors.Errorf("unsupported content type: %q", header.ContentType)
-	}
-
-	parsedBody, err := parseBody(in, header.ContentLength)
+	body, last, err := parseBody(in, last, header.ContentLength)
 	if err != nil {
 		return nil, false, errors.Wrap(err, "parsing body")
 	}
 
-	body := new(parse.LspBody)
-	err = json.Unmarshal([]byte(parsedBody), &body)
-
-	switch err {
-	case io.EOF:
-		// no more requests are coming
-		last = true
-	case nil:
-		// no problem
-	default:
-		return nil, false, errors.Wrap(err, "decoding body")
-	}
-
-	// do something with `req`
 	return &parse.LspRequest{Header: header, Body: body}, last, nil
 }
 
@@ -221,7 +198,6 @@ func parseHeader(in io.Reader) (*parse.LspHeader, error) {
 
 	for scan.Scan() {
 		header := scan.Text()
-		fmt.Println(header)
 		if header == "" {
 			// last header
 			return &lsp, nil
@@ -244,6 +220,15 @@ func parseHeader(in io.Reader) (*parse.LspHeader, error) {
 	if err := scan.Err(); err != nil {
 		return nil, errors.Wrap(err, "scanning header entries")
 	}
+
+	switch lsp.ContentType {
+	case "application/vscode-jsonrpc; charset=utf-8":
+		// continue
+	case "":
+
+	default:
+		return nil, errors.Errorf("unsupported content type: %q", lsp.ContentType)
+	}
 	return nil, errors.New("no body contained")
 }
 
@@ -257,7 +242,7 @@ func splitOnce(in, sep string) (prefix, suffix string, err error) {
 	return prefix, suffix, nil
 }
 
-func parseBody(in io.Reader, contentLength int64) (string, error) {
+func parseBody(in io.Reader, last bool, contentLength int64) (*parse.LspBody, bool, error) {
 	var body string
 	scanner := bufio.NewScanner(in)
 
@@ -278,8 +263,21 @@ func parseBody(in io.Reader, contentLength int64) (string, error) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		return "", errors.Wrap(err, "scanning body entries")
+		return nil, last, errors.Wrap(err, "scanning body entries")
+	}
+	
+	newLspBody := new(parse.LspBody)
+	err := json.Unmarshal([]byte(body), &newLspBody)
+
+	switch err {
+	case io.EOF:
+		// no more requests are coming
+		last = true
+	case nil:
+		// no problem
+	default:
+		return nil, false, errors.Wrap(err, "decoding body")
 	}
 
-	return body, nil
+	return newLspBody, last, nil
 }
