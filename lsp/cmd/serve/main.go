@@ -1,17 +1,18 @@
 package main
 
 import (
+	"os"
 	"bufio"
 	"encoding/hex"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	tcpserver "lsp/server"
 	"lsp/server/parse"
 	"net"
-	"os"
 	"strconv"
 	"strings"
 
@@ -73,7 +74,6 @@ func realMain() error {
 
 func handleClientConn(conn io.ReadWriteCloser) error {
 	defer conn.Close()
-	fmt.Print("\n")
 
 	more := true
 	for more {
@@ -88,7 +88,7 @@ func handleClientConn(conn io.ReadWriteCloser) error {
 
 		// handle request and respond
 		if err := serveReq(conn, req); err != nil {
-			return errors.Wrap(err, "serving request")
+			return errors.Wrap(err, "serving request back to client...")
 		}
 	}
 	return nil
@@ -103,7 +103,6 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 	case serverInitialize:
 		result, err = tcpserver.Initialize(body)
 	case serverInitialized:
-
 	// case didChange:
 	// 	tcpServer.didChange()
 	default:
@@ -128,6 +127,8 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 		return errors.Wrap(err, "encoding marshalled header")
 	}
 
+	fmt.Println("")
+	fmt.Println("serving request...")
 	// write to client
 	if _, err := conn.Write(*responseHeader); err != nil {
 		return errors.Wrap(err, "writing header response to connection")
@@ -183,11 +184,14 @@ func parseRequest(in io.Reader) (_ *parse.LspRequest, last bool, err error) {
 	if err != nil {
 		return nil, false, errors.Wrap(err, "parsing header")
 	}
+	fmt.Println("parsed header...")
 
 	body, last, err := parseBody(in, last, header.ContentLength)
 	if err != nil {
 		return nil, false, errors.Wrap(err, "parsing body")
 	}
+	fmt.Println("")
+	fmt.Println("parsed body...")
 
 	return &parse.LspRequest{Header: header, Body: body}, last, nil
 }
@@ -243,41 +247,25 @@ func splitOnce(in, sep string) (prefix, suffix string, err error) {
 }
 
 func parseBody(in io.Reader, last bool, contentLength int64) (*parse.LspBody, bool, error) {
-	var body string
-	scanner := bufio.NewScanner(in)
-
-	split := func(data []byte, atEOF bool) (advance int, token []byte, err error) {
-		if atEOF || (len(data) == int(contentLength)) {
-			return len(data), data, nil
-		}
-		return 0, nil, nil
-	}
-	scanner.Split(split)
-	buf := make([]byte, 2)
-	scanner.Buffer(buf, bufio.MaxScanTokenSize)
-	for scanner.Scan() {
-		if len(scanner.Bytes()) == int(contentLength) {
-			body = scanner.Text()
-			break
-		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, last, errors.Wrap(err, "scanning body entries")
-	}
-	
-	newLspBody := new(parse.LspBody)
-	err := json.Unmarshal([]byte(body), &newLspBody)
+	lr := io.LimitReader(in, contentLength)
+	body, err := ioutil.ReadAll(lr)
 
 	switch err {
 	case io.EOF:
 		// no more requests are coming
-		last = true
 	case nil:
 		// no problem
+		last = false
 	default:
-		return nil, false, errors.Wrap(err, "decoding body")
+		return nil, true, errors.Wrap(err, "decoding body")
+	}
+
+	newLspBody := new(parse.LspBody)
+	err = json.Unmarshal(body, &newLspBody)
+	if err != nil {
+		return nil, true, errors.Wrap(err, "unmarshalling request body")
 	}
 
 	return newLspBody, last, nil
 }
+
