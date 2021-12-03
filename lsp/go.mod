@@ -11,6 +11,7 @@ require (
 )
 
 require (
+	github.com/actions-mlh/go-workflows v0.0.0-20211201182519-58370fc9b8d5 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/francoispqt/gojay v1.2.13 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
