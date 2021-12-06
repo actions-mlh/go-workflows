@@ -132,6 +132,7 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 	fmt.Printf("%+v\n", string(*responseHeader))
 	fmt.Println("serving body request...")
 	fmt.Printf("%+v\n", string(marshalledBodyRequest))
+
 	// write to client
 	if _, err := conn.Write(*responseHeader); err != nil {
 		return errors.Wrap(err, "writing header response to connection")
@@ -206,6 +207,8 @@ func parseHeader(in io.Reader) (*parse.LspHeader, error) {
 
 	for scan.Scan() {
 		header := scan.Text()
+		fmt.Println("printing scanned header: ", header)
+
 		if header == "" {
 			// last header
 			return &lsp, nil
