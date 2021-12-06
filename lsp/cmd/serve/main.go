@@ -1,7 +1,6 @@
 package main
 
 import (
-	"os"
 	"bufio"
 	"encoding/hex"
 	"encoding/json"
@@ -10,12 +9,12 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
-	tcpserver "lsp/server"
-	"lsp/server/parse"
+	tcpserver "github.com/actions-mlh/go-workflows/lsp/server"
+	"github.com/actions-mlh/go-workflows/lsp/server/parse"
 	"net"
+	"os"
 	"strconv"
 	"strings"
-
 	"github.com/pkg/errors"
 )
 
@@ -26,7 +25,7 @@ const (
 const (
 	serverInitialize  string = "initialize"
 	serverInitialized string = "initialized"
-	didChanged        string = "textDocument/didChange"
+	didChange         string = "textDocument/didChange"
 )
 
 func main() {
@@ -103,8 +102,9 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 	case serverInitialize:
 		result, err = tcpserver.Initialize(body)
 	case serverInitialized:
-	// case didChange:
-	// 	tcpServer.didChange()
+		// continue, result == null to response to client
+	case didChange:
+		err = tcpserver.DidChange(body)
 	default:
 		err = errors.Errorf("unsupported method: %q", body.Method)
 	}
@@ -275,4 +275,3 @@ func parseBody(in io.Reader, last bool, contentLength int64) (*parse.LspBody, bo
 
 	return newLspBody, last, nil
 }
-

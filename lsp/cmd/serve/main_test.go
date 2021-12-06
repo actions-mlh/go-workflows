@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"lsp/mock/jsonclientdumps"
-	tcpserver "lsp/server"
-	"lsp/server/parse"
+	"github.com/actions-mlh/go-workflows/lsp/mock/jsonclientdumps"
+	tcpserver "github.com/actions-mlh/go-workflows/lsp/server"
+	"github.com/actions-mlh/go-workflows/lsp/server/parse"
 	"os"
 	"strings"
 	"testing"
@@ -17,6 +17,53 @@ import (
 	"go.uber.org/zap"
 	"github.com/pkg/errors"
 )
+
+func TestDidChange(t *testing.T) {
+	body := parse.LspBody{
+		Jsonrpc: "2.0",
+		Id:      0,
+		Method:  "initialize",
+		Params: []byte(`{
+			"textDocument": {
+			  "uri": "file:///home/hank/CodingWork/Go/github.com/github-actions/testplaintext/wow.yaml",
+			  "version": 4
+			},
+			"contentChanges": [
+			  {
+				"range": {
+				  "start": { "line": 1, "character": 2 },
+				  "end": { "line": 1, "character": 2 }
+				},
+				"rangeLength": 0,
+				"text": "name: hank\n\non: spec\n\njob: \n  job1: firstJob"
+			  }
+			]
+		  }`),
+	}
+	tests := []struct {
+		name string
+		bodyLSP *parse.LspBody
+		want string
+	}{
+		{
+			name: "file content did changed",
+			bodyLSP: &body,
+			want: "random error",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tcpserver.DidChange(tt.bodyLSP)
+			fmt.Println("-----------TESTING FILE-------------")
+			if err != nil {
+				fmt.Printf("%+v\n", err)
+			}
+			// fmt.Printf("%+v\n", result)
+			// require.NoError(t, err)
+			require.Equal(t, tt.want, err)
+		})
+	}
+}
 
 func TestNewInitializeResult(t *testing.T) {
 	body := parse.LspBody{
@@ -55,8 +102,6 @@ func TestNewInitializeResult(t *testing.T) {
 			require.Equal(t, tt.want, err)
 		})
 	}
-
-
 }
 
 func TestInitialize(t *testing.T) {

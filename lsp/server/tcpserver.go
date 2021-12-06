@@ -2,9 +2,10 @@ package tcpserver
 
 import (
 	"encoding/json"
-	"lsp/server/parse"
+	"github.com/actions-mlh/go-workflows/lsp/server/parse"
 	"github.com/pkg/errors"
 	"go.lsp.dev/protocol"
+	"fmt"
 )
 
 func Initialize(body *parse.LspBody) (*parse.InitializeResult, error) {
@@ -22,4 +23,16 @@ func Initialize(body *parse.LspBody) (*parse.InitializeResult, error) {
 	}
 
 	return result, nil
+}
+
+func DidChange(body *parse.LspBody) (error) {
+	params := body.Params
+	didChangeRequest, err := parse.NewDidChangeRequest(params)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%+v\n", didChangeRequest)
+
+	return nil
 }
