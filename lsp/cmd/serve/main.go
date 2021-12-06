@@ -128,7 +128,10 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 	}
 
 	fmt.Println("")
-	fmt.Println("serving request...")
+	fmt.Println("serving headers request...")
+	fmt.Printf("%+v\n", string(*responseHeader))
+	fmt.Println("serving body request...")
+	fmt.Printf("%+v\n", string(marshalledBodyRequest))
 	// write to client
 	if _, err := conn.Write(*responseHeader); err != nil {
 		return errors.Wrap(err, "writing header response to connection")
@@ -180,6 +183,7 @@ func marshalInterface(obj interface{}) (json.RawMessage, error) {
 }
 
 func parseRequest(in io.Reader) (_ *parse.LspRequest, last bool, err error) {
+	fmt.Println("---------------------------------")
 	header, err := parseHeader(in)
 	if err != nil {
 		return nil, false, errors.Wrap(err, "parsing header")
