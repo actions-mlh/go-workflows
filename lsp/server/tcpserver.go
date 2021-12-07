@@ -5,7 +5,6 @@ import (
 	"github.com/actions-mlh/go-workflows/lsp/server/parse"
 	"github.com/pkg/errors"
 	"go.lsp.dev/protocol"
-	"fmt"
 )
 
 func Initialize(body *parse.LspBody) (*parse.InitializeResult, error) {
@@ -17,7 +16,7 @@ func Initialize(body *parse.LspBody) (*parse.InitializeResult, error) {
 	}
 
 	result, err := parse.NewInitializeResult(initializeParamStruct)
-	
+
 	if err != nil {
 		return nil, errors.Wrap(err, "decoding initialized params")
 	}
@@ -25,14 +24,17 @@ func Initialize(body *parse.LspBody) (*parse.InitializeResult, error) {
 	return result, nil
 }
 
-func DidChange(body *parse.LspBody) (error) {
+func DidChange(body *parse.LspBody) (*parse.PublishDiagnosticsParams, error) {
 	params := body.Params
-	didChangeRequest, err := parse.NewDidChangeRequest(params)
+	textDocument, diagnostics, err := parse.NewDidChangeDiagnostic(params)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	fmt.Printf("%+v\n", didChangeRequest)
+	publishedDiagParams, err := parse.NewPublishDiagParams(diagnostics, textDocument)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil
+	return publishedDiagParams, nil
 }

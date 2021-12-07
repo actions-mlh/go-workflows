@@ -21,8 +21,7 @@ import (
 func TestDidChange(t *testing.T) {
 	body := parse.LspBody{
 		Jsonrpc: "2.0",
-		Id:      0,
-		Method:  "initialize",
+		Method:  "textDocument/didChange",
 		Params: []byte(`{
 			"textDocument": {
 			  "uri": "file:///home/hank/CodingWork/Go/github.com/github-actions/testplaintext/wow.yaml",
@@ -35,7 +34,7 @@ func TestDidChange(t *testing.T) {
 				  "end": { "line": 1, "character": 2 }
 				},
 				"rangeLength": 0,
-				"text": "name: hank\n\non: spec\n\njob: \n  job1: firstJob"
+				"text": "name: Hank\n\non: \n  check_run:\n    types: [requested]\n  check_suite:\n    \njobs:\n  jobOne:\n    name: jobby\n  jobTwo:\n    name: joker\n    needs: [jobOne, jobThree]\n  jobThree:\n    needs: jobTwo\n"
 			  }
 			]
 		  }`),
@@ -53,12 +52,12 @@ func TestDidChange(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := tcpserver.DidChange(tt.bodyLSP)
+			didChangeRequest, err := tcpserver.DidChange(tt.bodyLSP)
 			fmt.Println("-----------TESTING FILE-------------")
 			if err != nil {
 				fmt.Printf("%+v\n", err)
 			}
-			// fmt.Printf("%+v\n", result)
+			fmt.Printf("%+v\n", didChangeRequest)
 			// require.NoError(t, err)
 			require.Equal(t, tt.want, err)
 		})

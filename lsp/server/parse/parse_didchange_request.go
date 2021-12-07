@@ -2,44 +2,56 @@ package parse
 
 import (
 	"encoding/json"
-	"fmt"
-
 	"github.com/actions-mlh/go-workflows/lint"
 )
 
-func NewDidChangeRequest(params json.RawMessage) (*DidChangeRequest, error) {
+func NewDidChangeDiagnostic(params json.RawMessage) (*TextDocumentValue, *[]Diagnostic, error) {
 	didChangeRequestStruct := DidChangeRequest{}
 	err := json.Unmarshal(params, &didChangeRequestStruct)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	fileInfoStruct := FileInfo{}
 	for _, fileInfo := range didChangeRequestStruct.ContentChanges {
 		err := json.Unmarshal(fileInfo, &fileInfoStruct)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
-	problems, err := lint.Lint("hanks workspace", []byte(fileInfoStruct.Text))
+	problems, err := lint.Lint("hanks_workspace.yaml", []byte(fileInfoStruct.Text))
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-
+	
+	var diagnostics []Diagnostic
 	for _, problem := range problems {
-		fmt.Println(problem)
+		diagnostic := Diagnostic{}
+		// severity
+		diagnostic.Severity = 2
+		// range { Start, End }
+		diagnostic.Range.Start.Line = problem.Range.Line - 1
+		diagnostic.Range.Start.Character = problem.Range.Column
+		diagnostic.Range.End.Line = problem.Range.Line
+		diagnostic.Range.End.Character = 0
+		// message
+		diagnostic.Message = problem.ProblemMsg
+		// source
+		diagnostic.Source = "typescript"
+
+		diagnostics = append(diagnostics, diagnostic)
 	}
 
-	return nil, nil
+	return &didChangeRequestStruct.TextDocument, &diagnostics, nil
 }
 
 type DidChangeRequest struct {
-	TextDocument   textDocumentValue `json:"textDocument"`
+	TextDocument   TextDocumentValue `json:"textDocument"`
 	ContentChanges []json.RawMessage `json:"contentChanges"`
 }
 
-type textDocumentValue struct {
+type TextDocumentValue struct {
 	Uri     string `json:"uri"`
 	Version int    `json:"version"`
 }
@@ -61,6 +73,28 @@ type startValue struct {
 }
 
 type endValue struct {
+	Line      int `json:"line"`
+	Character int `json:"character"`
+}
+
+type Diagnostic struct {
+	Severity int        `json:"severity"`
+	Range    RangeValue `json:"range"`
+	Message  string     `json:"message"`
+	Source   string     `json:"source"`
+}
+
+type RangeValue struct {
+	Start StartPosition `json:"start"`
+	End   EndPosition   `json:"end"`
+}
+
+type StartPosition struct {
+	Line      int `json:"line"`
+	Character int `json:"character"`
+}
+
+type EndPosition struct {
 	Line      int `json:"line"`
 	Character int `json:"character"`
 }

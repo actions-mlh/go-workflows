@@ -9,12 +9,13 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
-	tcpserver "github.com/actions-mlh/go-workflows/lsp/server"
-	"github.com/actions-mlh/go-workflows/lsp/server/parse"
 	"net"
 	"os"
 	"strconv"
 	"strings"
+
+	tcpserver "github.com/actions-mlh/go-workflows/lsp/server"
+	"github.com/actions-mlh/go-workflows/lsp/server/parse"
 	"github.com/pkg/errors"
 )
 
@@ -24,8 +25,10 @@ const (
 
 const (
 	serverInitialize  string = "initialize"
+	serverShutdown    string = "shutdown"
 	serverInitialized string = "initialized"
 	didChange         string = "textDocument/didChange"
+	didOpen           string = "textDocument/didOpen"
 )
 
 func main() {
@@ -85,9 +88,25 @@ func handleClientConn(conn io.ReadWriteCloser) error {
 			more = false
 		}
 
-		// handle request and respond
+		method := req.Body.Method
+		err = handleServePath(method, conn, req)
+		if err != nil {
+			return errors.Wrap(err, "serving path back to client")
+		}
+	}
+	return nil
+}
+
+func handleServePath(method string, conn io.Writer, req *parse.LspRequest) error {
+	if method == serverShutdown || method == serverInitialize {
 		if err := serveReq(conn, req); err != nil {
 			return errors.Wrap(err, "serving request back to client...")
+		}
+	} else if method == serverInitialized {
+		// continue to next notification or response
+	} else {
+		if err := serveNotif(conn, req); err != nil {
+			return errors.Wrap(err, "serving notification to client...")
 		}
 	}
 	return nil
@@ -103,8 +122,6 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 		result, err = tcpserver.Initialize(body)
 	case serverInitialized:
 		// continue, result == null to response to client
-	case didChange:
-		err = tcpserver.DidChange(body)
 	default:
 		err = errors.Errorf("unsupported method: %q", body.Method)
 	}
@@ -145,6 +162,68 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 	return nil
 }
 
+func serveNotif(conn io.Writer, req *parse.LspRequest) error {
+	body := req.Body
+	var notif interface{}
+	var method string
+	var err error
+
+	switch body.Method {
+	// case serverInitialized:
+		// notif, err = tcpserver.DidChange(body)
+	case didOpen:
+		//
+	case didChange:
+		notif, err = tcpserver.DidChange(body)
+	default:
+		err = errors.Errorf("unsupported method: %q", body.Method)
+	}
+	if err != nil {
+		return errors.Wrap(err, "handling method")
+	}
+
+	method = "textDocument/publishDiagnostics"
+	notifMsg, err := NewNotificationMsg(method, notif)
+	if err != nil {
+		return errors.Wrap(err, "preparing notification message")
+	}
+
+	marshalledNotifMsg, err := json.Marshal(&notifMsg)
+	if err != nil {
+		return errors.Wrap(err, "marshaling notification message")
+	}
+
+	responseHeader, err := NewHeader(marshalledNotifMsg)
+	if err != nil {
+		return errors.Wrap(err, "encoding marshalled header")
+	}
+
+	if _, err := conn.Write(*responseHeader); err != nil {
+		return errors.Wrap(err, "writing header response to connection")
+	}
+
+	fmt.Println(string(marshalledNotifMsg))
+	if _, err := conn.Write(marshalledNotifMsg); err != nil {
+		return errors.Wrap(err, "writing notification message to client")
+	}
+
+	return nil
+}
+
+func NewNotificationMsg(method string, notif interface{}) (*NotificationMessage, error) {
+	n, err := marshalInterface(notif)
+	notification := &NotificationMessage{
+		Method: method,
+		Params: n,
+	}
+	return notification, err
+}
+
+type NotificationMessage struct {
+	Method string          `json:"method"`
+	Params json.RawMessage `json:"params"`
+}
+
 func NewHeader(marshalledBody []byte) (*[]byte, error) {
 	contentLengthRespBody := fmt.Sprint(len(marshalledBody))
 	// CR LF -> %0D%0A to seperate header and body
@@ -178,7 +257,7 @@ type Response struct {
 func marshalInterface(obj interface{}) (json.RawMessage, error) {
 	data, err := json.Marshal(obj)
 	if err != nil {
-		return nil, errors.Wrap(err, "interface requst to json raw message")
+		return nil, errors.Wrap(err, "interface request to json raw message")
 	}
 	return json.RawMessage(data), nil
 }
@@ -208,7 +287,6 @@ func parseHeader(in io.Reader) (*parse.LspHeader, error) {
 	for scan.Scan() {
 		header := scan.Text()
 		fmt.Println("printing scanned header: ", header)
-
 		if header == "" {
 			// last header
 			return &lsp, nil
