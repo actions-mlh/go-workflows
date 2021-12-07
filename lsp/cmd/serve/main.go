@@ -11,12 +11,11 @@ import (
 	"log"
 	"net"
 	"os"
-	"strconv"
 	"strings"
-
 	tcpserver "github.com/actions-mlh/go-workflows/lsp/server"
 	"github.com/actions-mlh/go-workflows/lsp/server/parse"
 	"github.com/pkg/errors"
+	"strconv"
 )
 
 const (
@@ -89,7 +88,7 @@ func handleClientConn(conn io.ReadWriteCloser) error {
 		}
 
 		method := req.Body.Method
-		err = handleServePath(method, conn, req)
+		more, err = handleServePath(more, method, conn, req)
 		if err != nil {
 			return errors.Wrap(err, "serving path back to client")
 		}
@@ -97,19 +96,24 @@ func handleClientConn(conn io.ReadWriteCloser) error {
 	return nil
 }
 
-func handleServePath(method string, conn io.Writer, req *parse.LspRequest) error {
+func handleServePath(more bool, method string, conn io.Writer, req *parse.LspRequest) (bool, error) {
 	if method == serverShutdown || method == serverInitialize {
 		if err := serveReq(conn, req); err != nil {
-			return errors.Wrap(err, "serving request back to client...")
+			return more, errors.Wrap(err, "serving request back to client...")
 		}
-	} else if method == serverInitialized {
-		// continue to next notification or response
+		if method == serverShutdown {
+			more = false
+			return more, nil
+		}
+	// } else if method == serverInitialized {
+	// 	// continue to next notification or response
+	// 	return more, nil 
 	} else {
 		if err := serveNotif(conn, req); err != nil {
-			return errors.Wrap(err, "serving notification to client...")
+			return more, errors.Wrap(err, "serving notification to client...")
 		}
 	}
-	return nil
+	return more, nil
 }
 
 func serveReq(conn io.Writer, req *parse.LspRequest) error {
@@ -162,15 +166,38 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 	return nil
 }
 
+var testBody = &parse.LspBody{
+	Jsonrpc: "2.0",
+	Method:  "textDocument/didChange",
+	Params: []byte(`{
+		"textDocument": {
+		  "uri": "file:///home/hank/CodingWork/Go/github.com/github-actions/testplaintext/wow.yaml",
+		  "version": 4
+		},
+		"contentChanges": [
+		  {
+			"range": {
+			  "start": { "line": 1, "character": 2 },
+			  "end": { "line": 1, "character": 2 }
+			},
+			"rangeLength": 0,
+			"text": "name: Hank\n\non: \n  check_run:\n    types: [requested]\n  check_suite:\n    \njobs:\n  jobOne:\n    name: jobby\n  jobTwo:\n    name: joker\n    needs: [jobOne, jobThree]\n  jobThree:\n    needs: jobTwo\n"
+		  }
+		]
+	  }`),
+}
+
 func serveNotif(conn io.Writer, req *parse.LspRequest) error {
-	body := req.Body
+	body := testBody
 	var notif interface{}
 	var method string
 	var err error
 
+	// fmt.Printf("%+v\n", body)
+
 	switch body.Method {
-	// case serverInitialized:
-		// notif, err = tcpserver.DidChange(body)
+	case serverInitialized:
+		notif, err = tcpserver.DidChange(body)
 	case didOpen:
 		//
 	case didChange:
