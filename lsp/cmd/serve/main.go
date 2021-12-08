@@ -291,7 +291,7 @@ func marshalInterface(obj interface{}) (json.RawMessage, error) {
 }
 
 func parseRequest(in io.Reader) (_ *parse.LspRequest, last bool, err error) {
-	// fmt.Println("---------------------------------")
+	fmt.Println("---------------------------------")
 	header, err := parseHeader(in)
 	if err != nil {
 		return nil, false, errors.Wrap(err, "parsing header")
@@ -310,41 +310,24 @@ func parseRequest(in io.Reader) (_ *parse.LspRequest, last bool, err error) {
 func parseHeader(in io.Reader) (*parse.LspHeader, error) {
 	var lsp parse.LspHeader
 	scan := bufio.NewScanner(in)
-
-	for scan.Scan() {
-		header := scan.Text()
-		if header == "" {
-			// last header
-			return &lsp, nil
-		}
-		name, value, err := splitOnce(header, ": ")
-		if err != nil {
-			return nil, errors.Wrap(err, "parsing an header entry")
-		}
-		switch name {
-		case "Content-Length":
-			v, err := strconv.ParseInt(value, 10, 64)
-			if err != nil {
-				return nil, errors.Wrapf(err, "invalid Content-Length: %q", value)
-			}
-			lsp.ContentLength = v
-		case "Content-Type":
-			lsp.ContentType = value
-		}
+	scan.Scan()
+	header := scan.Text()
+	fmt.Println("HEADER:")
+	fmt.Println(string(header))
+	name, value, err := splitOnce(header, ": ")
+	if err != nil {
+		return nil, errors.Wrap(err, "parsing an header entry with splitOnce")
 	}
-	if err := scan.Err(); err != nil {
-		return nil, errors.Wrap(err, "scanning header entries")
+	if name != "Content-Length" {
+		return nil, errors.Wrap(err, "unsupported header val (not Content-Length)")
 	}
-
-	switch lsp.ContentType {
-	case "application/vscode-jsonrpc; charset=utf-8":
-		// continue
-	case "":
-
-	default:
-		return nil, errors.Errorf("unsupported content type: %q", lsp.ContentType)
+	v, err := strconv.ParseInt(value, 10, 64)
+	if err != nil {
+		return nil, errors.Wrapf(err, "invalid Content-Length: %q", value)
 	}
-	return nil, errors.New("no body contained")
+	lsp.ContentLength = v
+	scan.Scan() // get rid of newline
+	return &lsp, nil
 }
 
 func splitOnce(in, sep string) (prefix, suffix string, err error) {
@@ -360,7 +343,8 @@ func splitOnce(in, sep string) (prefix, suffix string, err error) {
 func parseBody(in io.Reader, last bool, contentLength int64) (*parse.LspBody, bool, error) {
 	lr := io.LimitReader(in, contentLength)
 	body, err := ioutil.ReadAll(lr)
-	fmt.Println("BODY INTERNAL: " + string(body))
+	fmt.Println("BODY:")
+	fmt.Println(string(body))
 	
 	// find first instance of {, slice until then.
 	// for len(body) > 0 && body[0] != 123 {
