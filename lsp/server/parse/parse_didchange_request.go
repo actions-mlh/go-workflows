@@ -22,7 +22,19 @@ func NewDidChangeDiagnostic(params json.RawMessage) (*TextDocumentValue, *[]Diag
 
 	problems, err := lint.Lint("hanks_workspace.yaml", []byte(fileInfoStruct.Text))
 	if err != nil {
-		return nil, nil, err
+		diagnostic := Diagnostic{}
+		// severity
+		diagnostic.Severity = 2
+		// range { Start, End }
+		diagnostic.Range.Start.Line = 0
+		diagnostic.Range.Start.Character = 0
+		diagnostic.Range.End.Line = 1
+		diagnostic.Range.End.Character = 0
+		// message
+		diagnostic.Message = err.Error()
+		// source
+		diagnostic.Source = "typescript"
+		return &didChangeRequestStruct.TextDocument, &[]Diagnostic{diagnostic}, nil
 	}
 	
 	var diagnostics []Diagnostic
