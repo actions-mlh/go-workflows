@@ -23,37 +23,6 @@
         "onLanguage:yaml"
     ],
     "main": "out/extension",
-    "contributes": {
-        "languages": [
-            {
-                "id": "",
-                "aliases": [
-                    ""
-                ],
-                "extensions": [
-                    ""
-                ],
-                "configuration": ""
-            }
-        ],
-        "grammars": [
-            {
-                "language": "",
-                "scopeName": "",
-                "path": ""
-            }
-        ],
-        "commands": [
-            {
-                "command": "",
-                "title": ""
-            },
-            {
-                "command": "",
-                "title": ""
-            }
-        ]
-    },
     "devDependencies": {
         "@types/node": "^13.13.25",
         "@types/vscode": "^1.49.0",

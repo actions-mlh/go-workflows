@@ -78,7 +78,8 @@ func handleClientConn(conn io.ReadWriteCloser) error {
 
 	more := true
 	for more {
-		req, last, err := parseRequest(io.TeeReader(conn, os.Stderr))
+		// req, last, err := parseRequest(io.TeeReader(conn, os.Stderr))
+		req, last, err := parseRequest(conn)
 		if err != nil {
 			return errors.Wrap(err, "parsing request")
 		}
@@ -127,7 +128,7 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 	case serverInitialized:
 		// continue, result == null to response to client
 	default:
-		err = errors.Errorf("unsupported method: %q", body.Method)
+		fmt.Printf("unsupported method: %q", body.Method)
 	}
 	if err != nil {
 		return errors.Wrap(err, "handling method")
@@ -148,6 +149,7 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 		return errors.Wrap(err, "encoding marshalled header")
 	}
 
+	// debug
 	fmt.Println("")
 	fmt.Println("serving headers request...")
 	fmt.Printf("%+v\n", string(*responseHeader))
@@ -295,14 +297,15 @@ func parseRequest(in io.Reader) (_ *parse.LspRequest, last bool, err error) {
 	if err != nil {
 		return nil, false, errors.Wrap(err, "parsing header")
 	}
-	fmt.Println("parsed header...")
+	// fmt.Println("parsed header...")
+	fmt.Printf("HEADER: %+v\n", header)
 
 	body, last, err := parseBody(in, last, header.ContentLength)
 	if err != nil {
 		return nil, false, errors.Wrap(err, "parsing body")
 	}
-	fmt.Println("")
-	fmt.Println("parsed body...")
+	// fmt.Println("parsed body...")
+	fmt.Printf("BODY: %+v\n", body)
 
 	return &parse.LspRequest{Header: header, Body: body}, last, nil
 }
@@ -361,7 +364,21 @@ func splitOnce(in, sep string) (prefix, suffix string, err error) {
 func parseBody(in io.Reader, last bool, contentLength int64) (*parse.LspBody, bool, error) {
 	lr := io.LimitReader(in, contentLength)
 	body, err := ioutil.ReadAll(lr)
-
+	fmt.Println("BODY INTERNAL: " + string(body))
+	
+	// find first instance of {, slice until then.
+	// for len(body) > 0 && body[0] != 123 {
+	// 	body = body[1:]
+	// }
+	// find last instance of }, slice until then
+	// for len(body) > 0 && body[len(body) - 1] != 125 {
+	// 	body = body[:len(body) - 1]
+	// }
+	
+	// fmt.Println("NEW BODY INTERNAL: " + string(body))
+	// if len(body) == 0 {
+	// 	return nil, true, errors.Wrap(err, "could not find { in body")
+	// }
 	switch err {
 	case io.EOF:
 		// no more requests are coming
