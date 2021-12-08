@@ -127,7 +127,7 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 	case serverInitialized:
 		// continue, result == null to response to client
 	default:
-		fmt.Errorf("unsupported method: %q", body.Method)
+		fmt.Printf("unsupported method: %q", body.Method)
 	}
 	if err != nil {
 		return errors.Wrap(err, "handling method")
@@ -188,7 +188,6 @@ func serveNotif(conn io.Writer, req *parse.LspRequest) error {
 	if err != nil {
 		return errors.Wrap(err, "handling method")
 	}
-
 	method = "textDocument/publishDiagnostics"
 	notifMsg, err := NewNotificationMsg(method, notif)
 	if err != nil {
@@ -226,6 +225,14 @@ func NewNotificationMsg(method string, notif interface{}) (*NotificationMessage,
 	return notification, err
 }
 
+func marshalInterface(obj interface{}) (json.RawMessage, error) {
+	data, err := json.Marshal(obj)
+	if err != nil {
+		return nil, errors.Wrap(err, "interface request to json raw message")
+	}
+	return json.RawMessage(data), nil
+}
+
 type NotificationMessage struct {
 	Method string          `json:"method"`
 	Params json.RawMessage `json:"params"`
@@ -259,14 +266,6 @@ type Response struct {
 	Jsonrpc string          `json:"jsonrpc"`
 	Id      int             `json:"id"`
 	Result  json.RawMessage `json:"result"`
-}
-
-func marshalInterface(obj interface{}) (json.RawMessage, error) {
-	data, err := json.Marshal(obj)
-	if err != nil {
-		return nil, errors.Wrap(err, "interface request to json raw message")
-	}
-	return json.RawMessage(data), nil
 }
 
 func parseRequest(in io.Reader) (*parse.LspRequest, bool, error) {
