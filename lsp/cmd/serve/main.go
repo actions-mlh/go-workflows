@@ -290,15 +290,26 @@ func marshalInterface(obj interface{}) (json.RawMessage, error) {
 	return json.RawMessage(data), nil
 }
 
-func parseRequest(in io.Reader) (_ *parse.LspRequest, last bool, err error) {
+func parseRequest(in io.Reader) (*parse.LspRequest, bool, error) {
 	fmt.Println("---------------------------------")
-	header, err := parseHeader(in)
-	if err != nil {
-		return nil, false, errors.Wrap(err, "parsing header")
+	var header *parse.LspHeader
+	for {
+		lr := io.LimitReader(in, 1)
+		chr, err := ioutil.ReadAll(lr)
+		if err != nil {
+			return nil, false, errors.Wrap(err, "parsing header")
+		}
+		if chr[0] == byte('{') {
+			break
+		}
+		header, err = parseHeader(in)
+		if err != nil {
+			return nil, false, errors.Wrap(err, "parsing header")
+		}
 	}
 	// fmt.Printf("HEADER: %+v\n", header)
 
-	body, last, err := parseBody(in, last, header.ContentLength)
+	body, last, err := parseBody(in, false, header.ContentLength)
 	if err != nil {
 		return nil, false, errors.Wrap(err, "parsing body")
 	}
@@ -312,8 +323,9 @@ func parseHeader(in io.Reader) (*parse.LspHeader, error) {
 	scan := bufio.NewScanner(in)
 	scan.Scan()
 	header := scan.Text()
+	header = "C" + header // add the single char we scanned in parseRequest
 	fmt.Println("HEADER:")
-	fmt.Println(string(header))
+	fmt.Println(header)
 	name, value, err := splitOnce(header, ": ")
 	if err != nil {
 		return nil, errors.Wrap(err, "parsing an header entry with splitOnce")
@@ -326,7 +338,6 @@ func parseHeader(in io.Reader) (*parse.LspHeader, error) {
 		return nil, errors.Wrapf(err, "invalid Content-Length: %q", value)
 	}
 	lsp.ContentLength = v
-	scan.Scan() // get rid of newline
 	return &lsp, nil
 }
 
@@ -341,34 +352,16 @@ func splitOnce(in, sep string) (prefix, suffix string, err error) {
 }
 
 func parseBody(in io.Reader, last bool, contentLength int64) (*parse.LspBody, bool, error) {
-	lr := io.LimitReader(in, contentLength)
+	lr := io.LimitReader(in, contentLength - 1)
 	body, err := ioutil.ReadAll(lr)
+	if err != nil {
+		return nil, true, errors.Wrap(err, "decoding body")
+	}
+	body = append([]byte{byte('{')}, body...)
+	// append() to replace missing char that we scanned in parseRequest
 	fmt.Println("BODY:")
 	fmt.Println(string(body))
 	
-	// find first instance of {, slice until then.
-	// for len(body) > 0 && body[0] != 123 {
-	// 	body = body[1:]
-	// }
-	// find last instance of }, slice until then
-	// for len(body) > 0 && body[len(body) - 1] != 125 {
-	// 	body = body[:len(body) - 1]
-	// }
-	
-	// fmt.Println("NEW BODY INTERNAL: " + string(body))
-	// if len(body) == 0 {
-	// 	return nil, true, errors.Wrap(err, "could not find { in body")
-	// }
-	switch err {
-	case io.EOF:
-		// no more requests are coming
-	case nil:
-		// no problem
-		last = false
-	default:
-		return nil, true, errors.Wrap(err, "decoding body")
-	}
-
 	newLspBody := new(parse.LspBody)
 	err = json.Unmarshal(body, &newLspBody)
 	if err != nil {
