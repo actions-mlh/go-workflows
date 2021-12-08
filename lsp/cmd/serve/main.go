@@ -147,14 +147,14 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 	if err != nil {
 		return errors.Wrap(err, "encoding marshalled header")
 	}
-	/*
+
 	// debug
 	fmt.Println("")
 	fmt.Println("serving headers request...")
 	fmt.Printf("%+v\n", string(*responseHeader))
 	fmt.Println("serving body request...")
 	fmt.Printf("%+v\n", string(marshalledBodyRequest))
-	*/
+	
 	// write to client
 	if _, err := conn.Write(*responseHeader); err != nil {
 		return errors.Wrap(err, "writing header response to connection")
@@ -167,29 +167,8 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 	return nil
 }
 
-var testBody = &parse.LspBody{
-	Jsonrpc: "2.0",
-	Method:  "textDocument/didChange",
-	Params: []byte(`{
-		"textDocument": {
-		  "uri": "file:///home/hank/CodingWork/Go/github.com/github-actions/testplaintext/wow.yaml",
-		  "version": 4
-		},
-		"contentChanges": [
-		  {
-			"range": {
-			  "start": { "line": 1, "character": 2 },
-			  "end": { "line": 1, "character": 2 }
-			},
-			"rangeLength": 0,
-			"text": "name: Hank\n\non: \n  check_run:\n    types: [requested]\n  check_suite:\n    \njobs:\n  jobOne:\n    name: jobby\n  jobTwo:\n    name: joker\n    needs: [jobOne, jobThree]\n  jobThree:\n    needs: jobTwo\n"
-		  }
-		]
-	  }`),
-}
-
 func serveNotif(conn io.Writer, req *parse.LspRequest) error {
-	body := testBody
+	body := req.Body
 	var notif interface{}
 	var method string
 	var err error
@@ -230,7 +209,7 @@ func serveNotif(conn io.Writer, req *parse.LspRequest) error {
 		return errors.Wrap(err, "writing header response to connection")
 	}
 
-	// fmt.Println("TODO:", string(marshalledNotifMsg))
+	fmt.Println("TODO:", string(marshalledNotifMsg))
 	if _, err := conn.Write(marshalledNotifMsg); err != nil {
 		return errors.Wrap(err, "writing notification message to client")
 	}

@@ -19,6 +19,10 @@ import (
 func Lint(filename string, input []byte) ([]sink.ProblemsValue, error) {
 	sink := sink.ProblemSink{Filename: filename}
 	node := new(workflow.WorkflowNode)
+	if len(input) == 0 {
+		// empty file
+		return sink.Problems, nil
+	}
 	err := yaml.Unmarshal(input, &node)
 	if err != nil {
 		return sink.Problems, err
