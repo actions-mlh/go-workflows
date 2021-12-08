@@ -39,7 +39,11 @@ func TestClean(t *testing.T) {
 			t.Errorf("error linting file %s:\n%s", path, err)
 		}
 		if len(problems) > 0 {
-			t.Errorf("error(s) found in clean file %s:\n%s", path, strings.Join(problems, "\n"))
+			var arrayOfProblems []string
+			for _, problem := range problems {
+				arrayOfProblems = append(arrayOfProblems, problem.ProblemMsg)
+			}
+			t.Errorf("error(s) found in clean file %s:\n%s", path, strings.Join(arrayOfProblems, "\n"))
 		}
 		return nil
 	})
@@ -79,17 +83,22 @@ func TestDirty(t *testing.T) {
 		if err != nil {
 			t.Errorf("error linting file %s: %s", path, err)
 		}
+		var arrayOfProblems []string
+		for _, problem := range problems {
+			arrayOfProblems = append(arrayOfProblems, problem.ProblemMsg)
+		}
+
 		expected := strings.Split(string(expectedBytes), "\n")
 		for _, expProblem := range expected {
 			if expProblem == "" {
 				continue
 			}
-			if !contains(problems, expProblem) {
+			if !contains(arrayOfProblems, expProblem) {
 				t.Errorf("missing EXPECTED problem:\n%s", expProblem)
 			}
 		}
 
-		for _, problem := range problems {
+		for _, problem := range arrayOfProblems {
 			if !contains(expected, problem) {
 				t.Errorf("found UNEXPECTED problem:\n%s", problem)
 			}

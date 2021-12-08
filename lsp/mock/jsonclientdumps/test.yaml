@@ -1,0 +1,6 @@
+name: hank
+
+on: spec
+
+job: 
+  job1: firstJob

@@ -2,11 +2,11 @@
     "version": "0.1.0",
     "configurations": [
         {
-            "name": "Launch Extension",
+            "name": "Launch YAML Parser",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
-            "args": ["--extensionDevelopmentPath=${workspaceRoot}" ]
+            "args": ["--extensionDevelopmentPath=${workspaceRoot}"]
         }
     ]
 }

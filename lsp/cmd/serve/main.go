@@ -1,7 +1,6 @@
 package main
 
 import (
-	// "os"
 	"bufio"
 	"encoding/hex"
 	"encoding/json"
@@ -10,13 +9,12 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
-	tcpserver "lsp/server"
-	"lsp/server/parse"
 	"net"
-	"strconv"
 	"strings"
-
+	tcpserver "github.com/actions-mlh/go-workflows/lsp/server"
+	"github.com/actions-mlh/go-workflows/lsp/server/parse"
 	"github.com/pkg/errors"
+	"strconv"
 )
 
 const (
@@ -25,8 +23,10 @@ const (
 
 const (
 	serverInitialize  string = "initialize"
+	serverShutdown    string = "shutdown"
 	serverInitialized string = "initialized"
-	didChanged        string = "textDocument/didChange"
+	didChange         string = "textDocument/didChange"
+	didOpen           string = "textDocument/didOpen"
 )
 
 func main() {
@@ -56,7 +56,7 @@ func realMain() error {
 
 	addr := listener.Addr().(*net.TCPAddr)
 
-	fmt.Printf("listening on %q", addr.String())
+	fmt.Printf("listening on %q...\n", addr.String())
 
 	for {
 		conn, err := listener.Accept()
@@ -87,12 +87,33 @@ func handleClientConn(conn io.ReadWriteCloser) error {
 			more = false
 		}
 
-		// handle request and respond
-		if err := serveReq(conn, req); err != nil {
-			return errors.Wrap(err, "serving request back to client...")
+		method := req.Body.Method
+		more, err = handleServePath(more, method, conn, req)
+		if err != nil {
+			return errors.Wrap(err, "serving path back to client")
 		}
 	}
 	return nil
+}
+
+func handleServePath(more bool, method string, conn io.Writer, req *parse.LspRequest) (bool, error) {
+	if method == serverShutdown || method == serverInitialize {
+		if err := serveReq(conn, req); err != nil {
+			return more, errors.Wrap(err, "serving request back to client...")
+		}
+		if method == serverShutdown {
+			more = false
+			return more, nil
+		}
+	// } else if method == serverInitialized {
+	// 	// continue to next notification or response
+	// 	return more, nil 
+	} else {
+		if err := serveNotif(conn, req); err != nil {
+			return more, errors.Wrap(err, "serving notification to client...")
+		}
+	}
+	return more, nil
 }
 
 func serveReq(conn io.Writer, req *parse.LspRequest) error {
@@ -104,8 +125,7 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 	case serverInitialize:
 		result, err = tcpserver.Initialize(body)
 	case serverInitialized:
-	// case didChange:
-	// 	tcpServer.didChange()
+		// continue, result == null to response to client
 	default:
 		fmt.Printf("unsupported method: %q", body.Method)
 	}
@@ -127,7 +147,14 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 	if err != nil {
 		return errors.Wrap(err, "encoding marshalled header")
 	}
-	// fmt.Println("serving request...")
+
+	// debug
+	fmt.Println("")
+	fmt.Println("serving headers request...")
+	fmt.Printf("%+v\n", string(*responseHeader))
+	fmt.Println("serving body request...")
+	fmt.Printf("%+v\n", string(marshalledBodyRequest))
+	
 	// write to client
 	if _, err := conn.Write(*responseHeader); err != nil {
 		return errors.Wrap(err, "writing header response to connection")
@@ -138,6 +165,77 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 	}
 
 	return nil
+}
+
+func serveNotif(conn io.Writer, req *parse.LspRequest) error {
+	body := req.Body
+	var notif interface{}
+	var method string
+	var err error
+
+	// fmt.Printf("%+v\n", body)
+
+	switch body.Method {
+	case serverInitialized:
+		notif, err = tcpserver.DidChange(body)
+	case didOpen:
+		//
+	case didChange:
+		notif, err = tcpserver.DidChange(body)
+	default:
+		err = errors.Errorf("unsupported method: %q", body.Method)
+	}
+	if err != nil {
+		return errors.Wrap(err, "handling method")
+	}
+	method = "textDocument/publishDiagnostics"
+	notifMsg, err := NewNotificationMsg(method, notif)
+	if err != nil {
+		return errors.Wrap(err, "preparing notification message")
+	}
+
+	marshalledNotifMsg, err := json.Marshal(&notifMsg)
+	if err != nil {
+		return errors.Wrap(err, "marshaling notification message")
+	}
+
+	responseHeader, err := NewHeader(marshalledNotifMsg)
+	if err != nil {
+		return errors.Wrap(err, "encoding marshalled header")
+	}
+
+	if _, err := conn.Write(*responseHeader); err != nil {
+		return errors.Wrap(err, "writing header response to connection")
+	}
+
+	fmt.Println("TODO:", string(marshalledNotifMsg))
+	if _, err := conn.Write(marshalledNotifMsg); err != nil {
+		return errors.Wrap(err, "writing notification message to client")
+	}
+
+	return nil
+}
+
+func NewNotificationMsg(method string, notif interface{}) (*NotificationMessage, error) {
+	n, err := marshalInterface(notif)
+	notification := &NotificationMessage{
+		Method: method,
+		Params: n,
+	}
+	return notification, err
+}
+
+func marshalInterface(obj interface{}) (json.RawMessage, error) {
+	data, err := json.Marshal(obj)
+	if err != nil {
+		return nil, errors.Wrap(err, "interface request to json raw message")
+	}
+	return json.RawMessage(data), nil
+}
+
+type NotificationMessage struct {
+	Method string          `json:"method"`
+	Params json.RawMessage `json:"params"`
 }
 
 func NewHeader(marshalledBody []byte) (*[]byte, error) {
@@ -170,28 +268,30 @@ type Response struct {
 	Result  json.RawMessage `json:"result"`
 }
 
-func marshalInterface(obj interface{}) (json.RawMessage, error) {
-	data, err := json.Marshal(obj)
-	if err != nil {
-		return nil, errors.Wrap(err, "interface requst to json raw message")
+func parseRequest(in io.Reader) (*parse.LspRequest, bool, error) {
+	fmt.Println("---------------------------------")
+	var header *parse.LspHeader
+	for {
+		lr := io.LimitReader(in, 1)
+		chr, err := ioutil.ReadAll(lr)
+		if err != nil {
+			return nil, false, errors.Wrap(err, "parsing header")
+		}
+		if chr[0] == byte('{') {
+			break
+		}
+		header, err = parseHeader(in)
+		if err != nil {
+			return nil, false, errors.Wrap(err, "parsing header")
+		}
 	}
-	return json.RawMessage(data), nil
-}
+	// fmt.Printf("HEADER: %+v\n", header)
 
-func parseRequest(in io.Reader) (_ *parse.LspRequest, last bool, err error) {
-	header, err := parseHeader(in)
-	if err != nil {
-		return nil, false, errors.Wrap(err, "parsing header")
-	}
-	// fmt.Println("parsed header...")
-	fmt.Printf("HEADER: %+v\n", header)
-
-	body, last, err := parseBody(in, last, header.ContentLength)
+	body, last, err := parseBody(in, false, header.ContentLength)
 	if err != nil {
 		return nil, false, errors.Wrap(err, "parsing body")
 	}
-	// fmt.Println("parsed body...")
-	fmt.Printf("BODY: %+v\n", body)
+	// fmt.Printf("BODY: %+v\n", body)
 
 	return &parse.LspRequest{Header: header, Body: body}, last, nil
 }
@@ -199,41 +299,24 @@ func parseRequest(in io.Reader) (_ *parse.LspRequest, last bool, err error) {
 func parseHeader(in io.Reader) (*parse.LspHeader, error) {
 	var lsp parse.LspHeader
 	scan := bufio.NewScanner(in)
-
-	for scan.Scan() {
-		header := scan.Text()
-		if header == "" {
-			// last header
-			return &lsp, nil
-		}
-		name, value, err := splitOnce(header, ": ")
-		if err != nil {
-			return nil, errors.Wrap(err, "parsing an header entry")
-		}
-		switch name {
-		case "Content-Length":
-			v, err := strconv.ParseInt(value, 10, 64)
-			if err != nil {
-				return nil, errors.Wrapf(err, "invalid Content-Length: %q", value)
-			}
-			lsp.ContentLength = v
-		case "Content-Type":
-			lsp.ContentType = value
-		}
+	scan.Scan()
+	header := scan.Text()
+	header = "C" + header // add the single char we scanned in parseRequest
+	fmt.Println("HEADER:")
+	fmt.Println(header)
+	name, value, err := splitOnce(header, ": ")
+	if err != nil {
+		return nil, errors.Wrap(err, "parsing an header entry with splitOnce")
 	}
-	if err := scan.Err(); err != nil {
-		return nil, errors.Wrap(err, "scanning header entries")
+	if name != "Content-Length" {
+		return nil, errors.Wrap(err, "unsupported header val (not Content-Length)")
 	}
-
-	switch lsp.ContentType {
-	case "application/vscode-jsonrpc; charset=utf-8":
-		// continue
-	case "":
-
-	default:
-		return nil, errors.Errorf("unsupported content type: %q", lsp.ContentType)
+	v, err := strconv.ParseInt(value, 10, 64)
+	if err != nil {
+		return nil, errors.Wrapf(err, "invalid Content-Length: %q", value)
 	}
-	return nil, errors.New("no body contained")
+	lsp.ContentLength = v
+	return &lsp, nil
 }
 
 func splitOnce(in, sep string) (prefix, suffix string, err error) {
@@ -247,33 +330,16 @@ func splitOnce(in, sep string) (prefix, suffix string, err error) {
 }
 
 func parseBody(in io.Reader, last bool, contentLength int64) (*parse.LspBody, bool, error) {
-	lr := io.LimitReader(in, contentLength)
+	lr := io.LimitReader(in, contentLength - 1)
 	body, err := ioutil.ReadAll(lr)
-	fmt.Println("BODY INTERNAL: " + string(body))
-	
-	// find first instance of {, slice until then.
-	// for len(body) > 0 && body[0] != 123 {
-	// 	body = body[1:]
-	// }
-	// find last instance of }, slice until then
-	// for len(body) > 0 && body[len(body) - 1] != 125 {
-	// 	body = body[:len(body) - 1]
-	// }
-	
-	// fmt.Println("NEW BODY INTERNAL: " + string(body))
-	// if len(body) == 0 {
-	// 	return nil, true, errors.Wrap(err, "could not find { in body")
-	// }
-	switch err {
-	case io.EOF:
-		// no more requests are coming
-	case nil:
-		// no problem
-		last = false
-	default:
+	if err != nil {
 		return nil, true, errors.Wrap(err, "decoding body")
 	}
-
+	body = append([]byte{byte('{')}, body...)
+	// append() to replace missing char that we scanned in parseRequest
+	fmt.Println("BODY:")
+	fmt.Println(string(body))
+	
 	newLspBody := new(parse.LspBody)
 	err = json.Unmarshal(body, &newLspBody)
 	if err != nil {
@@ -282,4 +348,3 @@ func parseBody(in io.Reader, last bool, contentLength int64) (*parse.LspBody, bo
 
 	return newLspBody, last, nil
 }
-

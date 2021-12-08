@@ -33,7 +33,6 @@ function startLanguageServerTCP(address: number, documentSelector: string[]): Di
         documentSelector: documentSelector,
     }
 
-
     const client = new LanguageClient(`tcp language server (port ${address})`, serverOptions, clientOptions)
     const disposable = client.start();
 
