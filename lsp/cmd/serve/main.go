@@ -10,11 +10,12 @@ import (
 	"io/ioutil"
 	"log"
 	"net"
+	"strconv"
 	"strings"
+	"os"
 	tcpserver "github.com/actions-mlh/go-workflows/lsp/server"
 	"github.com/actions-mlh/go-workflows/lsp/server/parse"
 	"github.com/pkg/errors"
-	"strconv"
 )
 
 const (
@@ -27,6 +28,8 @@ const (
 	serverInitialized string = "initialized"
 	didChange         string = "textDocument/didChange"
 	didOpen           string = "textDocument/didOpen"
+	didSave           string = "textDocument/didSave"
+	didClose          string = "textDocument/didClose"
 )
 
 func main() {
@@ -78,7 +81,7 @@ func handleClientConn(conn io.ReadWriteCloser) error {
 	more := true
 	for more {
 		// req, last, err := parseRequest(io.TeeReader(conn, os.Stderr))
-		req, last, err := parseRequest(conn)
+		req, last, err := parseRequest(io.TeeReader(conn, os.Stderr))
 		if err != nil {
 			return errors.Wrap(err, "parsing request")
 		}
@@ -97,6 +100,7 @@ func handleClientConn(conn io.ReadWriteCloser) error {
 }
 
 func handleServePath(more bool, method string, conn io.Writer, req *parse.LspRequest) (bool, error) {
+	// Serve Response
 	if method == serverShutdown || method == serverInitialize {
 		if err := serveReq(conn, req); err != nil {
 			return more, errors.Wrap(err, "serving request back to client...")
@@ -105,9 +109,10 @@ func handleServePath(more bool, method string, conn io.Writer, req *parse.LspReq
 			more = false
 			return more, nil
 		}
-	// } else if method == serverInitialized {
-	// 	// continue to next notification or response
-	// 	return more, nil 
+		// Method Path that does not require a server notif response
+	} else if method == serverInitialized || method == didSave || method == didClose {
+		return more, nil
+		// Serve Notification
 	} else {
 		if err := serveNotif(conn, req); err != nil {
 			return more, errors.Wrap(err, "serving notification to client...")
@@ -124,8 +129,6 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 	switch body.Method {
 	case serverInitialize:
 		result, err = tcpserver.Initialize(body)
-	case serverInitialized:
-		// continue, result == null to response to client
 	default:
 		fmt.Printf("unsupported method: %q", body.Method)
 	}
@@ -154,7 +157,7 @@ func serveReq(conn io.Writer, req *parse.LspRequest) error {
 	fmt.Printf("%+v\n", string(*responseHeader))
 	fmt.Println("serving body request...")
 	fmt.Printf("%+v\n", string(marshalledBodyRequest))
-	
+
 	// write to client
 	if _, err := conn.Write(*responseHeader); err != nil {
 		return errors.Wrap(err, "writing header response to connection")
@@ -173,13 +176,9 @@ func serveNotif(conn io.Writer, req *parse.LspRequest) error {
 	var method string
 	var err error
 
-	// fmt.Printf("%+v\n", body)
-
 	switch body.Method {
-	case serverInitialized:
-		notif, err = tcpserver.DidChange(body)
 	case didOpen:
-		//
+		notif, err = tcpserver.DidOpen(body)
 	case didChange:
 		notif, err = tcpserver.DidChange(body)
 	default:
@@ -204,11 +203,16 @@ func serveNotif(conn io.Writer, req *parse.LspRequest) error {
 		return errors.Wrap(err, "encoding marshalled header")
 	}
 
+	fmt.Println("")
+	fmt.Println("serving headers request...")
+	fmt.Printf("%+v\n", string(*responseHeader))
+	fmt.Println("serving body request...")
+	fmt.Printf("%+v\n", string(marshalledNotifMsg))
+
 	if _, err := conn.Write(*responseHeader); err != nil {
 		return errors.Wrap(err, "writing header response to connection")
 	}
 
-	fmt.Println("TODO:", string(marshalledNotifMsg))
 	if _, err := conn.Write(marshalledNotifMsg); err != nil {
 		return errors.Wrap(err, "writing notification message to client")
 	}
@@ -269,6 +273,7 @@ type Response struct {
 }
 
 func parseRequest(in io.Reader) (*parse.LspRequest, bool, error) {
+	fmt.Println("")
 	fmt.Println("---------------------------------")
 	var header *parse.LspHeader
 	for {
@@ -285,13 +290,13 @@ func parseRequest(in io.Reader) (*parse.LspRequest, bool, error) {
 			return nil, false, errors.Wrap(err, "parsing header")
 		}
 	}
-	// fmt.Printf("HEADER: %+v\n", header)
+	fmt.Println("parsed header...")
 
 	body, last, err := parseBody(in, false, header.ContentLength)
 	if err != nil {
 		return nil, false, errors.Wrap(err, "parsing body")
 	}
-	// fmt.Printf("BODY: %+v\n", body)
+	fmt.Println("parsed body...")
 
 	return &parse.LspRequest{Header: header, Body: body}, last, nil
 }
@@ -330,16 +335,14 @@ func splitOnce(in, sep string) (prefix, suffix string, err error) {
 }
 
 func parseBody(in io.Reader, last bool, contentLength int64) (*parse.LspBody, bool, error) {
-	lr := io.LimitReader(in, contentLength - 1)
+	lr := io.LimitReader(in, contentLength-1)
 	body, err := ioutil.ReadAll(lr)
 	if err != nil {
 		return nil, true, errors.Wrap(err, "decoding body")
 	}
 	body = append([]byte{byte('{')}, body...)
 	// append() to replace missing char that we scanned in parseRequest
-	fmt.Println("BODY:")
-	fmt.Println(string(body))
-	
+
 	newLspBody := new(parse.LspBody)
 	err = json.Unmarshal(body, &newLspBody)
 	if err != nil {
