@@ -271,6 +271,12 @@ type Response struct {
 func parseRequest(in io.Reader) (*parse.LspRequest, bool, error) {
 	fmt.Println("---------------------------------")
 	var header *parse.LspHeader
+	/* 
+	you may be wondering, why do we have to read headers as a loop instead of just once?
+	the answer is that occasionally, the VSCode client will spit two headers in a row at the server for no reason,
+	causing our original implementation to break.
+	this hack with the loop and first-character checking is a way to work around that bug.
+	*/
 	for {
 		lr := io.LimitReader(in, 1)
 		chr, err := ioutil.ReadAll(lr)
